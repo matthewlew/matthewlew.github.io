@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Static HTML Server",
+      "runtimeExecutable": "/bin/sh",
+      "runtimeArgs": ["-c", "ruby -run -e httpd -- . -p $PORT"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}
