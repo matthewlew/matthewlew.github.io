@@ -1,0 +1,23 @@
+/* LDS theme: palette — playful, soft, rounded. Elevated glass surfaces. */
+.theme-palette{
+  --c-50:#F6EDFF;--c-100:#E7CCFF;--c-200:#CFA0FF;--c-300:#B673FF;--c-400:#A855F7;
+  --c-500:#9333EA;--c-600:#7E22CE;--c-700:#6B21A8;--c-800:#581C87;--c-900:#3B0764;--c-950:#1E0338;
+
+  --th-display:system-ui,sans-serif;
+  --th-body:system-ui,sans-serif;
+  --th-mono:ui-monospace,monospace;
+
+  --text-caption: var(--size-1);
+  --text-body: var(--size-3);
+  --text-subhead: var(--size-5);
+  --text-title: var(--size-7);
+
+  --radius:12px;--radius-lg:18px;--pill:999px;
+
+  --card-shadow:0 10px 30px -8px rgba(0,0,0,.28);
+  --btn-shadow:0 4px 14px -4px rgba(0,0,0,.25);
+
+  --density:1;
+
+  --icon-size:20px;--icon-weight:2;
+}

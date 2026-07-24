@@ -1,0 +1,24 @@
+/* LDS theme: product — neutral, dense, dependable. Reference/utility theme
+   for dashboards and internal tools (pickleball-booker, tripblend, etc). */
+.theme-product{
+  --c-50:#EAF1FF;--c-100:#CFE0FF;--c-200:#9DBEFF;--c-300:#6B9BFF;--c-400:#3E79FF;
+  --c-500:#2563EB;--c-600:#1D4FC4;--c-700:#173D97;--c-800:#112C6E;--c-900:#0A1943;--c-950:#050D22;
+
+  --th-display:'Inter',system-ui,sans-serif;
+  --th-body:'Inter',system-ui,sans-serif;
+  --th-mono:ui-monospace,monospace;
+
+  --text-caption: var(--size-0);
+  --text-body: var(--size-2);
+  --text-subhead: var(--size-3);
+  --text-title: var(--size-5);
+
+  --radius:10px;--radius-lg:14px;--pill:8px;
+
+  --card-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);
+  --btn-shadow:none;
+
+  --density:0.92;
+
+  --icon-size:18px;--icon-weight:1.75;
+}

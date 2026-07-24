@@ -1,0 +1,29 @@
+/* LDS theme: portfolio — editorial, sharp, serif. The Collletttivo brand. */
+.theme-portfolio{
+  /* knob 1: brand hue */
+  --c-50:#FBEEEB;--c-100:#F5D2CA;--c-200:#E9A192;--c-300:#DE7460;--c-400:#D4523A;
+  --c-500:#C8391B;--c-600:#A32D15;--c-700:#7E2310;--c-800:#5A190C;--c-900:#2E0C06;--c-950:#170603;
+
+  /* knob 2: typography */
+  --th-display:'DM Sans','Helvetica Neue',sans-serif;
+  --th-body:'DM Sans',system-ui,sans-serif;
+  --th-mono:'Space Mono',monospace;
+  
+  --text-caption: var(--size-1);
+  --text-body: var(--size-2);
+  --text-subhead: var(--size-5);
+  --text-title: var(--size-8);
+
+  /* knob 3: radius */
+  --radius:0px;--radius-lg:0px;--pill:0px;
+
+  /* knob 4: shadow / surface */
+  --card-shadow:none;--btn-shadow:none;
+
+  /* knob 5: density */
+  --density:1;
+
+  /* icon alignment */
+  --icon-size:18px;--icon-weight:1.5;
+}
+/* knob 6: default mode is set via .mode-light / .mode-dark on the root, not here */

@@ -1,0 +1,472 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lew Design System — Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --grey-50:#F8F8F8;--grey-100:#F0F0F0;--grey-200:#E2E2E2;--grey-300:#CACACA;
+    --grey-400:#ADADAD;--grey-500:#898989;--grey-600:#6B6B6B;--grey-700:#4E4E4E;
+    --grey-800:#333333;--grey-900:#1C1C1C;--grey-950:#0E0E0E;
+    --page:#0E0E10;--panel:#17171A;--panel-2:#1F1F24;--edge:#2A2A30;
+    --ink:#EDEDF0;--ink-2:#A0A0A8;--ink-3:#66666E;
+    --font-ui:'DM Sans',system-ui,sans-serif;--font-mono:'Space Mono',monospace;
+    --font-serif:'DM Sans',Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--page);color:var(--ink);font-family:var(--font-ui);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  ::selection{background:#C8391B;color:#fff;}
+
+  /* ---------- CONTROL BAR ---------- */
+  .bar{position:sticky;top:0;z-index:50;background:rgba(14,14,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--edge);
+       display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:12px 22px;}
+  .bar .brand{font-family:var(--font-serif);font-size:19px;letter-spacing:-0.01em;white-space:nowrap;}
+  .bar .brand b{color:#E8542F;font-weight:400;}
+  .ctl{display:flex;align-items:center;gap:8px;}
+  .ctl .lbl{font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+  .seg{display:flex;border:1px solid var(--edge);border-radius:7px;overflow:hidden;}
+  .seg button{font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.03em;padding:6px 11px;background:transparent;color:var(--ink-2);border:none;cursor:pointer;transition:all .12s;white-space:nowrap;}
+  .seg button+button{border-left:1px solid var(--edge);}
+  .seg button:hover{color:var(--ink);background:var(--panel-2);}
+  .seg button.on{background:var(--ink);color:var(--page);}
+  .bar-hint{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--ink-3);}
+
+  /* ---------- LAYOUT ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
+  section.slide{padding:64px 0;border-bottom:1px solid var(--edge);}
+  .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#E8542F;margin-bottom:16px;}
+  h1.title{font-family:var(--font-serif);font-weight:400;line-height:0.95;letter-spacing:-0.02em;font-size:clamp(40px,6.5vw,86px);}
+  h2.title{font-family:var(--font-serif);font-weight:400;line-height:1;letter-spacing:-0.01em;font-size:clamp(30px,4.2vw,52px);}
+  .lede{font-size:clamp(16px,2vw,21px);color:var(--ink-2);max-width:60ch;margin-top:20px;line-height:1.45;}
+  .lede b{color:var(--ink);font-weight:500;}
+
+  /* hero layer diagram */
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:44px;align-items:center;margin-top:40px;}
+  .layers{display:flex;flex-direction:column;gap:10px;}
+  .layer{border:1px solid var(--edge);border-radius:12px;padding:15px 18px;background:var(--panel);display:flex;align-items:center;gap:16px;transition:border-color .15s,transform .15s;}
+  .layer:hover{border-color:#E8542F;transform:translateX(4px);}
+  .layer .n{font-family:var(--font-mono);font-size:12px;color:#E8542F;width:20px;flex-shrink:0;}
+  .layer .nm{font-weight:500;font-size:16px;}
+  .layer .ds{font-size:12.5px;color:var(--ink-3);margin-top:2px;}
+  .layer .flow{margin-left:auto;font-family:var(--font-mono);font-size:9px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;}
+
+  /* ---------- STAGE (live themed area) ---------- */
+  .stage{border:1px solid var(--edge);border-radius:16px;overflow:hidden;}
+  .stage-head{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--edge);background:var(--panel);}
+  .stage-head .dot{width:10px;height:10px;border-radius:50%;background:var(--edge);}
+  .stage-head .t{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);letter-spacing:0.04em;}
+  .stage-head .tag{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--ink-2);border:1px solid var(--edge);padding:3px 9px;border-radius:100px;}
+
+  /* THE THEMED CANVAS — resolves the 7 One Token vars + personality knobs */
+  .canvas{
+    /* brand scale --c-* injected by .brand-*; personality by .theme-* */
+    padding:38px 30px;
+    background:var(--background);
+    color:var(--text);
+    transition:background .3s, color .3s;
+    font-family:var(--th-body,var(--font-ui));
+  }
+  /* brand hue scales (real colors from the projects) */
+  .brand-portfolio{--c-50:#FBEEEB;--c-100:#F5D2CA;--c-200:#E9A192;--c-300:#DE7460;--c-400:#D4523A;--c-500:#C8391B;--c-600:#A32D15;--c-700:#7E2310;--c-800:#5A190C;--c-900:#2E0C06;--c-950:#170603;}
+  .brand-palette  {--c-50:#F6EDFF;--c-100:#E7CCFF;--c-200:#CFA0FF;--c-300:#B673FF;--c-400:#A855F7;--c-500:#9333EA;--c-600:#7E22CE;--c-700:#6B21A8;--c-800:#581C87;--c-900:#3B0764;--c-950:#1E0338;}
+  .brand-product  {--c-50:#EAF1FF;--c-100:#CFE0FF;--c-200:#9DBEFF;--c-300:#6B9BFF;--c-400:#3E79FF;--c-500:#2563EB;--c-600:#1D4FC4;--c-700:#173D97;--c-800:#112C6E;--c-900:#0A1943;--c-950:#050D22;}
+  /* personality knobs per theme */
+  .theme-portfolio{--th-body:'DM Sans',sans-serif;--th-display:'DM Sans',serif;--radius:0px;--radius-lg:0px;--card-shadow:none;--btn-shadow:none;--pill:0px;}
+  .theme-palette  {--th-body:system-ui,sans-serif;--th-display:system-ui,sans-serif;--radius:12px;--radius-lg:18px;--card-shadow:0 10px 30px -8px rgba(0,0,0,.28);--btn-shadow:0 4px 14px -4px rgba(0,0,0,.25);--pill:999px;}
+  .theme-product  {--th-body:'Inter',sans-serif;--th-display:'Inter',sans-serif;--radius:10px;--radius-lg:14px;--card-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);--btn-shadow:none;--pill:8px;}
+  /* One Token resolution: mode x emphasis -> the 7 object vars */
+  .mode-light.emph-plain {--background:#FFFFFF;--text:var(--grey-900);--text-accent:var(--c-600);--text-subdued:var(--grey-500);--icon:var(--grey-400);--border:var(--grey-200);--border-subdued:var(--grey-100);--bg-hover:var(--grey-100);}
+  .mode-dark.emph-plain  {--background:#111114;--text:#FFFFFF;--text-accent:var(--c-300);--text-subdued:var(--grey-500);--icon:var(--grey-600);--border:#2C2C32;--border-subdued:#202024;--bg-hover:#1c1c20;}
+  .mode-light.emph-soft  {--background:var(--c-50);--text:var(--c-800);--text-accent:var(--c-600);--text-subdued:var(--c-500);--icon:var(--c-400);--border:var(--c-200);--border-subdued:var(--c-100);--bg-hover:var(--c-100);}
+  .mode-dark.emph-soft   {--background:var(--c-900);--text:var(--c-100);--text-accent:var(--c-200);--text-subdued:var(--c-400);--icon:var(--c-400);--border:var(--c-800);--border-subdued:var(--c-900);--bg-hover:var(--c-800);}
+  /* brand solids for buttons */
+  .canvas{--brand-solid:var(--c-600);--brand-solid-h:var(--c-700);--on-brand:#fff;}
+  .mode-dark .card,.mode-dark.emph-plain .card{}
+
+  /* ---------- COMPONENTS (reference only the 7 vars + knobs) ---------- */
+  .gallery{display:grid;grid-template-columns:1.15fr 0.85fr;gap:24px;}
+  @media(max-width:760px){.gallery{grid-template-columns:1fr;}}
+  .col{display:flex;flex-direction:column;gap:20px;}
+
+  .card{background:var(--background);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--card-shadow);}
+  .mode-dark .card{background:#17171B;}
+  .card .k{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-accent);}
+  .card h3{font-family:var(--th-display);font-weight:500;font-size:22px;line-height:1.1;color:var(--text);margin:8px 0 6px;letter-spacing:-0.01em;}
+  .card .body{font-size:13.5px;color:var(--text-subdued);line-height:1.55;}
+  .card .divider{border:none;border-top:1px solid var(--border-subdued);margin:16px 0;}
+  .card .meta{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-subdued);font-weight:500;}
+  .card .meta svg{width:14px;height:14px;color:var(--icon);flex-shrink:0;}
+
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px;}
+  .btn{font-family:var(--th-body);font-size:13px;font-weight:600;padding:9px 17px;border-radius:var(--pill);cursor:pointer;transition:filter .12s,background .12s,transform .05s;border:1px solid transparent;}
+  .btn:active{transform:translateY(1px);}
+  /* default style set by data attr on stage: fill / outline / ghost */
+  .btn.primary.s-fill   {background:var(--brand-solid);color:var(--on-brand);border-color:var(--brand-solid);box-shadow:var(--btn-shadow);}
+  .btn.primary.s-fill:hover{filter:brightness(1.08);}
+  .btn.primary.s-outline{background:transparent;color:var(--text);border-color:var(--border);}
+  .btn.primary.s-outline:hover{background:var(--bg-hover);}
+  .btn.primary.s-ghost  {background:transparent;color:var(--text-accent);border-color:transparent;}
+  .btn.primary.s-ghost:hover{background:var(--bg-hover);}
+  .btn.secondary{background:transparent;color:var(--text-subdued);border-color:var(--border-subdued);}
+  .btn.secondary:hover{color:var(--text);border-color:var(--border);}
+
+  .badges{display:flex;gap:8px;flex-wrap:wrap;}
+  .badge{font-family:var(--font-mono);font-size:10px;letter-spacing:0.03em;padding:4px 9px;border-radius:var(--pill);background:var(--c-50);color:var(--c-700);border:1px solid var(--c-100);}
+  .mode-dark .badge{background:var(--c-900);color:var(--c-200);border-color:var(--c-800);}
+
+  .field label{display:block;font-size:11px;font-weight:600;color:var(--text-subdued);margin-bottom:6px;letter-spacing:0.02em;}
+  .field input{width:100%;font-family:var(--th-body);font-size:13.5px;padding:10px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--background);color:var(--text);outline:none;transition:border-color .12s,box-shadow .12s;}
+  .mode-dark .field input{background:#0f0f12;}
+  .field input:focus{border-color:var(--text-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--text-accent) 22%,transparent);}
+
+  .banner{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:var(--radius);font-size:13px;line-height:1.4;}
+  .banner svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;}
+  .b-success{background:#E7F6EC;color:#0B5A26;border:1px solid #B7E4C6;}
+  .b-error{background:#FDECEA;color:#8A1C10;border:1px solid #F5C4BD;}
+  .mode-dark .b-success{background:#0c2417;color:#8FE0AB;border-color:#17492b;}
+  .mode-dark .b-error{background:#2a0f0b;color:#F3A79A;border-color:#5a1a10;}
+
+  .navbar{display:flex;align-items:center;gap:18px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--background);box-shadow:var(--card-shadow);}
+  .navbar .logo{font-family:var(--th-display);font-weight:500;font-size:16px;color:var(--text);}
+  .navbar .logo b{color:var(--text-accent);}
+  .navbar nav{display:flex;gap:14px;font-size:12.5px;color:var(--text-subdued);}
+  .navbar nav a{cursor:pointer;}
+  .navbar nav a:hover{color:var(--text);}
+  .navbar .sp{margin-left:auto;}
+
+  /* decision blocks */
+  .decisions{display:grid;grid-template-columns:1fr;gap:20px;margin-top:36px;}
+  .decision{border:1px solid var(--edge);border-radius:16px;background:var(--panel);overflow:hidden;}
+  .decision .dh{display:flex;align-items:baseline;gap:12px;padding:18px 22px;border-bottom:1px solid var(--edge);}
+  .decision .q{font-family:var(--font-mono);font-size:11px;color:#E8542F;letter-spacing:0.08em;}
+  .decision .dh h3{font-size:19px;font-weight:600;}
+  .decision .rec{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:#7BDBA0;border:1px solid #234C36;background:#0e2417;padding:4px 10px;border-radius:100px;white-space:nowrap;}
+  .decision .db{padding:22px;}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  @media(max-width:760px){.opts{grid-template-columns:1fr;}}
+  .opt{border:1px solid var(--edge);border-radius:12px;padding:16px;background:var(--panel-2);}
+  .opt.pick{border-color:#E8542F;}
+  .opt .on{font-family:var(--font-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;display:flex;justify-content:space-between;}
+  .opt .on .win{color:#E8542F;}
+  .opt .demo{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;min-height:64px;background:#fff;border-radius:8px;padding:14px;margin-bottom:12px;}
+  .opt .why{font-size:12.5px;color:var(--ink-2);line-height:1.5;}
+
+  /* mini buttons for decision demos (static, own colors) */
+  .mb{font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;padding:8px 15px;border:1px solid transparent;cursor:default;}
+  .mb.fill{background:#C8391B;color:#fff;border-radius:8px;}
+  .mb.outline{background:#fff;color:#1c1c1c;border-color:#d8d8d5;border-radius:8px;}
+  .mb.ghost{background:transparent;color:#C8391B;border-radius:8px;}
+  .mb.pill{border-radius:999px;}
+
+  /* glass vs flat demo */
+  .glassdemo{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:640px){.glassdemo{grid-template-columns:1fr;}}
+  .gd-flat{background:#F5F0E8;border:1px solid #0a0a0a;border-radius:0;padding:18px;}
+  .gd-flat .t{font-family:'DM Sans',serif;font-size:20px;color:#0a0a0a;}
+  .gd-flat .s{font-size:12.5px;color:#5c5c5a;margin-top:4px;}
+  .gd-glasswrap{border-radius:14px;padding:18px;background:linear-gradient(135deg,#7E22CE,#2563EB 60%,#0EA5A5);position:relative;overflow:hidden;}
+  .gd-glass{background:rgba(255,255,255,0.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.28);border-radius:12px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.22);}
+  .gd-glass .t{font-family:system-ui;font-weight:600;font-size:18px;color:#fff;}
+  .gd-glass .s{font-size:12.5px;color:rgba(255,255,255,0.85);margin-top:4px;}
+
+  /* three-brand strip */
+  .brandstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px;}
+  @media(max-width:760px){.brandstrip{grid-template-columns:1fr;}}
+  .bs-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;display:flex;justify-content:space-between;}
+  .bs-label span:last-child{color:var(--ink-2);}
+
+  /* themeable knobs grid */
+  .knobs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px;}
+  @media(max-width:760px){.knobs{grid-template-columns:1fr;}}
+  .knob{border:1px solid var(--edge);border-radius:12px;padding:18px;background:var(--panel);}
+  .knob .ic{font-family:var(--font-mono);font-size:10px;color:#E8542F;letter-spacing:0.08em;}
+  .knob h4{font-size:16px;font-weight:600;margin:10px 0 6px;}
+  .knob p{font-size:13px;color:var(--ink-2);line-height:1.5;}
+  .knob .ex{margin-top:12px;font-family:var(--font-mono);font-size:11px;color:var(--ink-3);border-top:1px solid var(--edge);padding-top:10px;}
+
+  .foot{padding:40px 0 60px;}
+  .foot .n{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.06em;}
+  .cta-list{margin-top:18px;display:flex;flex-direction:column;gap:10px;}
+  .cta-list .item{display:flex;gap:12px;align-items:baseline;font-size:15px;}
+  .cta-list .item b{color:#E8542F;font-family:var(--font-mono);font-size:12px;}
+</style>
+
+<!-- CONTROL BAR -->
+<div class="bar">
+  <div class="brand">Lew<b>.</b>Design System</div>
+  <div class="ctl"><span class="lbl">Theme</span>
+    <div class="seg" id="segTheme">
+      <button data-v="portfolio" class="on">Portfolio</button>
+      <button data-v="palette">Palette</button>
+      <button data-v="product">Product</button>
+    </div>
+  </div>
+  <div class="ctl"><span class="lbl">Mode</span>
+    <div class="seg" id="segMode">
+      <button data-v="light" class="on">Light</button>
+      <button data-v="dark">Dark</button>
+    </div>
+  </div>
+  <div class="ctl"><span class="lbl">Emphasis</span>
+    <div class="seg" id="segEmph">
+      <button data-v="plain" class="on">Plain</button>
+      <button data-v="soft">Soft</button>
+    </div>
+  </div>
+  <div class="ctl"><span class="lbl">Buttons</span>
+    <div class="seg" id="segBtn">
+      <button data-v="fill">Fill</button>
+      <button data-v="outline" class="on">Outline</button>
+      <button data-v="ghost">Ghost</button>
+    </div>
+  </div>
+  <div class="bar-hint">↓ live — controls re-theme the components below</div>
+</div>
+
+<!-- HERO -->
+<section class="slide">
+  <div class="wrap">
+    <div class="eyebrow">Design System Pitch · v0.1</div>
+    <h1 class="title">One system.<br>Every project.<br><span style="color:#E8542F;font-style:italic">Themed, not rebuilt.</span></h1>
+    <p class="lede"><b>Lew Design System (LDS)</b> is one set of framework-agnostic components. Every repo — the portfolio, palette, tote, scentmap, the apps — links the same CSS and drops in a project theme file. Same components, unmistakably different brands. Built on your <b>One Token</b> color methodology.</p>
+    <div class="hero-grid">
+      <div class="layers">
+        <div class="layer"><span class="n">01</span><div><div class="nm">Primitives</div><div class="ds">Grey + brand scales (50–950), space, type, radius ramps</div></div><span class="flow">raw</span></div>
+        <div class="layer"><span class="n">02</span><div><div class="nm">Semantics · One Token</div><div class="ds">mode × hue × emphasis → the 7 color roles + type/space/radius</div></div><span class="flow">meaning</span></div>
+        <div class="layer"><span class="n">03</span><div><div class="nm">Components</div><div class="ds">Button · Card · Field · Badge · Banner · Nav · Modal</div></div><span class="flow">reused</span></div>
+        <div class="layer"><span class="n">04</span><div><div class="nm">Project themes</div><div class="ds">brand hue · fonts · radius · shadow · density — one file per repo</div></div><span class="flow">per-project</span></div>
+      </div>
+      <div>
+        <div class="stage" id="stageHero">
+          <div class="stage-head"><span class="dot"></span><span class="t">card.component</span><span class="tag" id="tagHero">theme-portfolio · light</span></div>
+          <div class="canvas theme-portfolio brand-portfolio mode-light emph-plain" id="canvasHero" data-btn="outline">
+            <div class="card">
+              <div class="k">New Arrival</div>
+              <h3>Iced Brown Sugar Oat Espresso</h3>
+              <div class="body">Blonde espresso shaken with oat milk and brown sugar. The same markup, re-skinned by one class.</div>
+              <hr class="divider">
+              <div class="meta"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5l2 1.5"/></svg>230 cal · Available now</div>
+              <div class="btnrow">
+                <button class="btn primary s-outline">Order now</button>
+                <button class="btn secondary">Details</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE GALLERY -->
+<section class="slide">
+  <div class="wrap">
+    <div class="eyebrow">The foundation set · live</div>
+    <h2 class="title">Seven components. <span style="font-style:italic">One source.</span></h2>
+    <p class="lede">Flip the controls at the top. Every component below is the exact same HTML — only the theme class changes. This is the whole promise: build once, theme forever.</p>
+    <div class="stage" style="margin-top:30px;">
+      <div class="stage-head"><span class="dot"></span><span class="t">foundation.gallery</span><span class="tag" id="tagMain">theme-portfolio · light · outline</span></div>
+      <div class="canvas theme-portfolio brand-portfolio mode-light emph-plain" id="canvasMain" data-btn="outline">
+        <div class="gallery">
+          <div class="col">
+            <div class="navbar">
+              <div class="logo">Lew<b>.</b></div>
+              <nav><a>Work</a><a>Cases</a><a>About</a></nav>
+              <span class="sp"></span>
+              <button class="btn primary s-outline" style="padding:7px 14px;">Contact</button>
+            </div>
+            <div class="card">
+              <div class="k">Featured Case</div>
+              <h3>Design tokens at scale</h3>
+              <div class="body">A machine-readable token architecture consumed by 50+ designers and every downstream platform.</div>
+              <hr class="divider">
+              <div class="badges">
+                <span class="badge">tokens</span><span class="badge">theming</span><span class="badge">a11y</span><span class="badge">figma-mcp</span>
+              </div>
+              <div class="btnrow">
+                <button class="btn primary s-outline">View case</button>
+                <button class="btn secondary">Share</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="field">
+              <label>Work email</label>
+              <input type="text" placeholder="you@studio.com" value="hello@lew.design">
+            </div>
+            <div class="banner b-success">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8.5l3 3 7-7"/></svg>
+              <div>Theme applied. Every surface updated from one class.</div>
+            </div>
+            <div class="banner b-error">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v4M8 11h.01"/></svg>
+              <div>Hardcoded hex found. Components reference tokens only.</div>
+            </div>
+            <div class="btnrow" style="margin-top:0;">
+              <button class="btn primary s-outline">Primary</button>
+              <button class="btn secondary">Secondary</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DECISIONS -->
+<section class="slide">
+  <div class="wrap">
+    <div class="eyebrow">The look-and-feel calls</div>
+    <h2 class="title">Three decisions, <span style="font-style:italic">my recommendations.</span></h2>
+    <p class="lede">You asked the right questions. Here's where I'd land — and why. All three are <b>theme-level</b>, so a project can override any of them.</p>
+
+    <div class="decisions">
+      <!-- Q1 buttons -->
+      <div class="decision">
+        <div class="dh"><span class="q">Q1</span><h3>Fill, outline, or ghost buttons?</h3><span class="rec">REC · Outline default + Fill for primary CTA</span></div>
+        <div class="db">
+          <div class="opts">
+            <div class="opt">
+              <div class="on"><span>Fill</span><span>bold</span></div>
+              <div class="demo"><span class="mb fill">Order now</span></div>
+              <div class="why">High emphasis, unmistakable CTA. Reads loud — use it for the ONE primary action per view.</div>
+            </div>
+            <div class="opt pick">
+              <div class="on"><span>Outline</span><span class="win">✓ default</span></div>
+              <div class="demo"><span class="mb outline">Order now</span></div>
+              <div class="why">Quiet, editorial, on-brand with your portfolio's flat 1px language. The system default; pairs with one fill CTA.</div>
+            </div>
+            <div class="opt">
+              <div class="on"><span>Ghost</span><span>tertiary</span></div>
+              <div class="demo"><span class="mb ghost">Order now</span></div>
+              <div class="why">Lowest weight — tertiary actions, toolbars, icon chrome (palette's ghost-chip lives here).</div>
+            </div>
+          </div>
+          <p class="lede" style="font-size:14px;margin-top:18px;">Not either/or — LDS ships <b>all three as variants</b>. The theme sets the default. Portfolio → outline; Palette → ghost/pill; Product → fill. Never more than one fill per screen.</p>
+        </div>
+      </div>
+
+      <!-- Q2 glass vs simple -->
+      <div class="decision">
+        <div class="dh"><span class="q">Q2</span><h3>Glass UI or very simple?</h3><span class="rec">REC · Simple core, glass as an opt-in theme</span></div>
+        <div class="db">
+          <div class="glassdemo">
+            <div class="gd-flat">
+              <div style="font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.08em;color:#999;text-transform:uppercase;margin-bottom:8px;">Simple · default</div>
+              <div class="t">Flat, sharp, 1px</div>
+              <div class="s">Fast, accessible, timeless. Renders identically everywhere. Your portfolio's DNA.</div>
+            </div>
+            <div class="gd-glasswrap">
+              <div style="font-family:monospace;font-size:9.5px;letter-spacing:0.08em;color:rgba(255,255,255,.8);text-transform:uppercase;margin-bottom:8px;">Glass · opt-in</div>
+              <div class="gd-glass">
+                <div class="t">Translucent, blurred</div>
+                <div class="s">Great over imagery (palette's gradients). Costs blur perf + contrast care.</div>
+              </div>
+            </div>
+          </div>
+          <p class="lede" style="font-size:14px;margin-top:18px;">The <b>core stays simple</b> — flat surfaces, real borders, no blur. That's the reliable, accessible default across all repos. <b>Glass is a theme add-on</b> (a <code style="font-family:var(--font-mono);font-size:12px;color:#E8542F;">--surface-glass</code> recipe) that image-forward projects like palette opt into. You never pay blur cost where you don't need it.</p>
+        </div>
+      </div>
+
+      <!-- Q3 themeable -->
+      <div class="decision">
+        <div class="dh"><span class="q">Q3</span><h3>What can be themed?</h3><span class="rec">REC · Six knobs, everything else fixed</span></div>
+        <div class="db">
+          <div class="knobs">
+            <div class="knob"><div class="ic">KNOB 01</div><h4>Brand hue</h4><p>An 11-step scale from one hex. Drives all seven color roles via One Token.</p><div class="ex">portfolio #C8391B · palette #AA3BFF</div></div>
+            <div class="knob"><div class="ic">KNOB 02</div><h4>Typography</h4><p>Display + body + mono families. The single biggest personality lever.</p><div class="ex">DM Sans ↔ system-ui ↔ Inter</div></div>
+            <div class="knob"><div class="ic">KNOB 03</div><h4>Radius</h4><p>Corner scale: sharp 0, product 10px, pill 999px. Reshapes every control.</p><div class="ex">0 ↔ 12 ↔ 999</div></div>
+            <div class="knob"><div class="ic">KNOB 04</div><h4>Shadow / surface</h4><p>Flat, soft-elevated, or glass. Sets depth language.</p><div class="ex">none ↔ soft ↔ glass</div></div>
+            <div class="knob"><div class="ic">KNOB 05</div><h4>Density</h4><p>Spacing multiplier — compact tools vs. airy marketing.</p><div class="ex">0.85 ↔ 1 ↔ 1.15</div></div>
+            <div class="knob"><div class="ic">KNOB 06</div><h4>Default mode</h4><p>Light or dark starting point; both always available at runtime.</p><div class="ex">light ↔ dark</div></div>
+          </div>
+          <p class="lede" style="font-size:14px;margin-top:18px;"><b>Fixed on purpose:</b> component structure, spacing rhythm, the seven color roles, accessibility rules, interaction states. That's what keeps twelve projects feeling like one system instead of twelve snowflakes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE BRANDS AT ONCE -->
+<section class="slide">
+  <div class="wrap">
+    <div class="eyebrow">Same component · three brands</div>
+    <h2 class="title">Proof.</h2>
+    <p class="lede">Identical card markup. Three theme files. This is what "themed, not rebuilt" means in practice.</p>
+    <div class="brandstrip">
+      <div>
+        <div class="bs-label"><span>Portfolio</span><span>#C8391B</span></div>
+        <div class="canvas theme-portfolio brand-portfolio mode-light emph-plain" data-btn="outline" style="border:1px solid var(--edge);border-radius:0;">
+          <div class="card"><div class="k">Case Study</div><h3>Tokens at scale</h3><div class="body">Editorial, sharp, serif. Flat 1px language.</div><div class="btnrow"><button class="btn primary s-outline">Read</button></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="bs-label"><span>Palette</span><span>#AA3BFF</span></div>
+        <div class="canvas theme-palette brand-palette mode-light emph-plain" data-btn="ghost" style="border:1px solid var(--edge);border-radius:18px;">
+          <div class="card"><div class="k">Gallery</div><h3>Tokens at scale</h3><div class="body">Playful, soft, rounded. Elevated surfaces.</div><div class="btnrow"><button class="btn primary s-ghost">Read</button></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="bs-label"><span>Product</span><span>#2563EB</span></div>
+        <div class="canvas theme-product brand-product mode-light emph-plain" data-btn="fill" style="border:1px solid var(--edge);border-radius:14px;">
+          <div class="card"><div class="k">Dashboard</div><h3>Tokens at scale</h3><div class="body">Neutral, dense, dependable. Fill CTAs.</div><div class="btnrow"><button class="btn primary s-fill">Read</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section class="slide foot">
+  <div class="wrap">
+    <div class="eyebrow">Where this goes</div>
+    <h2 class="title">Refine, then <span style="font-style:italic">ship it.</span></h2>
+    <div class="cta-list">
+      <div class="item"><b>NOW</b><span>React to the three decisions above — change any default you disagree with.</span></div>
+      <div class="item"><b>NEXT</b><span>I write the LDS spec + build the core CSS, Portfolio + Palette themes, and a public docs/gallery site.</span></div>
+      <div class="item"><b>THEN</b><span>Migrate palette's real components into LDS; retrofit the portfolio; wire the rest of your repos.</span></div>
+    </div>
+    <p class="n" style="margin-top:30px;">Lew Design System · built on One Token · framework-agnostic · CDN via jsDelivr</p>
+  </div>
+</section>
+
+<script>
+  const canvases = () => document.querySelectorAll('.canvas');
+  const state = { theme:'portfolio', mode:'light', emph:'plain', btn:'outline' };
+  const brandOf = { portfolio:'brand-portfolio', palette:'brand-palette', product:'brand-product' };
+
+  function apply(){
+    // only the two INTERACTIVE stages follow the controls (hero + main gallery)
+    ['canvasHero','canvasMain'].forEach(id=>{
+      const c = document.getElementById(id);
+      if(!c) return;
+      c.className = 'canvas theme-'+state.theme+' '+brandOf[state.theme]+' mode-'+state.mode+' emph-'+state.emph;
+      c.setAttribute('data-btn', state.btn);
+      // swap button style classes
+      c.querySelectorAll('.btn.primary').forEach(b=>{
+        b.classList.remove('s-fill','s-outline','s-ghost');
+        b.classList.add('s-'+state.btn);
+      });
+    });
+    const label = 'theme-'+state.theme+' · '+state.mode;
+    const t1=document.getElementById('tagHero'); if(t1) t1.textContent=label;
+    const t2=document.getElementById('tagMain'); if(t2) t2.textContent=label+' · '+state.btn;
+  }
+
+  function wire(segId, key){
+    const seg = document.getElementById(segId);
+    seg.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on');
+        state[key] = btn.dataset.v;
+        apply();
+      });
+    });
+  }
+  wire('segTheme','theme'); wire('segMode','mode'); wire('segEmph','emph'); wire('segBtn','btn');
+  apply();
+</script>
