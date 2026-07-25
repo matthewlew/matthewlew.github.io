@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   
+  <link rel="stylesheet" href="dist/apca-palette.css">
   <link rel="stylesheet" href="dist/lds.css">
   <link rel="stylesheet" href="dist/themes/portfolio.css">
   <link rel="stylesheet" href="dist/themes/palette.css">
@@ -125,6 +126,8 @@
     
     /* We override the body theme class application and only apply it to the .demo-box wrappers
        so the overall page layout stays clean while the components shift drastically. */
+      .micro-label { font-family: var(--th-mono); font-size: 11px; letter-spacing:.04em; text-transform:uppercase; color:#999; margin-bottom:12px; }
+    .chip-row { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
   </style>
 </head>
 <body>
@@ -164,6 +167,7 @@
     <li><a href="#buttons">Buttons</a></li>
     <li><a href="#cards">Cards & Surfaces</a></li>
     <li><a href="#inputs">Inputs & Badges</a></li>
+    <li><a href="#status">Tags, Chips & Status</a></li>
     <li><a href="#guidance">Guidance</a></li>
   </ul>
 </aside>
@@ -266,24 +270,22 @@
   <section id="buttons">
     <div class="sec-header">
       <h2>Buttons</h2>
-      <p>Buttons inherit their typographic scale, corner radius, and color from the theme. A primary button is just a button with <code>emph-strong</code>.</p>
+      <p>Three named variants compose from hue &times; emphasis: <code>primary</code> is emph-soft (the light tint &mdash; same tone as the tags) on the brand hue, <code>secondary</code> is plain grey, <code>tertiary</code> is outlined grey. Fills carry <strong>no border</strong> &mdash; only the plain tertiary is outlined. Swap themes on the left to watch the brand hue flow through.</p>
     </div>
-    
+
     <div class="demo-box">
       <div style="display:flex; flex-direction:column; gap:32px;">
         <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
-          <button class="lds-btn emph-strong" data-inspect="backgroundColor, color, borderTopLeftRadius" data-inspect-state="Bespoke Override (.emph-strong)" style="cursor:crosshair;">Primary Action</button>
-          <button class="lds-btn lds-btn--outline" data-inspect="backgroundColor, color, borderTopLeftRadius" data-inspect-state="Inherited from surface (.lds-btn--outline)" style="cursor:crosshair;">Outline</button>
-          <button class="lds-btn lds-btn--ghost" data-inspect="backgroundColor, color, borderTopLeftRadius" data-inspect-state="Inherited from surface (.lds-btn--ghost)" style="cursor:crosshair;">Ghost</button>
+          <button class="lds-btn lds-btn--primary" data-inspect="backgroundColor, color, borderColor" data-inspect-state="primary = emph-soft (light tint) &times; brand" style="cursor:crosshair;">Primary</button>
+          <button class="lds-btn lds-btn--secondary" data-inspect="backgroundColor, color, borderColor" data-inspect-state="secondary = subtle &times; grey" style="cursor:crosshair;">Secondary</button>
+          <button class="lds-btn lds-btn--tertiary" data-inspect="backgroundColor, color, borderColor" data-inspect-state="tertiary = plain grey (outlined)" style="cursor:crosshair;">Tertiary</button>
         </div>
-        
+
         <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
-          <button class="lds-btn emph-strong lds-btn--sm" data-inspect="backgroundColor, fontSize" data-inspect-state="Bespoke (.emph-strong) + .lds-btn--sm" style="cursor:crosshair;">Small Primary</button>
-          <button class="lds-btn lds-btn--outline lds-btn--sm" data-inspect="backgroundColor, fontSize" data-inspect-state="Inherited (.lds-btn--outline) + .lds-btn--sm" style="cursor:crosshair;">Small Outline</button>
-        </div>
-        
-        <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
-          <button class="lds-btn emph-strong" disabled data-inspect="opacity" data-inspect-state="State: Disabled" style="cursor:crosshair;">Disabled</button>
+          <span style="font-family:var(--th-mono); font-size:11px; color:#999; width:120px;">Override tone &rarr;</span>
+          <button class="lds-btn lds-btn--primary emph-strong" data-inspect="backgroundColor, color" data-inspect-state="primary + emph-strong (knockout)" style="cursor:crosshair;">Knockout</button>
+          <button class="lds-btn lds-btn--primary lds-btn--sm" data-inspect="fontSize" data-inspect-state="primary + .lds-btn--sm" style="cursor:crosshair;">Small Primary</button>
+          <button class="lds-btn lds-btn--primary" disabled data-inspect="opacity" data-inspect-state="State: Disabled" style="cursor:crosshair;">Disabled</button>
         </div>
       </div>
     </div>
@@ -355,15 +357,61 @@
         </div>
         
         <div style="display:flex; flex-direction:column; gap:16px;">
-          <div class="lds-banner emph-soft">
+          <div class="lds-banner emph-subtle">
             <svg class="lds-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             <div>Brand-tinted soft banner applied successfully.</div>
           </div>
-          <div class="lds-banner banner-error">
+          <div class="lds-banner hue-error emph-subtle">
             <svg class="lds-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             <div>Hardcoded hex found. Please refactor to tokens.</div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="status">
+    <div class="sec-header">
+      <h2>Tags, Chips &amp; Status</h2>
+      <p>Semantic status built on the same One&nbsp;Token engine: <code>hue-*</code> sets intent, an emphasis class sets tone, and the <code>--icon</code> token tracks it automatically. <strong>Tags describe; chips do.</strong> These use the fixed semantic hues, so they hold their meaning regardless of the active brand theme.</p>
+    </div>
+
+    <div class="demo-box">
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Soft tags &mdash; the everyday status pill</div>
+          <div class="chip-row"><span class="lds-tag hue-error"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6 6l4 4M10 6l-4 4"/></svg></span>error</span><span class="lds-tag hue-warning"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5L14.5 13.5H1.5z"/><path d="M8 6.5v3M8 11.6h.01"/></svg></span>warning</span><span class="lds-tag hue-caution"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.8v4M8 11h.01"/></svg></span>caution</span><span class="lds-tag hue-success"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M5.4 8.2l1.8 1.8 3.4-3.8"/></svg></span>success</span><span class="lds-tag hue-info"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 7.4v3.4M8 5h.01"/></svg></span>info</span><span class="lds-tag hue-helpful"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6.4 6.2a1.6 1.6 0 1 1 2.2 1.5c-.5.3-.8.6-.8 1.2v.3"/><path d="M8 11h.01"/></svg></span>helpful</span></div>
+          <div class="micro-label" style="margin-top:20px;">Plain tags &mdash; white bg, hue border + label</div>
+          <div class="chip-row"><span class="lds-tag hue-error emph-plain"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6 6l4 4M10 6l-4 4"/></svg></span>error</span><span class="lds-tag hue-warning emph-plain"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5L14.5 13.5H1.5z"/><path d="M8 6.5v3M8 11.6h.01"/></svg></span>warning</span><span class="lds-tag hue-caution emph-plain"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.8v4M8 11h.01"/></svg></span>caution</span><span class="lds-tag hue-success emph-plain"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M5.4 8.2l1.8 1.8 3.4-3.8"/></svg></span>success</span><span class="lds-tag hue-info emph-plain"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 7.4v3.4M8 5h.01"/></svg></span>info</span><span class="lds-tag hue-helpful emph-plain"><span class="lds-tag__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6.4 6.2a1.6 1.6 0 1 1 2.2 1.5c-.5.3-.8.6-.8 1.2v.3"/><path d="M8 11h.01"/></svg></span>helpful</span></div>
+        </div>
+
+        <div>
+          <div class="micro-label">Inline status &mdash; icon + text, no container (icon = label color)</div>
+          <div class="chip-row" style="gap:24px;"><span class="lds-inline hue-error"><span class="lds-inline__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6 6l4 4M10 6l-4 4"/></svg></span>Enter a valid email address.</span><span class="lds-inline hue-success"><span class="lds-inline__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M5.4 8.2l1.8 1.8 3.4-3.8"/></svg></span>Username is available.</span><span class="lds-inline hue-warning"><span class="lds-inline__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5L14.5 13.5H1.5z"/><path d="M8 6.5v3M8 11.6h.01"/></svg></span>This can’t be undone.</span></div>
+        </div>
+
+        <div>
+          <div class="micro-label">Chips &mdash; interactive: filter / selected, dropdown, removable</div>
+          <div class="chip-row"><span class="lds-chip" tabindex="0">Filter</span><span class="lds-chip lds-chip--selected" tabindex="0">Selected</span></div>
+          <div class="chip-row" style="margin-top:10px;"><span class="lds-chip" tabindex="0">Status<span class="lds-chip__caret"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span></span><span class="lds-chip" aria-expanded="true" tabindex="0">Sort: Newest<span class="lds-chip__caret"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></span></span></div>
+          <div class="chip-row" style="margin-top:10px;"><span class="lds-chip" tabindex="0">Design<span class="lds-chip__remove" aria-label="remove"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg></span></span><span class="lds-chip" tabindex="0"><span class="lds-chip__icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6 6l4 4M10 6l-4 4"/></svg></span>Bug<span class="lds-chip__remove" aria-label="remove"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7"/></svg></span></span></div>
+        </div>
+
+        <div>
+          <div class="micro-label">Tag &amp; banner &mdash; same composition, different scale</div>
+          <div style="display:flex; flex-direction:column; gap:12px; max-width:520px;">
+            <div class="lds-banner hue-error emph-subtle" data-inspect="backgroundColor, color" data-inspect-state="hue-error emph-soft (block)">
+              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M6 6l4 4M10 6l-4 4"/></svg></span>
+              <div>Payment failed &mdash; update your card to continue.</div>
+            </div>
+            <div class="lds-banner hue-success emph-subtle" data-inspect="backgroundColor, color" data-inspect-state="hue-success emph-soft (block)">
+              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M5.4 8.2l1.8 1.8 3.4-3.8"/></svg></span>
+              <div>Your changes have been saved.</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>

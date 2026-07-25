@@ -65,7 +65,7 @@ section_replacement = '''<section id="accessibility">
         
         <div style="display:flex; flex-direction:column; gap:16px;" dir="rtl">
           <div style="font-family:var(--th-mono); font-size:10px; color:var(--text-subdued);">Right-to-Left (Arabic)</div>
-          <div class="lds-banner emph-soft">
+          <div class="lds-banner emph-subtle">
             <svg class="lds-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
             <div>تم تطبيق الخصم بنجاح على حسابك.</div>
           </div>

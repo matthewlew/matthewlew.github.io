@@ -64,12 +64,21 @@
 .emph-plain {--background:#FFFFFF;--text:var(--grey-900);--text-accent:var(--c-600);--text-subdued:var(--grey-500);--icon:var(--grey-400);--border:var(--grey-200);--border-subdued:var(--grey-100);--bg-hover:var(--grey-100);--bg-pressed:var(--grey-200);}
 .mode-dark.emph-plain, .mode-dark .emph-plain {--background:var(--grey-950);--text:#FFFFFF;--text-accent:var(--c-300);--text-subdued:var(--grey-500);--icon:var(--grey-600);--border:var(--grey-800);--border-subdued:var(--grey-900);--bg-hover:var(--grey-900);--bg-pressed:var(--grey-800);}
 
-/* SOFT — light tint of the hue. The default for banners / status surfaces. */
-.emph-soft {--background:var(--c-50);--text:var(--c-800);--text-accent:var(--c-600);--text-subdued:var(--c-500);--icon:var(--c-400);--border:var(--c-200);--border-subdued:var(--c-100);--bg-hover:var(--c-100);--bg-pressed:var(--c-200);}
-.mode-dark.emph-soft, .mode-dark .emph-soft {--background:var(--c-900);--text:var(--c-100);--text-accent:var(--c-200);--text-subdued:var(--c-400);--icon:var(--c-400);--border:var(--c-800);--border-subdued:var(--c-900);--bg-hover:var(--c-800);--bg-pressed:var(--c-700);}
+/* SUBTLE — the lightest wash of the hue. Reserved for LARGE fields (banners,
+   cards): a big plane of color needs less saturation to register, so it stays
+   gentlest to avoid overwhelming the view. */
+.emph-subtle {--background:var(--c-50);--text:var(--c-800);--text-accent:var(--c-600);--text-subdued:var(--c-500);--icon:var(--c-400);--border:var(--c-200);--border-subdued:var(--c-100);--bg-hover:var(--c-100);--bg-pressed:var(--c-200);}
+.mode-dark.emph-subtle, .mode-dark .emph-subtle {--background:var(--c-900);--text:var(--c-100);--text-accent:var(--c-200);--text-subdued:var(--c-400);--icon:var(--c-400);--border:var(--c-800);--border-subdued:var(--c-900);--bg-hover:var(--c-800);--bg-pressed:var(--c-700);}
 
-/* STRONG — full brand color, white text. The default for primary buttons. */
-.emph-strong {--background:var(--c-500);--text:#FFFFFF;--text-accent:var(--c-100);--text-subdued:var(--c-200);--icon:var(--c-200);--border:var(--c-600);--border-subdued:var(--c-400);--bg-hover:var(--c-400);--bg-pressed:var(--c-600);}
+/* SOFT — light tint for SMALL components (tags, chips, primary buttons). One
+   step up from subtle: a pill or button is a small field, so it can carry a
+   touch more color and still read clean. Tags and buttons share this tone. */
+.emph-soft {--background:var(--c-100);--text:var(--c-800);--text-accent:var(--c-600);--text-subdued:var(--c-500);--icon:var(--c-500);--border:var(--c-200);--border-subdued:var(--c-100);--bg-hover:var(--c-200);--bg-pressed:var(--c-300);}
+.mode-dark.emph-soft, .mode-dark .emph-soft {--background:var(--c-800);--text:var(--c-100);--text-accent:var(--c-200);--text-subdued:var(--c-300);--icon:var(--c-400);--border:var(--c-700);--border-subdued:var(--c-800);--bg-hover:var(--c-700);--bg-pressed:var(--c-600);}
+
+/* STRONG — saturated knockout, white text (APCA fill ≈ Lc 75, label ≥ 77).
+   c-600 (not c-500) so the white label clears the body floor. */
+.emph-strong {--background:var(--c-600);--text:#FFFFFF;--text-accent:var(--c-100);--text-subdued:var(--c-200);--icon:var(--c-200);--border:var(--c-700);--border-subdued:var(--c-500);--bg-hover:var(--c-500);--bg-pressed:var(--c-700);}
 .mode-dark.emph-strong, .mode-dark .emph-strong {--background:var(--c-600);--text:#FFFFFF;--text-accent:var(--c-100);--text-subdued:var(--c-300);--icon:var(--c-200);--border:var(--c-700);--border-subdued:var(--c-500);--bg-hover:var(--c-500);--bg-pressed:var(--c-700);}
 
 /* STARK — reverse/knockout. On light pages: near-black surface. On dark
@@ -86,6 +95,30 @@
 .mode-dark.banner-error  {--background:#2A0F0B;--text:#F3A79A;--border:#5A1A10;}
 .mode-dark.banner-warning{--background:#2C2000;--text:#FCD874;--border:#583F00;}
 .mode-dark.banner-info   {--background:#0A1943;--text:#9DBEFF;--border:#173D97;}
+
+/* ==========================================================================
+   One Token hue selectors — repoint the brand --c-* scale at a specific
+   APCA palette hue (from apca-palette.css). Drop on any element together with
+   an emph-x class to retint it. Semantic names carry intent; raw names expose
+   the full palette. Because emphasis resolves off --c-*, swapping the hue also
+   swaps every derived state (default / hover / pressed / inactive).
+   error=red  warning=orange  caution=yellow  success=green  info=gray  helpful=blue
+   ========================================================================== */
+.hue-error{--c-50:var(--red-50);--c-100:var(--red-100);--c-200:var(--red-200);--c-300:var(--red-300);--c-400:var(--red-400);--c-500:var(--red-500);--c-600:var(--red-600);--c-700:var(--red-700);--c-800:var(--red-800);--c-900:var(--red-900);--c-950:var(--red-950);}
+.hue-warning{--c-50:var(--orange-50);--c-100:var(--orange-100);--c-200:var(--orange-200);--c-300:var(--orange-300);--c-400:var(--orange-400);--c-500:var(--orange-500);--c-600:var(--orange-600);--c-700:var(--orange-700);--c-800:var(--orange-800);--c-900:var(--orange-900);--c-950:var(--orange-950);}
+.hue-caution{--c-50:var(--yellow-50);--c-100:var(--yellow-100);--c-200:var(--yellow-200);--c-300:var(--yellow-300);--c-400:var(--yellow-400);--c-500:var(--yellow-500);--c-600:var(--yellow-600);--c-700:var(--yellow-700);--c-800:var(--yellow-800);--c-900:var(--yellow-900);--c-950:var(--yellow-950);}
+.hue-success{--c-50:var(--green-50);--c-100:var(--green-100);--c-200:var(--green-200);--c-300:var(--green-300);--c-400:var(--green-400);--c-500:var(--green-500);--c-600:var(--green-600);--c-700:var(--green-700);--c-800:var(--green-800);--c-900:var(--green-900);--c-950:var(--green-950);}
+.hue-info{--c-50:var(--gray-50);--c-100:var(--gray-100);--c-200:var(--gray-200);--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);--c-700:var(--gray-700);--c-800:var(--gray-800);--c-900:var(--gray-900);--c-950:var(--gray-950);}
+.hue-helpful{--c-50:var(--blue-50);--c-100:var(--blue-100);--c-200:var(--blue-200);--c-300:var(--blue-300);--c-400:var(--blue-400);--c-500:var(--blue-500);--c-600:var(--blue-600);--c-700:var(--blue-700);--c-800:var(--blue-800);--c-900:var(--blue-900);--c-950:var(--blue-950);}
+.hue-red{--c-50:var(--red-50);--c-100:var(--red-100);--c-200:var(--red-200);--c-300:var(--red-300);--c-400:var(--red-400);--c-500:var(--red-500);--c-600:var(--red-600);--c-700:var(--red-700);--c-800:var(--red-800);--c-900:var(--red-900);--c-950:var(--red-950);}
+.hue-orange{--c-50:var(--orange-50);--c-100:var(--orange-100);--c-200:var(--orange-200);--c-300:var(--orange-300);--c-400:var(--orange-400);--c-500:var(--orange-500);--c-600:var(--orange-600);--c-700:var(--orange-700);--c-800:var(--orange-800);--c-900:var(--orange-900);--c-950:var(--orange-950);}
+.hue-yellow{--c-50:var(--yellow-50);--c-100:var(--yellow-100);--c-200:var(--yellow-200);--c-300:var(--yellow-300);--c-400:var(--yellow-400);--c-500:var(--yellow-500);--c-600:var(--yellow-600);--c-700:var(--yellow-700);--c-800:var(--yellow-800);--c-900:var(--yellow-900);--c-950:var(--yellow-950);}
+.hue-green{--c-50:var(--green-50);--c-100:var(--green-100);--c-200:var(--green-200);--c-300:var(--green-300);--c-400:var(--green-400);--c-500:var(--green-500);--c-600:var(--green-600);--c-700:var(--green-700);--c-800:var(--green-800);--c-900:var(--green-900);--c-950:var(--green-950);}
+.hue-cyan{--c-50:var(--cyan-50);--c-100:var(--cyan-100);--c-200:var(--cyan-200);--c-300:var(--cyan-300);--c-400:var(--cyan-400);--c-500:var(--cyan-500);--c-600:var(--cyan-600);--c-700:var(--cyan-700);--c-800:var(--cyan-800);--c-900:var(--cyan-900);--c-950:var(--cyan-950);}
+.hue-blue{--c-50:var(--blue-50);--c-100:var(--blue-100);--c-200:var(--blue-200);--c-300:var(--blue-300);--c-400:var(--blue-400);--c-500:var(--blue-500);--c-600:var(--blue-600);--c-700:var(--blue-700);--c-800:var(--blue-800);--c-900:var(--blue-900);--c-950:var(--blue-950);}
+.hue-violet{--c-50:var(--violet-50);--c-100:var(--violet-100);--c-200:var(--violet-200);--c-300:var(--violet-300);--c-400:var(--violet-400);--c-500:var(--violet-500);--c-600:var(--violet-600);--c-700:var(--violet-700);--c-800:var(--violet-800);--c-900:var(--violet-900);--c-950:var(--violet-950);}
+.hue-pink{--c-50:var(--pink-50);--c-100:var(--pink-100);--c-200:var(--pink-200);--c-300:var(--pink-300);--c-400:var(--pink-400);--c-500:var(--pink-500);--c-600:var(--pink-600);--c-700:var(--pink-700);--c-800:var(--pink-800);--c-900:var(--pink-900);--c-950:var(--pink-950);}
+.hue-gray{--c-50:var(--gray-50);--c-100:var(--gray-100);--c-200:var(--gray-200);--c-300:var(--gray-300);--c-400:var(--gray-400);--c-500:var(--gray-500);--c-600:var(--gray-600);--c-700:var(--gray-700);--c-800:var(--gray-800);--c-900:var(--gray-900);--c-950:var(--gray-950);}
 
 /* ==========================================================================
    Layer 3: components — reference only the semantic vars + theme knobs
@@ -123,13 +156,60 @@
 
 /* Emphasis-driven buttons — the one-token-pure path. A primary button is
    just a strong-emphasis surface: <button class="lds-btn emph-strong">.
-   Add emph-soft/plain/stark to re-tone the same button per object. */
-.lds-btn.emph-plain,.lds-btn.emph-soft,.lds-btn.emph-strong,.lds-btn.emph-stark{
-  background:var(--background);color:var(--text);border-color:var(--border);box-shadow:var(--btn-shadow,none);
+   Add emph-subtle/soft/plain/stark to re-tone the same button per object. */
+.lds-btn.emph-plain,.lds-btn.emph-subtle,.lds-btn.emph-soft,.lds-btn.emph-strong,.lds-btn.emph-stark{
+  background:var(--background);color:var(--text);border-color:transparent;box-shadow:var(--btn-shadow,none);
 }
-.lds-btn.emph-plain:hover,.lds-btn.emph-soft:hover,.lds-btn.emph-strong:hover,.lds-btn.emph-stark:hover{
-  background:var(--bg-hover);border-color:var(--bg-hover);
+/* border only on the plain (outlined) emphasis — fills carry none */
+.lds-btn.emph-plain{border-color:var(--border);}
+.lds-btn.emph-plain:hover,.lds-btn.emph-subtle:hover,.lds-btn.emph-soft:hover,.lds-btn.emph-strong:hover,.lds-btn.emph-stark:hover{
+  background:var(--bg-hover);border-color:transparent;
 }
+.lds-btn.emph-plain:hover{border-color:var(--border);}
+
+/* Named button variants — plain-language presets so authors don't touch the
+   abstract emphasis/hue layer directly. Each one is literally a hue × emphasis
+   composition, and stays fully overridable (add emph-x / hue-x to retone):
+     primary   = emph-soft  × brand hue   (light brand fill, brand-dark label)
+     secondary = emph-soft  × grey        (light neutral fill, dark label)
+     tertiary  = emph-plain × grey        (quiet neutral, bordered)          */
+
+/* primary = emph-SOFT on brand hue: light tonal tint, same tone as the tags.
+   Kept light (c-100) so it reads clean rather than heavy next to grey. */
+.lds-btn--primary{
+  --background:var(--c-100);--text:var(--c-800);--border:var(--c-200);
+  --bg-hover:var(--c-200);--bg-pressed:var(--c-300);
+}
+.mode-dark.lds-btn--primary,.mode-dark .lds-btn--primary{
+  --background:var(--c-800);--text:var(--c-100);--border:var(--c-700);
+  --bg-hover:var(--c-700);--bg-pressed:var(--c-600);
+}
+/* secondary = emph-SOFT × grey — same soft shape on the neutral scale */
+.lds-btn--secondary{
+  --background:var(--grey-100);--text:var(--grey-900);--border:var(--grey-200);
+  --bg-hover:var(--grey-200);--bg-pressed:var(--grey-300);
+}
+.mode-dark.lds-btn--secondary,.mode-dark .lds-btn--secondary{
+  --background:var(--grey-800);--text:#FFFFFF;--border:var(--grey-700);
+  --bg-hover:var(--grey-700);--bg-pressed:var(--grey-600);
+}
+/* tertiary = emph-PLAIN × grey — default surface, quietest */
+.lds-btn--tertiary{
+  --background:#FFFFFF;--text:var(--grey-900);--border:var(--grey-200);
+  --bg-hover:var(--grey-100);--bg-pressed:var(--grey-200);
+}
+.mode-dark.lds-btn--tertiary,.mode-dark .lds-btn--tertiary{
+  --background:var(--grey-950);--text:#FFFFFF;--border:var(--grey-800);
+  --bg-hover:var(--grey-900);--bg-pressed:var(--grey-800);
+}
+/* shared paint for all three named variants — fills carry no border */
+.lds-btn--primary,.lds-btn--secondary,.lds-btn--tertiary{
+  background:var(--background);color:var(--text);border-color:transparent;box-shadow:var(--btn-shadow,none);
+}
+/* only the plain tertiary is outlined */
+.lds-btn--tertiary{border-color:var(--border);}
+.lds-btn--primary:hover,.lds-btn--secondary:hover,.lds-btn--tertiary:hover{background:var(--bg-hover);}
+.lds-btn--primary:active,.lds-btn--secondary:active,.lds-btn--tertiary:active{background:var(--bg-pressed);}
 
 /* ---- Card ---- */
 .lds-card{
@@ -164,6 +244,94 @@
   display:inline-flex;align-items:center;gap:5px;
 }
 .mode-dark .lds-badge{background:var(--c-900);color:var(--c-200);border-color:var(--c-800);}
+
+/* ---- Tag ---- one-token pill. Default tone is emph-soft on the current hue.
+   Compose: hue-x sets intent (error/warning/caution/success/info/helpful),
+   emph-x changes tone, --interactive adds hover/press, --inactive/aria-disabled
+   gives the low-contrast disabled state. All states are derived from the same
+   --c-* scale, so swapping hue-x re-tints every state automatically.
+   Default tone is emph-SOFT (light tint, c-100) — the same tone as the primary
+   button, since both are small fields. Banners drop to subtle (c-50). Dark-mode
+   uses c-800 fill with c-100 label (not c-50/100 fills, which are too stark on
+   dark) so tags stay legible without glare. Fills carry no border — only the
+   plain emphasis is outlined. */
+.lds-tag{
+  --icon:var(--c-500);
+  font-family:var(--th-body);font-size:var(--text-caption);font-weight:var(--weight-semibold);
+  letter-spacing:var(--tracking-wide);line-height:1.4;
+  padding:3px 10px;border-radius:var(--pill);
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  background:var(--c-100);color:var(--c-800);border:1px solid transparent;
+}
+.mode-dark .lds-tag{--icon:var(--c-400);background:var(--c-800);color:var(--c-100);}
+/* emphasis override — compound specificity beats the subtle default.
+   Fills stay borderless; only plain (the outlined tone) shows a border. */
+.lds-tag.emph-plain,.lds-tag.emph-subtle,.lds-tag.emph-soft,.lds-tag.emph-strong,.lds-tag.emph-stark{
+  background:var(--background);color:var(--text);border-color:transparent;
+}
+/* plain = colored outline: white bg, hue border, hue label (not neutral grey).
+   The icon sits one step stronger than the label so it still reads on white. */
+.lds-tag.emph-plain{--icon:var(--c-600);background:#FFFFFF;color:var(--c-800);border-color:var(--c-300);}
+.mode-dark .lds-tag.emph-plain{--icon:var(--c-300);background:transparent;color:var(--c-200);border-color:var(--c-700);}
+/* leading marker — icon takes the icon color token; dot takes the label color */
+.lds-tag__icon{width:13px;height:13px;flex-shrink:0;color:var(--icon);}
+.lds-tag__icon svg{width:100%;height:100%;display:block;}
+.lds-tag__dot{width:6px;height:6px;border-radius:50%;background:var(--icon);flex-shrink:0;}
+/* interactive (filter / removable chips) — one-token hover + pressed states */
+.lds-tag--interactive{cursor:pointer;transition:background var(--dur-fast) var(--ease-standard);}
+.lds-tag--interactive:hover{background:var(--c-200);}
+.mode-dark .lds-tag--interactive:hover{background:var(--c-700);}
+.lds-tag--interactive:active{background:var(--c-300);}
+.mode-dark .lds-tag--interactive:active{background:var(--c-600);}
+/* inactive / disabled — low-contrast surface + label (~Lc 27, reads disabled).
+   Icon is muted to the same step as the label so both fade together. */
+.lds-tag--inactive,.lds-tag[aria-disabled="true"]{--icon:var(--c-300);background:var(--c-100);color:var(--c-300);border-color:transparent;pointer-events:none;}
+.mode-dark .lds-tag--inactive,.mode-dark .lds-tag[aria-disabled="true"]{--icon:var(--c-700);background:var(--c-900);color:var(--c-700);border-color:transparent;}
+
+/* ---- Inline message ---- no container: just a hue icon + hue text, for form
+   validation and inline status. Icon uses currentColor so it is the exact same
+   color as the label — they read as one unit. Compose with hue-x. */
+.lds-inline{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--th-body);font-size:var(--size-1);font-weight:var(--weight-medium);
+  line-height:1.4;color:var(--c-700);
+}
+.mode-dark .lds-inline{color:var(--c-300);}
+.lds-inline__icon{width:14px;height:14px;flex-shrink:0;color:currentColor;}
+.lds-inline__icon svg{width:100%;height:100%;display:block;}
+
+/* ---- Chip ---- the interactive counterpart to the tag. Tags are read-only
+   status; chips respond to input (filter / dropdown / removable). Neutral by
+   default with a real hover AND pressed step; --selected is the filled active
+   state (grey-900 knockout — clean contrast, unlike murky mid-hue fills). */
+.lds-chip{
+  --icon:var(--grey-500);
+  font-family:var(--th-body);font-size:var(--text-caption);font-weight:var(--weight-semibold);
+  letter-spacing:var(--tracking-wide);line-height:1.4;
+  padding:5px 11px;border-radius:var(--pill);
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;
+  background:#FFFFFF;color:var(--grey-800);border:1px solid var(--grey-300);
+  transition:background var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard);
+}
+.lds-chip:hover{background:var(--grey-100);border-color:var(--grey-400);}
+.lds-chip:active{background:var(--grey-200);border-color:var(--grey-500);}
+.lds-chip:focus-visible{outline:2px solid var(--grey-500);outline-offset:2px;}
+.mode-dark .lds-chip{background:transparent;color:var(--grey-200);border-color:var(--grey-700);}
+.mode-dark .lds-chip:hover{background:var(--grey-900);border-color:var(--grey-600);}
+.mode-dark .lds-chip:active{background:var(--grey-800);border-color:var(--grey-500);}
+/* selected / active — filled */
+.lds-chip--selected{--icon:#FFFFFF;background:var(--grey-900);color:#FFFFFF;border-color:var(--grey-900);}
+.lds-chip--selected:hover{background:var(--grey-800);border-color:var(--grey-800);}
+.mode-dark .lds-chip--selected{--icon:var(--grey-900);background:#FFFFFF;color:var(--grey-900);border-color:#FFFFFF;}
+.mode-dark .lds-chip--selected:hover{background:var(--grey-200);border-color:var(--grey-200);}
+/* parts: leading icon, dropdown caret (rotates when open), remove button */
+.lds-chip__icon,.lds-chip__caret,.lds-chip__remove{flex-shrink:0;color:var(--icon);display:inline-flex;align-items:center;justify-content:center;}
+.lds-chip__icon{width:14px;height:14px;}
+.lds-chip__caret{width:12px;height:12px;margin-right:-2px;transition:transform var(--dur-fast) var(--ease-standard);}
+.lds-chip[aria-expanded="true"] .lds-chip__caret{transform:rotate(180deg);}
+.lds-chip__remove{width:15px;height:15px;margin:0 -3px 0 1px;border-radius:50%;}
+.lds-chip__remove:hover{background:color-mix(in srgb,currentColor 16%,transparent);}
+.lds-chip svg{width:100%;height:100%;display:block;}
 
 /* ---- Banner ---- */
 .lds-banner{

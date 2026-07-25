@@ -22,7 +22,8 @@
 ### Surfaces & Emphasis
 Instead of assigning specific colors, assign an emphasis role:
 * **Standard Surface:** `.emph-plain` (White fill, neutral border, default ink).
-* **Tinted Surface:** `.emph-soft` (Soft brand background, colored ink).
+* **Large Tinted Field:** `.emph-subtle` (Lightest wash — banners, cards; big fields stay gentle).
+* **Small Tinted Component:** `.emph-soft` (Light tint one step up — tags, chips, primary buttons).
 * **Primary Surface:** `.emph-strong` (Full brand fill, white text, high attention).
 * **Knockout:** `.emph-stark` (Reverse/Near-black for maximum contrast).
 
