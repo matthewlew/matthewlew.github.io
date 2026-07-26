@@ -349,6 +349,22 @@ have needed a dark-mode twin each, plus a new pair for every future semantic.
 **Cost:** `hue-*` must sit on the **same element** as an `emph-*` class. See
 *A hue only retints where emphasis resolves*.
 
+**Amended 2026-07-26.** The item shipped painting `background:var(--background)`
+and that was wrong. Because a hue only retints where emphasis resolves, the list
+has to carry an `emph-*` class — so the paint forced the plain surface through
+whatever container it sat in, punching a light card out of any tinted section.
+
+It also broke the first rule on the page it was built to render: *"Inherit by
+default — let components inherit their environment so they adapt contextually."*
+A component that contradicts the guidance it displays is worse than no component.
+
+The item now has no background and inherits its surface. Structure comes from the
+left rule and the spacing. For a lifted card, put an `emph-*` on the item itself.
+
+Separately: the container around it carried an inline `background:#fff` and a
+`#E2E2E2` border, which is where the actual white was coming from. Both now read
+tokens.
+
 ### A hue only retints where emphasis resolves
 
 `2026-07-26` · `emphasis` · `measured` · `notable`

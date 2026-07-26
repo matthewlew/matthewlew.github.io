@@ -633,7 +633,12 @@
   padding-left:calc(18px * var(--density));
   border-left:2px solid var(--text-accent);
   border-radius:var(--radius-sm);
-  background:var(--background);
+  /* No background. The item inherits whatever surface it is dropped on, which
+     is the system's own first rule — it previously painted var(--background),
+     and because a hue only retints where emphasis resolves, the list has to
+     carry an emph-* class, so that paint forced the plain surface through any
+     tinted container it sat in. Structure comes from the rule and the spacing.
+     For a lifted card, put an emph-* on the item itself. */
   color:var(--text-subdued);
   font-size:var(--text-body);
   line-height:var(--leading-body);
@@ -652,7 +657,6 @@
 /* Flush variant for lists that sit inside an already-bordered container and
    should not look like stacked cards. */
 .lds-list--flush .lds-list__item{
-  background:none;
   border-radius:0;
   corner-shape:round;
   margin-top:0;
