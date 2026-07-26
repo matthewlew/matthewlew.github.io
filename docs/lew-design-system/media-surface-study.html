@@ -50,20 +50,136 @@ td{padding:3px 6px 3px 0}
 .F.h    {background:color-mix(in srgb,currentColor 12%,transparent);border-color:color-mix(in srgb,currentColor 28%,transparent)}
 .F.p    {background:color-mix(in srgb,currentColor 18%,transparent);border-color:color-mix(in srgb,currentColor 62%,transparent)}
 .F.i    {background:transparent;border-color:color-mix(in srgb,currentColor 12%,transparent);color:color-mix(in srgb,currentColor 45%,transparent)}
+
+.play{max-width:900px;border:1px solid #e6e6e2;border-radius:12px;padding:16px;background:#fff;margin-bottom:26px}
+.ctl{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;margin-bottom:14px}
+.ctl label{font:11px ui-monospace;color:#555;display:flex;align-items:center;gap:7px}
+.ctl input[type=range]{width:130px}
+.ctl output{font:11px ui-monospace;color:#161616;min-width:42px}
+.ctl input[type=color]{width:38px;height:26px;padding:0;border:1px solid #ddd;border-radius:6px;background:none}
+.presets{display:flex;gap:4px}
+.presets button{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,0,0,.15);cursor:pointer;padding:0}
+.sw{width:16px;height:16px;border-radius:4px;border:1px solid rgba(0,0,0,.2);display:inline-block}
+.mini{font:11px ui-monospace;padding:5px 10px;border-radius:6px;border:1px solid #ddd;background:#fafafa;cursor:pointer}
+.stage{border-radius:12px;padding:26px 20px 14px;transition:background 120ms}
+.stage .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.hint{font:10.5px ui-monospace;opacity:.6;margin:14px 0 0}
+.readout{margin-top:14px;font:11.5px ui-monospace;border-collapse:collapse;width:100%;max-width:520px}
+.readout th{font:600 10px ui-monospace;color:#999;text-transform:uppercase;letter-spacing:.05em;padding-bottom:4px}
+.readout td{padding:4px 10px 4px 0;border-top:1px solid #f0f0ec}
+.ok{color:#1a7f3c;font-weight:700}
+.bad{color:#c0392b;font-weight:700}
 </style>
 
-<h1>Media chrome — treatments &times; states</h1>
+<h1>Media surface study</h1>
 <p class=k>
-Four states per treatment, left to right: <b>rest &middot; hover &middot; pressed &middot; inactive</b>.
-<b>W</b> and <b>K</b> are the conventional opaque pills — they beat everything on raw contrast
-because they delete the artwork behind them, and they lose their edge entirely when the artwork
-happens to match their own tone (white pill on near-white, dark pill on near-black).
+Live. Everything below is the <b>real</b> <code>.lds-btn.emph-media</code> / <code>.lds-chip.emph-media</code>
+from <code>lds.css</code> — hover them, press them, drag the sliders. The readout recomputes APCA
+from the actual values as you go.
 </p>
 
-<h2>G — the proposed default, at size</h2>
-<table id=focus><tbody id=frows></tbody></table>
+<div class=play>
+  <div class=ctl>
+    <label>Backdrop <input type=color id=bg value="#ff00ff"></label>
+    <div class=presets id=presets></div>
+    <label>Stroke <input type=range id=stroke min=0 max=100 value=60><output id=strokeV>60%</output></label>
+    <label>Fill <input type=range id=fill min=0 max=60 value=0><output id=fillV>0%</output></label>
+    <label>Blur <input type=range id=blur min=0 max=24 value=10><output id=blurV>10px</output></label>
+    <label>Saturate <input type=range id=sat min=100 max=250 value=100><output id=satV>1.00</output></label>
+    <label class=inline><input type=checkbox id=autoink checked> auto ink <span id=inkSwatch class=sw></span></label>
+    <button type=button id=reset class=mini>reset to LDS defaults</button>
+  </div>
 
-<h2>All treatments, side by side</h2>
+  <div class=stage id=stage>
+    <div class=row>
+      <button class="lds-btn lds-btn--icon emph-media demo">&#9733;</button>
+      <button class="lds-btn emph-media demo">Share</button>
+      <span class="lds-chip emph-media demo">Linear</span>
+      <span class="lds-chip emph-media lds-chip--selected demo">Mirror</span>
+      <button class="lds-btn emph-media demo" disabled>Off</button>
+    </div>
+    <p class=hint id=hint>hover &amp; press these &mdash; states are the real CSS</p>
+  </div>
+
+  <table class=readout>
+    <tr><th>measure</th><th>value</th><th>floor</th><th></th></tr>
+    <tr><td>edge &mdash; stroke vs artwork</td><td id=rEdge></td><td>Lc 15</td><td id=rEdgeV></td></tr>
+    <tr><td>label &mdash; ink vs chip</td><td id=rLabel></td><td>Lc 75</td><td id=rLabelV></td></tr>
+    <tr><td>artwork chroma under the chip</td><td id=rChroma></td><td>100%</td><td id=rChromaV></td></tr>
+  </table>
+</div>
+
+<script type="module">
+import { lcOn, inkOn } from '../../design-system/dist/lds-ink.mjs'
+const s2l=c=>(c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4)
+const hx=h=>{h=h.replace('#','');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)}
+const tohex=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('')
+const chroma=([r,g,b])=>{r=s2l(r);g=s2l(g);b=s2l(b)
+ const l=Math.cbrt(0.4122214708*r+0.5363325363*g+0.0514459929*b),m=Math.cbrt(0.2119034982*r+0.6806995451*g+0.1073969566*b),t=Math.cbrt(0.0883024619*r+0.2817188376*g+0.6299787005*b)
+ return Math.hypot(1.9779984951*l-2.4285922050*m+0.4505937099*t,0.0259040371*l+0.7827717662*m-0.8086757660*t)}
+const satM=([r,g,b],s)=>[(0.213+0.787*s)*r+(0.715-0.715*s)*g+(0.072-0.072*s)*b,
+ (0.213-0.213*s)*r+(0.715+0.285*s)*g+(0.072-0.072*s)*b,(0.213-0.213*s)*r+(0.715-0.715*s)*g+(0.072+0.928*s)*b]
+const clamp=a=>a.map(v=>Math.max(0,Math.min(1,v)))
+const over=(c,bg,n)=>c.map((v,i)=>v*n+bg[i]*(1-n))
+
+const PRESETS=[['MAX magenta','#ff00ff'],['MAX red','#ff0000'],['MAX blue','#0000ff'],
+ ['sat pink','#ff2d8f'],['dark violet','#2a1442'],['near-black','#101014'],['mid teal','#3d6b66'],
+ ['mid grey','#808080'],['light peach','#ffd9a0'],['near-white','#f4f0e8']]
+const $=id=>document.getElementById(id)
+$('presets').innerHTML=PRESETS.map(p=>`<button type=button data-c="${p[1]}" style="background:${p[1]}" title="${p[0]}"></button>`).join('')
+$('presets').addEventListener('click',e=>{const c=e.target.dataset.c; if(c){$('bg').value=c; render()}})
+$('reset').addEventListener('click',()=>{$('stroke').value=60;$('fill').value=0;$('blur').value=10;$('sat').value=100;$('autoink').checked=true;render()})
+;['bg','stroke','fill','blur','sat','autoink'].forEach(id=>$(id).addEventListener('input',render))
+
+function verdict(v,floor){return v>=floor
+  ? `<span class=ok>clears</span>` : `<span class=bad>below</span>`}
+
+function render(){
+  const bgHex=$('bg').value, bg=hx(bgHex)
+  const st=+$('stroke').value/100, fl=+$('fill').value/100
+  const bl=+$('blur').value, sa=+$('sat').value/100
+  $('strokeV').textContent=Math.round(st*100)+'%'
+  $('fillV').textContent=Math.round(fl*100)+'%'
+  $('blurV').textContent=bl+'px'
+  $('satV').textContent=sa.toFixed(2)
+  const ink=inkOn(bgHex)
+  $('inkSwatch').style.background=ink
+
+  // what the chip surface actually becomes: saturate pass, then the alpha fill
+  const filtered=clamp(satM(bg,sa))
+  const chip=over(hx(ink),filtered,fl)
+  const chipHex=tohex(chip)
+  const strokeHex=tohex(over(hx(ink),chip,st))
+
+  $('stage').style.background=bgHex
+  $('stage').style.color=ink
+  document.querySelectorAll('.demo').forEach(el=>{
+    el.style.setProperty('--border',`color-mix(in srgb, currentColor ${st*100}%, transparent)`)
+    el.style.setProperty('--background', fl? `color-mix(in srgb, currentColor ${fl*100}%, transparent)`:'transparent')
+    el.style.setProperty('--bg-hover',`color-mix(in srgb, currentColor ${(fl*100+12).toFixed(0)}%, transparent)`)
+    el.style.setProperty('--bg-pressed',`color-mix(in srgb, currentColor ${(fl*100+18).toFixed(0)}%, transparent)`)
+    el.style.setProperty('--glass-blur',bl+'px')
+    el.style.setProperty('--media-filter', sa>1? `saturate(${sa})`:'')
+  })
+
+  const edge=lcOn(strokeHex,chipHex), label=lcOn(ink,chipHex)
+  const cRatio=chroma(bg)>0.002 ? chroma(chip)/chroma(bg) : 1
+  $('rEdge').textContent='Lc '+edge.toFixed(1);   $('rEdgeV').innerHTML=verdict(edge,15)
+  $('rLabel').textContent='Lc '+label.toFixed(1); $('rLabelV').innerHTML=verdict(label,75)
+  $('rChroma').textContent=(cRatio*100).toFixed(0)+'%'
+  $('rChromaV').innerHTML = cRatio>=0.999 ? '<span class=ok>untouched</span>'
+    : `<span class=bad>&minus;${((1-cRatio)*100).toFixed(0)}% muddier</span>`
+}
+render()
+</script>
+
+<h2>Static matrix &mdash; every treatment, for the record</h2>
+<p class=k>
+Hand-set states so all four are visible at once. <b>W</b> and <b>K</b> are opaque pills: they beat
+everything on contrast by deleting the artwork, and lose their edge when it matches their own tone.
+</p>
+
+
 <table>
 <tr>
   <th></th>
@@ -93,23 +209,6 @@ var BG=[
 ];
 var CL=['W','K','A','B','G','F'];
 var STATES=[['','rest'],['h','hover'],['p','pressed'],['i','inactive']];
-
-// --- focus block: G only, big enough to actually judge ---
-var f=document.getElementById('frows');
-BG.forEach(function(b){
-  var tr=document.createElement('tr');
-  var td0=document.createElement('td'); td0.className='name'; td0.textContent=b[0]; tr.appendChild(td0);
-  var td=document.createElement('td');
-  var art=document.createElement('div'); art.className='art';
-  art.style.background=b[1]; art.style.color=b[2]; art.style.minWidth='560px';
-  STATES.forEach(function(s){
-    var w=document.createElement('div');
-    w.innerHTML='<span class="c G '+s[0]+' blur" style="height:40px;padding:0 20px;font-size:14px">Share</span>'+
-                '<div class=st>'+s[1]+'</div>';
-    art.appendChild(w);
-  });
-  td.appendChild(art); tr.appendChild(td); f.appendChild(tr);
-});
 
 var t=document.getElementById('rows');
 BG.forEach(function(b){
