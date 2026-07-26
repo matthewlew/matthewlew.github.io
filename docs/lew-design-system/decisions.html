@@ -188,20 +188,16 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
 
 </div>
 
-<script>
-'use strict'
+<script type=module>
+
+// The grammar is imported, never restated. scripts/check-decisions.mjs imports
+// the same module, so the validator and this renderer cannot disagree about
+// what a valid entry is.
+import {
+  parse, WHO, QUAL, WHO_LONG, QUALITY
+} from './decisions-parser.mjs'
 
 const REPO = 'https://github.com/matthewlew/matthewlew.github.io/commit/'
-const QUALITY = ['reversal', 'structural', 'notable', 'minor']
-const WHO = { human: 'Human', measured: 'Measured', ai: 'AI' }
-const QUAL = { minor: 'Minor', notable: 'Notable', structural: 'Structural',
-               reversal: 'Reversal' }
-const WHO_LONG = {
-  human: 'a human call',
-  measured: 'settled by measurement',
-  ai: 'AI-proposed, human-approved'
-}
-const META = /^`(\d{4}-\d{2}(?:-\d{2})?)`\s*·\s*`([a-z-]+)`\s*·\s*`(human|measured|ai)`(?:\s*·\s*`(minor|notable|structural|reversal)`)?(?:\s*·\s*`([0-9a-f]{7,40})`)?$/
 
 const $ = id => document.getElementById(id)
 const sep = ' <span class=sep>·</span> '
@@ -287,61 +283,6 @@ function blocks (lines) {
 
 /* ---------- parse ---------- */
 
-function parse (md) {
-  const lines = md.split('\n')
-  const entries = []
-  let section = null, cur = null
-  const close = () => { if (cur) { entries.push(cur); cur = null } }
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-
-    if (line.startsWith('## ')) {
-      close()
-      const raw = line.slice(3).trim()
-      // Butterick: the section mark is for documents with numbered sections,
-      // which this is. Unnumbered ones (Milestones, Pre-history) get no mark
-      // rather than a decorative one.
-      const m = /^(\d+)\.\s*(.+)$/.exec(raw)
-      section = m ? { num: m[1], name: m[2] } : { num: null, name: raw }
-      continue
-    }
-
-    if (line.startsWith('### ')) {
-      close()
-      cur = { title: line.slice(4).trim(), section, raw: [], meta: null }
-      // Metadata is the next non-blank line. A miss is surfaced, never swallowed:
-      // silent drops are the exact failure this document exists to prevent.
-      let j = i + 1
-      while (j < lines.length && !lines[j].trim()) j++
-      const m = META.exec((lines[j] || '').trim())
-      if (m) {
-        cur.meta = { date: m[1], area: m[2], attribution: m[3], quality: m[4] || null, commit: m[5] || null }
-        i = j
-      }
-      continue
-    }
-
-    if (cur) cur.raw.push(line)
-  }
-  close()
-
-  for (const e of entries) {
-    const body = [], fields = {}
-    let sink = body
-    for (const l of e.raw) {
-      const m = /^\*\*(Ruled out|Cost):\*\*\s*(.*)$/.exec(l)
-      if (m) { sink = fields[m[1]] = [m[2]]; continue }
-      if (sink === body) body.push(l)
-      else if (l.trim()) sink.push(l)
-      else sink = body
-    }
-    e.body = body
-    e.ruled = fields['Ruled out'] || null
-    e.cost = fields['Cost'] || null
-  }
-  return entries
-}
 
 /* ---------- dates ---------- */
 

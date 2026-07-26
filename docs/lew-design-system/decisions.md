@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 40 decisions: **21 human · 17 measured · 2 ai**.
+The split as it stands, across the 43 decisions: **23 human · 18 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -161,6 +161,35 @@ accidents as everyone's API.
 **Cost:** this rule was broken once, on purpose, and it worked — `--dur-slow`
 and `emph-media` were both contributed up from `palette`. See those entries. The
 rule holds for *components*; primitives discovered in the field are fair game.
+
+### The record is validated by structure, never by judgement
+
+`2026-07-26` · `foundations` · `human` · `notable`
+
+`scripts/check-decisions.mjs` checks every entry parses, that decisions name a
+`Ruled out`, that enum values are valid, that referenced commits still exist in
+the repo, and that the header's attribution split matches the actual counts.
+`CLAUDE.md` carries the rule so future sessions write entries as part of the
+work rather than reconstructing them from a diff afterwards.
+
+The grammar lives in `decisions-parser.mjs` and is imported by both the validator
+and `decisions.html`. One copy, deliberately: a validator with its own regex
+would drift from the renderer, and the record would then pass its own checks
+while displaying something else — which is the precise failure this document
+exists to prevent.
+
+The split sentence is now generated. It drifted three times in a single
+afternoon while being maintained by hand, which is the whole argument for
+generating anything.
+
+**Ruled out:** a pre-commit hook, which would nag on trivial commits and get
+bypassed. Also ruled out, and more importantly: any attempt to check *quality*.
+A script cannot tell whether the reasoning is sound or whether the "Ruled out"
+line names something real. Pretending otherwise would be worse than not checking,
+because a green run would start to feel like approval.
+
+**Cost:** a green run means well-formed, not well-reasoned. The thing worth
+having still cannot be automated — only its scaffolding.
 
 ### Showcase pages paint from tokens, never their own fonts
 
@@ -831,6 +860,57 @@ because the measurements showed core's defaults failing on this surface.
 **Cost:** these are theme-level overrides of core behaviour, so a future change
 to core's `emph-plain` will not reach `theme-portfolio`. Widening the floors in
 core would be the better long-term fix.
+
+### The portfolio consumes the theme through its own token layer
+
+`2026-07-26` · `themes` · `human` · `reversal` 
+
+`index.html` and `about.html` now alias their eleven private tokens onto LDS —
+`--red: var(--c-600)`, `--ink: var(--grey-900)`, `--font-body: var(--th-body)`
+and so on — with `theme-portfolio emph-plain` on `<html>` so `:root` can resolve
+the emphasis roles.
+
+Before this, `theme-portfolio` appeared **once per page**, on a `<span>` wrapping
+the footer badge. Everything visible ran on a parallel, divergent copy of a
+design system, while the badge in the corner read "Built on Lew Design System".
+The claim was true of one element on the page.
+
+The migration is cheap for a reason worth recording: the pages already routed
+123 and 139 style usages through their own token names, so re-pointing eleven
+declarations moved ~87% of the styling without touching a single component rule.
+**That is the entire argument for having a token layer** — and it only paid off
+because the original author had been disciplined about not scattering hexes.
+
+**Ruled out:** rewriting the pages onto `.lds-*` components, which is a far
+larger job for a portfolio whose layout is deliberately bespoke. Also ruled out:
+leaving it and recording the gap, which keeps the badge overstating things.
+
+**Cost:** the pages are in **quirks mode** — no doctype, `compatMode` is
+`BackCompat`. This change deliberately did not add one, because flipping to
+standards mode carries its own layout risk and deserves its own change. An
+`<html>` tag alone does not affect the mode.
+
+### A `data:` URI cannot read a token
+
+`2026-07-26` · `themes` · `measured` · `minor`
+
+The hand-drawn squiggle under "100+ color tokens into 7" is an SVG `data:` URI
+in a `background` shorthand. CSS treats that URI as an opaque string, so
+`var(--red)` does not resolve inside it. The hex has to be maintained by hand.
+
+Found because it kept rendering the old vermilion for a while after everything
+around it had moved to terracotta — the page looked migrated and one stroke was
+not.
+
+Inline SVG has no such problem: `.doodle path { stroke: var(--red) }` and
+`.circled svg.oval` both tokenise correctly, which is why they moved on their own.
+
+**Ruled out:** masking, which would tokenise it — `background-color: var(--red)`
+plus a `mask-image`. It fails here because a mask applies to the element's text
+as well, so it would knock out the words the squiggle sits under.
+
+**Cost:** one hex on the page is permanently off-token and will go stale again at
+the next brand move. Prefer inline SVG for any new annotation.
 
 ### `theme-palette` ships no brand hue
 

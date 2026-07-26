@@ -19,6 +19,16 @@
       ],
       "port": 5173,
       "autoPort": false
+    },
+    {
+      "name": "palette-pre-passa",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /private/tmp/claude-501/-Users-matthewlewair-Documents-matthewlew-github-io/49b97632-314e-41e7-b1e4-3df7ba42200e/scratchpad/pre-passa && npm run dev -- --port 5174 --strictPort"
+      ],
+      "port": 5174,
+      "autoPort": false
     }
   ]
 }

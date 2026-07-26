@@ -1,3 +1,4 @@
+<html lang="en" class="theme-portfolio emph-plain">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Matthew Lew — Design Systems Designer. Machine-readable design systems, token architectures, and AI-augmented workflows. Formerly Starbucks & DoorDash.">
@@ -10,18 +11,28 @@
 <link rel="stylesheet" href="design-system/dist/lds.css">
 <link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
 <style>
+  /* This page's tokens are now aliases onto LDS, not values of their own.
+     Every rule below still says var(--ink) or var(--red); re-pointing the
+     eleven names here moves ~87% of the page's styling onto theme-portfolio
+     without touching a single component rule. That is the entire argument for
+     having a token layer.
+
+     The theme + emphasis classes sit on <html> so that :root can resolve
+     var(--background) — same element, so the emphasis roles are in scope here.
+     Deliberately NO doctype added: these pages render in quirks mode today,
+     and flipping that is a separate change with its own risks. */
   :root {
-    --bg:      #FFFFFF;
-    --bg-soft: #F6F6F4;
-    --paper:   #F5F0E8;
-    --ink:     #0A0A0A;
-    --ink-2:   #5C5C5A;
-    --ink-3:   #B5B5B2;
-    --rule:    #D8D8D5;
-    --red:     #C8391B;
-    --font-display: 'Bricolage Grotesque', 'DM Sans', 'Helvetica Neue', sans-serif;
-    --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
-    --font-mono:    'Space Mono', 'Courier New', monospace;
+    --bg:      var(--background);   /* cream card, not #FFFFFF */
+    --bg-soft: var(--grey-100);
+    --paper:   var(--c-50);         /* warm tinted panel */
+    --ink:     var(--grey-900);
+    --ink-2:   var(--grey-600);
+    --ink-3:   var(--grey-400);
+    --rule:    var(--grey-300);
+    --red:     var(--c-600);        /* terracotta, was hardcoded vermilion */
+    --font-display: var(--th-display);
+    --font-body:    var(--th-body);
+    --font-mono:    var(--th-mono);
     --nav-h: 48px;
   }
 
@@ -472,9 +483,18 @@
   }
   @keyframes draw { to { stroke-dashoffset: 0; } }
 
+  /* The one place on this page that cannot read a token. A data: URI is an
+     opaque string to CSS, so var(--red) does not resolve inside it and the hex
+     has to be maintained by hand — it sat on the old vermilion for a while
+     after everything around it had moved to terracotta. Masking would tokenise
+     it, but mask applies to the element's text too, so it would knock out the
+     words. Inline SVG can use var(--red); a background URI cannot.
+
+     padding-bottom is 3px, not 9px: padding on an inline box does not grow the
+     line box, so 9px put the stroke 12px into the following line of the lede. */
   .squiggle {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='8' viewBox='0 0 90 8'%3E%3Cpath d='M2 5.5 C 10 2.5, 18 7.5, 26 4.5 S 42 2.5, 50 5.5 S 66 7, 74 4 S 86 3, 88 5' fill='none' stroke='%23C8391B' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 90px 8px;
-    padding-bottom: 9px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='8' viewBox='0 0 90 8'%3E%3Cpath d='M2 5.5 C 10 2.5, 18 7.5, 26 4.5 S 42 2.5, 50 5.5 S 66 7, 74 4 S 86 3, 88 5' fill='none' stroke='%23973A0D' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 90px 8px;
+    padding-bottom: 3px;
   }
 
   .hand-note {
@@ -781,7 +801,7 @@
     <span class="num">02 / 06</span>
   </div>
   <div class="section-title-row">
-    <h2 class="section-title" style="color: var(--bg);">The 80/90 <span class="it">Rule.</span><svg class="doodle" width="0.6em" height="0.5em" viewBox="0 0 66 56" aria-hidden="true"><path d="M33 6 L 59 28 L 33 50 L 7 28 L 30 8 M 33 6 L 36 9" stroke="#C8391B"/></svg></h2>
+    <h2 class="section-title" style="color: var(--bg);">The 80/90 <span class="it">Rule.</span><svg class="doodle" width="0.6em" height="0.5em" viewBox="0 0 66 56" aria-hidden="true"><path d="M33 6 L 59 28 L 33 50 L 7 28 L 30 8 M 33 6 L 36 9"/></svg></h2>
   </div>
   
   <div style="padding: 0 24px; max-width: 800px; margin: 0 auto; margin-top: 24px;">
