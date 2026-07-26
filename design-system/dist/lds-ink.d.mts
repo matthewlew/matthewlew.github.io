@@ -41,3 +41,13 @@ export declare function bestInkOn(
 
 /** Knockout white/black ink for a backdrop — the zero-config case. */
 export declare function inkOn(bgHex: string): '#ffffff' | '#000000'
+
+/**
+ * Ink plus the scrim behind it. The scrim is the OPPOSITE polarity to the ink,
+ * so it raises label contrast instead of eating it. Assign `ink` to `color` and
+ * `scrim` to `--media-scrim`.
+ */
+export declare function mediaInkOn(bgHex: string): {
+  ink: '#ffffff' | '#000000'
+  scrim: '#ffffff' | '#000000'
+}

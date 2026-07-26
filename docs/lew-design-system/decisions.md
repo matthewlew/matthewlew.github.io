@@ -1,0 +1,684 @@
+# LDS — decisions and why
+
+Why the Lew Design System is shaped the way it is.
+
+This is not a changelog. It records **decisions** — the ones where something was
+ruled out — so the reasoning survives the commit that carried it, and so a
+settled question doesn't get re-opened by accident. Organised by area of the
+system, not by date: read it front to back and the system should feel logical.
+
+**Timeline view:** [decisions.html](decisions.html)
+
+Each entry carries one metadata line:
+
+```
+`date` · `area` · `attribution` · `quality` · `commit`
+```
+
+**Quality** is the weight of the change — one dot in the timeline. `reversal` is
+the one that matters most: it means this was already tried the other way, and
+the entry says why it didn't hold.
+
+| | | |
+|---|---|---|
+| · | `minor` | A refinement inside an existing decision. |
+| • | `notable` | A new role, component, or constraint. |
+| ⬤ | `structural` | Changes the shape of the system. |
+| ◎ | `reversal` | Undoes a previous call. **Read before re-deciding.** |
+
+**Who decided** — a human, a measurement, or the AI:
+
+| | |
+|---|---|
+| `human` | Matthew's call. Taste, product, or scope. |
+| `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
+| `ai` | AI-proposed, human-approved. |
+
+The split as it stands: **20 human · 13 measured · 3 ai**. The judgment is human;
+the verification is machine.
+
+Every entry names what it **ruled out**. If a change ruled nothing out, it is a
+fact about the system, not a decision, and it belongs in the README. Some
+entries add a **Cost** line: the live gotcha you need to know before you touch
+that area.
+
+---
+
+## Milestones
+
+Events, not decisions. They anchor the timeline; they have no "ruled out".
+
+### Spec written
+
+`2026-07-14` · `milestone` · `human`
+
+LDS begins as a design spec: ~12 repos under `github.com/matthewlew` sharing no
+common system. Day 0 of the timeline.
+
+### First code lands
+
+`2026-07-24` · `milestone` · `ai`
+
+`lds.css` enters the portfolio repo alongside the sub-project integration.
+
+### v1.0.0 published
+
+`2026-07-26` · `milestone` · `human`
+
+LDS becomes installable. 14.4 kB, 10 files.
+
+---
+
+## Pre-history
+
+Decisions LDS **inherited** rather than made. Excluded from the day-0 arithmetic
+on the timeline — otherwise a nine-month gap swamps the axis. Dates are
+month-precision.
+
+### The APCA construction comes from the Oct 2025 rebrand
+
+`2025-10` · `prehistory` · `measured` · `structural`
+
+The 11-step symmetric ramp tuned to a fixed APCA curve is not invented for LDS.
+It reproduces the method used in the October 2025 rebrand: place each colour in
+OKLCH, mute chroma toward the ends, then binary-search lightness until measured
+APCA hits the target. LDS adopts the method wholesale rather than re-deriving it.
+
+**Ruled out:** starting the colour system from scratch. The method was already
+proven and verified; re-deriving it would have risked a different answer for no
+gain.
+
+### One Token is the colour layer, not a dependency to be replaced
+
+`2026-07` · `prehistory` · `human` · `structural`
+
+One Token already solved `mode × emphasis → colour roles` as a portable skill
+file. LDS treats it as Layer 2 rather than reimplementing colour resolution.
+
+**Ruled out:** a bespoke LDS colour model. Two competing colour systems under
+one author is the exact fragmentation LDS exists to end.
+
+**Cost:** the origin date of One Token is not recorded in this repo. `2026-07`
+is when it was vendored in, not when it was made.
+
+---
+
+## 1. Foundations & scope
+
+### Plain CSS — no build step, no runtime, no framework binding
+
+`2026-07-14` · `foundations` · `human` · `structural`
+
+LDS ships as CSS files you link or import. No preprocessor, no CSS-in-JS, no
+component runtime, no framework peer dependency.
+
+The consumers are irreconcilable by construction: static single-page HTML
+(`tote`, `ping`, `waypoint`), multi-page static sites (`scentmap`,
+`volleyball-rotation`), a Vite + CSS-modules React app (`palette`), and a
+shadcn/Tailwind React app (`tripblend`). Anything with a build step or a
+framework binding would exclude some of them on day one.
+
+**Ruled out:** a component library. It would have served `palette` and
+`tripblend` and been useless to the six static sites, which are the majority.
+
+**Cost:** no type safety on class names, and no tree-shaking — you ship all
+of `lds.css` or none of it. At 407 lines that is an acceptable trade.
+
+### Core never hardcodes a hex
+
+`2026-07-24` · `foundations` · `human` · `structural`
+
+`lds.css` contains no brand colour. Themes supply the `--c-*` ramp; components
+read `var(--background)` and `var(--text)` and inherit their environment.
+
+This is what makes one stylesheet serve an editorial portfolio, a neutral
+product surface, and a chromeless media tool. It is also what makes mode
+switching free — a component that only listens to tokens adapts without knowing
+dark mode exists.
+
+**Ruled out:** shipping a default brand palette in core. Every consumer would
+have had to override it, and overrides are where cascade bugs live.
+
+**Cost:** two exceptions survive deliberately. `.emph-plain` pins
+`--background:#FFFFFF` and `.emph-strong`/`.emph-stark` pin `--text:#FFFFFF`,
+because a knockout label must not follow the theme ramp. The banner status hues
+are also fixed hexes — see *Status colour is fixed, not themed*.
+
+### New shared components land in LDS first
+
+`2026-07-24` · `foundations` · `human` · `structural`
+
+A component that more than one product needs is built in LDS and consumed from
+there — not built in a product and back-ported later.
+
+Back-porting means the first product's incidental constraints get baked into the
+shared abstraction, and every later consumer inherits them.
+
+**Ruled out:** the pragmatic "build it where you need it, promote it later"
+path. Faster per-feature, and it is how design systems accumulate one product's
+accidents as everyone's API.
+
+**Cost:** this rule was broken once, on purpose, and it worked — `--dur-slow`
+and `emph-media` were both contributed up from `palette`. See those entries. The
+rule holds for *components*; primitives discovered in the field are fair game.
+
+### LDS must not absorb the gradient canvas
+
+`2026-07-26` · `foundations` · `human` · `structural`
+
+The honest adoption ceiling for `palette` is ~54% of its component CSS, not
+80–90%. `ShapePreviews`, `CanvasHandles`, `SwatchTray`, `FlowEditor`,
+`TurrellSquare` and `NoiseOverlay` — 382 lines that are irreducibly
+app-specific, plus the bespoke core of another 1,936 — stay in the product.
+
+That gap is not a shortfall. It is the product. A design system that absorbed a
+gradient editor's canvas would be a worse design system, because the next
+consumer inherits an abstraction shaped by one app's canvas.
+
+**Ruled out:** chasing a high adoption percentage as the success metric. The
+target is 80–90% for generic chrome — buttons, search, typography, chips,
+modals, toasts, sheets — and 54% overall is a success, not a miss.
+
+**Cost:** the number looks bad out of context, so it has to be stated with the
+reasoning attached every time it comes up.
+
+---
+
+## 2. Colour & contrast
+
+### APCA, not WCAG 2.x
+
+`2026-07-26` · `color` · `measured` · `structural` · `c7f9ade`
+
+Contrast is measured with APCA (Lc 0–106), not the WCAG 2.x contrast ratio.
+
+WCAG's ratio is a symmetric luminance quotient. It ignores polarity, so it
+scores light-on-dark and dark-on-light identically, and it misjudges the
+mid-tones — exactly where photographic and gradient backdrops sit, which is the
+surface `emph-media` exists to serve. APCA models perceived lightness difference
+and polarity, so a step that passes actually reads.
+
+The implementation is verified against the `apca-w3` reference across a
+3,456-pair sweep of the gamut: exact agreement, max |delta| 0.0.
+
+**Ruled out:** WCAG 2.x as the standard. It survives as a sanity floor —
+every emphasis pair in `theme-palette` clears AA 4.5:1, tightest is
+`emph-strong` at 5.73:1 — but it is not what LDS targets.
+
+**Cost:** APCA is polarity-asymmetric, so contrast does not mirror between
+modes. Step 600-on-white measures Lc +72; its complement, step 400-on-black,
+measures about Lc −63. In dark mode, step text one notch lighter than the
+light-mode complement. Never assume symmetry — verify.
+
+### Eleven symmetric steps on a fixed Lc curve
+
+`2026-07-25` · `color` · `measured` · `structural` · `954445e`
+
+Each hue has 11 steps. Step *N* and step *(1000 − N)* mirror around 500. Every
+step's Lc against white is pinned to a fixed target:
+
+| step | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Lc vs white | 0 | 9 | 17 | 27 | 40 | 57 | **72** | 82 | 91 | 100 | 103 |
+
+Lightness is binary-searched in OKLCH until the measured APCA hits the target,
+so every hue lands on the same curve rather than on the same *nominal* value.
+That is what makes `hue-error` and `hue-success` interchangeable at a given
+step: the contrast is equal because it was solved to be, not because the hexes
+look similar.
+
+**Ruled out:** eyeballed ramps, and evenly-spaced OKLCH lightness. Even
+perceptual spacing does not produce even *contrast* — the curve has to be solved
+against a measurement.
+
+**Cost:** adding a hue means running the generator, not picking hexes by hand.
+
+### One Token: `mode × emphasis → seven roles`
+
+`2026-07-24` · `color` · `human` · `structural`
+
+Colour resolves through two inputs — mode and emphasis — into exactly seven
+object roles: `--background`, `--text`, `--text-accent`, `--text-subdued`,
+`--icon`, `--border`, `--border-subdued`, plus hover/pressed states.
+
+The payoff is local re-resolution. Drop `.emph-strong` on any element and the
+whole set re-resolves for that subtree, without touching its container and
+without a variant class. `<div class="lds-card emph-strong">` promotes one card;
+the same markup inside `.mode-dark` resolves dark.
+
+**Ruled out:** per-component `--primary`/`--secondary` variants. That is the
+usual approach and it multiplies: every new component needs its own variant set,
+and every variant needs a dark-mode twin.
+
+**Cost:** seven roles is a fixed vocabulary. A component needing an eighth
+colour has to compose from what exists or justify widening the contract for
+everyone.
+
+### Status colour is fixed, not themed
+
+`2026-07-25` · `color` · `ai` · `notable` · `a8b98b7`
+
+Banner status hues are hardcoded hexes in core, the one place core carries
+colour. Success is green in every theme, including the portfolio's red-brand and
+palette's neutral.
+
+Status is not brand expression. A theme whose brand hue is red cannot render
+errors in its brand colour without the error stopping being legible as an error.
+
+**Ruled out:** resolving status through the theme's `--c-*` ramp, which is what
+the rest of the system does. Consistency with the architecture would have cost
+the semantics.
+
+---
+
+## 3. Emphasis ladder
+
+### Five roles, assigned by object size
+
+`2026-07-25` · `emphasis` · `human` · `notable` · `954445e`
+
+`plain` → `subtle` → `soft` → `strong` → `stark`. The choice between `subtle`
+and `soft` is not intensity, it is **area**:
+
+- `subtle` (`--c-50`) — large fields: banners, cards. A big plane of colour
+  registers with less saturation, so it stays gentlest.
+- `soft` (`--c-100`) — small components: tags, chips, buttons. A pill is a small
+  field, so it carries one step more colour and still reads clean.
+
+**Ruled out:** a pure intensity ladder where the author picks by "how loud".
+Same tint on a full-width banner and on a chip reads as two different
+intensities, so the author would have to compensate by feel every time.
+
+### Components paint from an explicit emphasis list
+
+`2026-07-26` · `emphasis` · `human` · `notable` · `9d48813`
+
+`.lds-btn`, `.lds-tag` and `.lds-chip` enumerate the emphasis classes they
+paint. A new role is **inert** until it is added to each.
+
+Discovered by adding `emph-media` and finding it silently did nothing on
+buttons. Fixing it by making components paint from any `emph-*` would have been
+the smaller diff.
+
+**Ruled out:** implicit adoption via a wildcard. It would make every new role
+land everywhere at once — including on components it was never designed for,
+where it fails silently and looks like a component bug.
+
+**Cost:** adding a role is a multi-file change, and forgetting a component is a
+silent no-op. The explicitness is the point; the tax is real.
+
+### `emph-media` derives every role from `currentColor`
+
+`2026-07-26` · `emphasis` · `human` · `structural` · `9d48813`
+
+Every other emphasis resolves against a surface colour known when the CSS is
+written. `emph-media` does not: it is for chrome over a photo, video still,
+album art, or generated gradient, where the backdrop is decided at runtime and
+changes as the user scrolls.
+
+All seven roles derive from `currentColor`, so the consumer owns exactly one
+decision — the ink — and everything else follows.
+
+This was simultaneously LDS's biggest blocker and the biggest thing `palette`
+owed back. Palette's signature floating chrome is 100% of its first screen and
+could not adopt LDS at any percentage without it.
+
+**Ruled out:** `.lds-glass`'s fixed `rgba(255,255,255,.14)` recipe as the
+answer. It is strictly less capable and dissolves on light gradients.
+
+**Cost:** it is the one role whose correctness depends on the consumer. Give it
+a bad ink and every derived role is wrong together.
+
+### Media chrome does not flip with mode
+
+`2026-07-26` · `emphasis` · `measured` · `notable` · `9d48813`
+
+`.mode-dark` deliberately does not override `emph-media`. The role is identical
+in both modes.
+
+Media chrome is backdrop-relative, not mode-relative. A white pill over a bright
+photo is wrong in light mode and equally wrong in dark mode — the page's mode
+says nothing about the artwork underneath.
+
+**Ruled out:** giving `emph-media` a dark-mode resolution like every other role.
+It would have been architecturally consistent and behaviourally wrong.
+
+### Stroke-defined, not fill-defined
+
+`2026-07-26` · `emphasis` · `measured` · `reversal` · `8b47a4a`
+
+The 1px hairline was questioned as a glass-UI relic. Measuring it reversed the
+conclusion: the hairline earns its keep and the translucent **fill** is the
+relic. `emph-media` has no resting fill.
+
+An alpha fill of the ink over artwork is just a dimmer. It moves lightness only,
+so it desaturates whatever sits behind it: across six backdrops a 10% fill lowers
+backdrop chroma on 5 of 6, and a 30% fill costs ~36% (0.084 → 0.054). For a
+gradient tool that is the one unaffordable side effect.
+
+It also fights the label. The fill is made of the same ink as the text on top of
+it, so every percent of fill eats label contrast — worst case Lc 66.1 at 10%
+fill, Lc 50.9 at 30%.
+
+Removing the resting fill fixes both at once: worst-case label rises to Lc 72.4
+and backdrop chroma is untouched on 6 of 6, because nothing is composited over
+the art at all.
+
+**Ruled out:** the translucent fill, i.e. the standard glass recipe and the
+thing the original `.lds-glass` did.
+
+### The stroke is 60%, because 28% measures Lc 0.0
+
+`2026-07-26` · `emphasis` · `measured` · `notable` · `8b47a4a`
+
+With the fill gone the stroke carries the control alone, and the usual 28% glass
+hairline cannot. An ink-alpha mix moves mostly chroma rather than luminance, so
+on saturated artwork a faint hairline just matches its backdrop: a white 28%
+stroke over pure red is pink-on-red, measuring **Lc 0.0** on red, blue and
+magenta.
+
+Stepping up: 40% still fails magenta (7.8). 50% still fails magenta (13.6). 60%
+is the first value where every backdrop tested clears the Lc 15 non-text floor —
+worst case 20.6, magenta.
+
+Being 1px, its own effect on the artwork is negligible. That is exactly what
+lets it be strong.
+
+**Ruled out:** 28%, 40% and 50%, each by measurement rather than taste.
+
+### `backdrop-filter: saturate()` rejected as the default
+
+`2026-07-26` · `emphasis` · `measured` · `notable` · `8b47a4a`
+
+Considered as an alternative to a strong stroke, and kept only as opt-in via
+`--media-filter`.
+
+It scores identically to the plain stroke and does make artwork richer — but on
+already-saturated backdrops it clips to a no-op on pure primaries, and on
+near-max colours it clips asymmetrically and shifts hue 4–10°. It distorts the
+artwork precisely where help is most needed.
+
+**Ruled out:** as a default. Available for consumers whose artwork is known to
+be low-chroma.
+
+### Inactive media chrome is opacity, not faded tokens
+
+`2026-07-26` · `emphasis` · `measured` · `notable` · `8b47a4a`
+
+The disabled state is one `opacity:.45` on the element, not faded `--text` and
+`--border` values.
+
+The token version is a trap. The component sets `color:var(--text)`, so once the
+label fades, `currentColor` **is** the faded ink — and the border's own
+`color-mix` then re-derives 12% *of* 45%, landing at 5.4%. The two fades
+multiply and the stroke all but vanishes. One opacity does it correctly in one
+operation: the 28% stroke becomes 12.6%, the ink becomes 45%.
+
+`.45` rather than the `.38` of ordinary disabled buttons, because media chrome
+has no container to fade toward — drop it further and it stops reading as
+disabled and starts reading as a rendering artifact.
+
+**Ruled out:** expressing the state through the token system, which is how every
+other state in LDS works.
+
+### Choosing the ink was deliberately deferred
+
+`2026-07-26` · `emphasis` · `human` · `notable` · `9d48813`
+
+`emph-media` shipped without a sampler. Picking the ink was explicitly left to
+the consumer, with `--on-dark`/`--on-light` covering known-tone backdrops.
+
+Sampling requires a contrast threshold, and that was the one open question in
+the system: `palette` enforced WCAG 4.5:1, LDS standardised on APCA Lc, and the
+two disagree precisely in the mid-tones where gradients live. Shipping a sampler
+first would have baked the disagreement into the API.
+
+**Ruled out:** shipping the sampler with `emph-media`, which is what the role
+obviously wanted.
+
+### `lew-design-system/ink` settles it
+
+`2026-07-26` · `emphasis` · `measured` · `reversal` · `c7f9ade`
+
+The sampler ships as a separate module, and the answer is APCA. Exports
+`apcaContrast`/`lcOn` (raw), `bestInkOn` (pick from candidates, fall back to
+white/black), `inkOn` (zero-config knockout), and the published Lc floors.
+
+Measured across all 146 published gradients. Two findings any consumer will hit:
+
+- Enforcing the floor naively collapses **~94% of labels to white or black** —
+  the gradient's own stops rarely clear it, so a naive implementation throws
+  away the reason to sample at all.
+- The OKLCH lightness walk needs real gamut mapping, or it shifts hue by ~29°.
+
+**Ruled out:** WCAG 4.5:1, which is what `palette` shipped. The migration has to
+absorb the change.
+
+**Cost:** the ~94% finding means `bestInkOn` needs a candidate list and a
+considered fallback, not just a floor.
+
+### `.lds-glass` gets dedicated tokens
+
+`2026-07-26` · `emphasis` · `measured` · `reversal` · `9d48813`
+
+`.lds-glass` reads `--glass-bg` and `--glass-border`, not `--background` and
+`--border`.
+
+It previously hardcoded a white wash and dissolved on light backdrops. Pointing
+it at the general roles instead would have turned it **opaque white** inside any
+`.emph-plain` context, because that is what `--background` resolves to there.
+
+**Ruled out:** reusing the general surface roles. The obvious fix; wrong for the
+one component whose entire job is to stay translucent.
+
+---
+
+## 4. Typography
+
+### Semantic roles for UI, primitives inside components
+
+`2026-07-25` · `type` · `human` · `notable`
+
+`--text-title`, `--text-subhead`, `--text-body`, `--text-caption` for anything
+building a UI. The raw `--size-0`…`--size-8` scale only inside component
+internals.
+
+Each semantic role bundles size, leading and tracking, so a theme can shift all
+three together. The portfolio's title is `--size-8` with tightest tracking;
+palette's is smaller. A consumer reading `--text-title` follows automatically; a
+consumer reading `--size-8` does not.
+
+**Ruled out:** exposing only the numeric scale, which is simpler and what most
+token sets do.
+
+### Mono means machine-readable
+
+`2026-07-24` · `type` · `human` · `minor`
+
+Dates, tokens, code, hashes and system output always use `--th-mono`. Never for
+emphasis or decoration.
+
+It makes the typeface carry a meaning rather than a mood: mono signals "this
+value came from a machine and is exact."
+
+**Ruled out:** mono as a stylistic accent, which is the common editorial use and
+would destroy the signal.
+
+---
+
+## 5. Motion
+
+### `--dur-slow` + `--ease-decelerate` for large objects
+
+`2026-07-26` · `motion` · `ai` · `notable`
+
+A second duration/easing pair (320ms, `cubic-bezier(.22,1,.36,1)`) alongside the
+standard 180ms, for sheets, drawers and view-transition groups.
+
+The standard 180ms `--ease-standard` lands too abrupt on a large moving object.
+Contributed up from `palette`, which drives every view-transition group off this
+pair: mismatched easing between a resizing card and a sliding sheet reads as jank
+even at a full frame rate.
+
+**Ruled out:** one duration for everything. Simpler, and it makes large-object
+motion feel broken in a way that is hard to attribute.
+
+**Cost:** two pairs means authors must choose, and "large" is a judgment call.
+
+---
+
+## 6. Geometry & targets
+
+### Radius is a token, and themes move it hard
+
+`2026-07-24` · `geometry` · `human` · `notable`
+
+`--radius-sm`, `--radius`, `--radius-lg`, `--pill`. Never a hardcoded pixel.
+
+The range is deliberately extreme: `theme-portfolio` sets every radius to **0px**
+(sharp, editorial), `theme-palette` is bubbly. Same components, and the shift
+alone changes the character of the whole UI.
+
+**Ruled out:** a fixed radius scale with per-theme nudges. The 0px case proves
+the token has to be able to go all the way.
+
+**Cost:** a component that hardcodes even one corner breaks visibly in
+`theme-portfolio`, where the mismatch against 0px is obvious.
+
+### `--target-min` is a floor of 44px that themes may raise
+
+`2026-07-26` · `geometry` · `human` · `minor`
+
+Minimum interactive target is a token, not a constant. Components must never
+hardcode below it; themes may raise it.
+
+`theme-palette` uses 44px for chrome that floats over artwork, where there is no
+surrounding container to help the user aim.
+
+**Ruled out:** hardcoding 44px in components. It would be correct today and
+unraisable by a theme that needs more.
+
+---
+
+## 7. Themes
+
+### `theme-palette` ships no brand hue
+
+`2026-07-26` · `themes` · `human` · `reversal` · `9d48813`
+
+Palette's theme has no brand colour. Its `--c-*` ramp is a cool neutral.
+
+Palette is a gradient tool: **the artwork is the colour**. A violet brand ramp
+would compete with every gradient on screen. The earlier version of this theme
+was fiction — a violet ramp for an app that has no brand colour.
+
+**Ruled out:** giving palette a brand hue because every other theme has one.
+
+### The palette ramp is measured, not invented
+
+`2026-07-26` · `themes` · `measured` · `reversal` · `9d48813`
+
+Converting palette's 19 ad-hoc CSS colours to OKLCH shows they already land on
+the **same lightness steps as the LDS grey ramp** — at hue ~285 with ~0.02
+chroma, a cool violet cast. So the theme ramp is the LDS grey ramp rotated onto
+palette's own measured hue, with 6 of 11 steps snapped to hexes palette already
+ships.
+
+Every emphasis pair LDS resolves from it clears WCAG AA 4.5:1; tightest is
+`emph-strong` at 5.73:1. Verified, not eyeballed.
+
+**Ruled out:** designing a neutral ramp by eye. The measurement meant the theme
+could match the app instead of the app having to change.
+
+### The palette type scale was one step too large
+
+`2026-07-26` · `themes` · `measured` · `reversal` · `9d48813`
+
+Corrected to palette's real 13px body / 11px caption.
+
+As originally written the theme's scale was one step up, so adopting LDS
+as-written would have silently restyled the entire app — the kind of change that
+reads as "the design system broke my product" and ends adoption.
+
+**Ruled out:** keeping the nominal scale and asking palette to absorb the shift.
+
+---
+
+## 8. Distribution
+
+### npm from GitHub, not a CDN `<link>`
+
+`2026-07-26` · `dist` · `human` · `reversal` · `9d48813`
+
+```bash
+npm i "github:matthewlew/matthewlew.github.io#v1.0.0"
+```
+
+The original plan was a jsDelivr `<link>`. That meant an unversioned network
+dependency in the critical rendering path, no bundler involvement, and no way to
+consume LDS from `palette`'s Vite + CSS-modules build at all.
+
+Installing from GitHub keeps it free — no registry account, no hosting, no
+recurring cost — while behaving like a real dependency.
+
+**Ruled out:** jsDelivr, and publishing to the public npm registry. The registry
+would work, but the package is one person's design system and the GitHub path
+costs nothing.
+
+### The manifest sits at the repo root
+
+`2026-07-26` · `dist` · `measured` · `minor` · `9d48813`
+
+`package.json` is at the root of `matthewlew.github.io`, not in
+`design-system/`, with an `exports` map pointing into `design-system/dist`.
+
+Not a preference: npm requires the manifest at the repo root for git
+dependencies.
+
+**Ruled out:** co-locating the manifest with the code it describes. It does not
+work for this install method.
+
+**Cost:** a design-system manifest at the root of a portfolio repo reads as
+misplaced. The `exports` map is the only thing keeping the boundary legible.
+
+### Pin the tag
+
+`2026-07-26` · `dist` · `human` · `minor` · `9d48813`
+
+Consumers install `#v1.0.0`, never a bare `github:matthewlew/matthewlew.github.io`.
+
+A bare ref resolves to whatever is on `main` at install time — an unversioned
+dependency that drifts between a local install and CI, with no lockfile entry to
+catch it.
+
+**Ruled out:** tracking `main` for convenience during early development.
+
+### `ink` has no DOM and no dependencies
+
+`2026-07-26` · `dist` · `human` · `minor` · `c7f9ade`
+
+The sampler is pure computation over colour values. No `document`, no `canvas`,
+no packages.
+
+That is what makes it safe in Node, in workers, and in canvas export paths —
+which is where palette actually needs it, not just in the browser.
+
+**Ruled out:** reading pixels via `canvas` inside the module. Convenient in a
+page, unusable everywhere else palette needs ink.
+
+---
+
+## Adding an entry
+
+An entry is **required** when a change:
+
+- alters what a token means
+- adds or removes a role, component, or theme
+- reverses a prior decision
+- sets a constraint other consumers must respect
+
+**Exempt:** typos, `dist` rebuilds, new example pages, and additions that follow
+an existing pattern without changing it.
+
+Write it in the same commit as the change. If you cannot name what the change
+ruled out, it is not a decision.

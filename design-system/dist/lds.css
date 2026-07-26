@@ -121,56 +121,66 @@
   --text-accent:currentColor;
   --icon:currentColor;
   --text-subdued:color-mix(in srgb,currentColor 70%,transparent);
-  /* NO resting fill — the stroke defines the control. See the note below. */
-  --background:transparent;
-  --bg-hover:color-mix(in srgb,currentColor 12%,transparent);
-  --bg-pressed:color-mix(in srgb,currentColor 18%,transparent);
-  --border:color-mix(in srgb,currentColor 60%,transparent);
-  --border-subdued:color-mix(in srgb,currentColor 30%,transparent);
+  /* The scrim is the OPPOSITE polarity to the ink — white behind dark text,
+     black behind white text. Defaults to `transparent`, which degrades to a
+     pure stroke-defined chip, because no single colour is right for both
+     polarities. Set it with the ink (mediaInkOn returns both), or use the
+     --on-dark / --on-light helpers, which set the matching pair. */
+  --media-scrim:transparent;
+  --background:color-mix(in srgb,var(--media-scrim) 25%,transparent);
+  --bg-hover:color-mix(in srgb,var(--media-scrim) 34%,transparent);
+  --bg-pressed:color-mix(in srgb,var(--media-scrim) 42%,transparent);
+  --border:color-mix(in srgb,currentColor 40%,transparent);
+  --border-subdued:color-mix(in srgb,currentColor 20%,transparent);
   /* glass-specific aliases. .lds-glass reads THESE rather than --background, so
      that it stays translucent inside a normal emphasis context — reading the
      inherited --background would turn it opaque white inside any .emph-plain. */
-  --glass-bg:transparent;
-  --glass-border:color-mix(in srgb,currentColor 60%,transparent);
+  --glass-bg:color-mix(in srgb,var(--media-scrim) 25%,transparent);
+  --glass-border:color-mix(in srgb,currentColor 40%,transparent);
 }
-/* Stroke, not fill — and this is the opposite of the usual glass instinct.
-   An alpha fill of the ink over the artwork is just a dimmer: it moves
-   lightness only, so it desaturates whatever is behind it. Measured across six
-   backdrops, a 10% ink fill drops backdrop chroma on 5 of 6 and a 30% fill
-   drops it by ~36% (0.084 -> 0.054) — the artwork goes muddy, which is the one
-   thing a gradient tool cannot afford.
+/* THE SCRIM MUST BE THE OPPOSITE POLARITY TO THE INK. That is the whole design.
 
-   Worse, the fill is made of the same ink as the label sitting on it, so every
-   percent of fill costs label contrast: 10% fill puts the worst-case label at
-   Lc 66.1 and 30% at Lc 50.9.
+   The obvious move — tint the chip with the ink, the way most glass UI does —
+   is a trap, for two compounding reasons. First, an alpha fill of the ink is
+   just a dimmer: it moves lightness only, so it desaturates the artwork behind
+   it. A 10% ink fill lowers backdrop chroma on 5 of 6 backdrops and a 30% fill
+   costs ~36% of it. Second, and worse, that fill is made of the same colour as
+   the label sitting on it, so every percent of fill eats the label's own
+   contrast: worst-case label lands at Lc 66.1 with a 10% ink fill, Lc 50.9
+   with 30%.
 
-   Dropping the fill entirely fixes both at once — worst-case label rises to
-   Lc 72.4 and chroma is untouched on 6 of 6, because nothing is composited over
-   the art at all. The 1px stroke then carries the whole job of defining the
-   control, and because it is 1px its own effect on the artwork is negligible,
-   which is what lets it be strong.
+   An INVERSE scrim inverts that second effect. It still costs saturation, but
+   it pushes the backdrop away from the ink, so the label gets easier to read
+   rather than harder. Measured worst-case across ten backdrops, dark through
+   near-white through max-chroma primaries:
 
-   And it has to be strong. 28% (the usual glass hairline) fails badly on
-   saturated artwork: an ink-alpha mix moves mostly chroma, not luminance, so a
-   white hairline over pure red is just pink-on-red — measured Lc 0.0 on red,
-   blue and magenta. Stepping the alpha up: 40% still fails magenta (7.8), 50%
-   still fails magenta (13.6), and 60% is the first value where every backdrop
-   tested clears the Lc 15 non-text floor (worst case 20.6, magenta).
+     scrim  stroke |  edge  label  chroma kept
+       0%     60%  |  20.6   60.9    100%     stroke-only; label misses the floor
+      15%     45%  |  16.3   72.1     89%
+      25%     40%  |  16.2   79.2     81%     <- shipped
+      30%     35%  |  15.5   82.3     77%
 
-   A `backdrop-filter: saturate()` pass was considered as an alternative and
-   rejected as a default: on already-saturated artwork it clips to a no-op on
-   pure primaries, and on near-max colours it clips asymmetrically and shifts
-   hue 4–10° — it distorts the artwork rather than enriching it, on exactly the
-   backdrops that need help most. It stays available via --media-filter for
-   consumers whose artwork is known to be low-chroma. */
+   25/40 is where the label first clears the Lc 75 body floor while keeping the
+   most artwork chroma, and it lets the stroke soften from 60% to 40%. A pure
+   stroke at 40% could not carry the chip alone — 40% measured Lc 7.8 on magenta
+   — but it does not have to, because the scrim now shares edge duty.
+
+   The trade is explicit and worth stating: ~19% of the artwork's chroma under
+   the chip, bought for +18 Lc of label legibility and a visibly softer edge.
+
+   A `backdrop-filter: saturate()` pass was considered instead and rejected as a
+   default: on already-saturated artwork it clips to a no-op on pure primaries,
+   and on near-max colours it clips asymmetrically and shifts hue 4–10° — it
+   distorts the artwork on exactly the backdrops that need help most. It stays
+   available via --media-filter for known-low-chroma artwork. */
 /* Media chrome is backdrop-relative, not mode-relative, so .mode-dark must NOT
    flip it — a white pill over a bright photo stays wrong in either mode. The
    role is intentionally identical in both; the ink is what changes. */
 
 /* Static ink for backdrops you already know the tone of (a dark hero image, a
    light product shot). Skips sampling entirely. */
-.emph-media--on-dark{color:#FFFFFF;}
-.emph-media--on-light{color:var(--grey-900);}
+.emph-media--on-dark{color:#FFFFFF;--media-scrim:#000000;}
+.emph-media--on-light{color:var(--grey-900);--media-scrim:#FFFFFF;}
 
 /* Inactive is handled at the end of this file — it has to beat .lds-btn:disabled
    on source order, and it must NOT be expressed as faded tokens. See the note

@@ -24,6 +24,11 @@ pre{background:#f4f4f2;border-radius:8px;padding:12px 14px;font:12px/1.55 ui-mon
 .a4{background:linear-gradient(135deg,#dff5c8,#a8e6f0 70%)}
 .note{font:12px ui-monospace;color:#9a9a9a;margin-top:6px}
 .bad{border:1px dashed #d9534f;border-radius:10px;padding:10px;margin-top:10px}
+table.trade{border-collapse:collapse;font:12px ui-monospace;margin:10px 0 4px}
+table.trade th{text-align:left;font:600 10px ui-monospace;color:#999;text-transform:uppercase;letter-spacing:.05em;padding:0 16px 4px 0}
+table.trade td{padding:3px 16px 3px 0;border-top:1px solid #eee}
+table.trade tr.on td{background:#f4f4f2;font-weight:700}
+.yes{color:#1a7f3c;font-weight:700}.no{color:#c0392b;font-weight:700}
 </style>
 
 <h1><code>emph-media</code> — chrome that sits on artwork</h1>
@@ -44,13 +49,13 @@ derivations of it, so they follow automatically:
 &lt;button class="lds-btn lds-btn--icon emph-media"&gt;★&lt;/button&gt;
 &lt;button class="lds-chip emph-media lds-chip--selected"&gt;Linear&lt;/button&gt;</pre>
 <p class=k>
-The role is <b>stroke-defined, not fill-defined</b>: at rest there is no fill at all, just a 1px
-ink stroke at 60%. That is deliberate and measured — see the
-<a href="media-surface-study.html">media surface study</a>. In short, an alpha fill over artwork is
-just a dimmer: it moves lightness only, so it desaturates the very thing it sits on (a 30% fill
-costs ~36% of the backdrop's chroma), and because the fill is the same ink as the label, every
-percent of fill also eats label contrast. Dropping it fixes both, and a 1px stroke can carry the
-control on its own.
+The chip is a <b>scrim of the opposite polarity to the ink</b> — white behind dark text, black
+behind white text — plus a soft 40% stroke. The polarity is the whole design. A scrim made of the
+ink itself is a dimmer: it desaturates the artwork <i>and</i> eats the label's contrast, because
+the label is that same colour. An inverse scrim still costs saturation, but it pushes the backdrop
+<i>away</i> from the ink, so the label gets easier to read rather than harder — worst-case label
+goes from Lc 60.9 (stroke only) to Lc 79.2, clearing the body floor. Full workings in the
+<a href="media-surface-study.html">media surface study</a>, which you can drag.
 </p>
 
 <h2>Dark artwork <code>color:#fff</code></h2>
@@ -102,12 +107,23 @@ backdrop is invisible.
   </div>
 </div>
 
-<h2>Why the stroke is 60%, not the usual 28%</h2>
+<h2>The scrim / stroke trade</h2>
 <p class=k>
-An ink-alpha mix moves mostly chroma, not luminance, so on saturated artwork a faint hairline
-simply matches its backdrop — a white 28% stroke over pure red is pink-on-red, measuring
-<b>Lc 0.0</b> on red, blue and magenta. 40% still fails magenta (7.8), 50% still fails it (13.6).
-<b>60%</b> is the first value where every backdrop tested clears the Lc 15 non-text floor.
+The two share edge duty, so a stronger scrim buys a softer stroke. Worst case across ten backdrops,
+dark through near-white through max-chroma primaries:
+</p>
+<table class=trade>
+<tr><th>scrim</th><th>stroke</th><th>edge</th><th>label</th><th>artwork chroma</th></tr>
+<tr><td>0%</td><td>60%</td><td>20.6</td><td class=no>60.9</td><td>100%</td></tr>
+<tr><td>15%</td><td>45%</td><td>16.3</td><td class=no>72.1</td><td>89%</td></tr>
+<tr class=on><td>25%</td><td>40%</td><td>16.2</td><td class=yes>79.2</td><td>81%</td></tr>
+<tr><td>30%</td><td>35%</td><td>15.5</td><td class=yes>82.3</td><td>77%</td></tr>
+</table>
+<p class=k>
+25/40 is where the label first clears the Lc 75 body floor while keeping the most chroma. A 40%
+stroke could not carry the chip <i>alone</i> — it measures Lc 7.8 on magenta — but it does not have
+to, because the scrim shares the work. The trade is explicit: about <b>19% of the artwork's chroma
+under the chip</b>, bought for +18 Lc of label legibility and a visibly softer edge.
 </p>
 <div class=two>
   <div class="art" style="background:linear-gradient(135deg,#ff00ff,#e000e0);color:#fff;min-height:120px">

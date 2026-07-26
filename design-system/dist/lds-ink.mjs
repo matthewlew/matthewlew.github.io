@@ -124,3 +124,23 @@ export function bestInkOn(bgHex, candidates = [], min = Lc.BODY_LARGE) {
 export function inkOn(bgHex) {
   return lcOn('#ffffff', bgHex) >= lcOn('#000000', bgHex) ? '#ffffff' : '#000000'
 }
+
+/**
+ * Both halves of a media chip's palette: the ink, and the scrim behind it.
+ *
+ * The scrim is the OPPOSITE polarity to the ink, and that is the whole point.
+ * A scrim made of the ink itself is a dimmer — it desaturates the artwork AND
+ * eats the label's contrast, because the label is that same colour. An inverse
+ * scrim still costs some saturation, but it pushes the backdrop AWAY from the
+ * ink, so the label gets easier to read rather than harder.
+ *
+ * Set both and the role does the rest:
+ *
+ *     const { ink, scrim } = mediaInkOn(backdropHex)
+ *     el.style.color = ink
+ *     el.style.setProperty('--media-scrim', scrim)
+ */
+export function mediaInkOn(bgHex) {
+  const ink = inkOn(bgHex)
+  return { ink, scrim: ink === '#ffffff' ? '#000000' : '#ffffff' }
+}

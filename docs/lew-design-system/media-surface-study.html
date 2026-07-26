@@ -1,4 +1,4 @@
-<meta charset=utf-8><title>Media surface study — why stroke, not fill</title>
+<meta charset=utf-8><title>Media surface study — scrim polarity and the stroke trade</title>
 <link rel="stylesheet" href="../../design-system/dist/apca-palette.css">
 <link rel="stylesheet" href="../../design-system/dist/lds.css">
 <link rel="stylesheet" href="../../design-system/dist/themes/palette.css">
@@ -82,8 +82,8 @@ from the actual values as you go.
   <div class=ctl>
     <label>Backdrop <input type=color id=bg value="#ff00ff"></label>
     <div class=presets id=presets></div>
-    <label>Stroke <input type=range id=stroke min=0 max=100 value=60><output id=strokeV>60%</output></label>
-    <label>Fill <input type=range id=fill min=0 max=60 value=0><output id=fillV>0%</output></label>
+    <label>Stroke <input type=range id=stroke min=0 max=100 value=40><output id=strokeV>40%</output></label>
+    <label>Scrim <input type=range id=fill min=0 max=70 value=25><output id=fillV>25%</output></label>
     <label>Blur <input type=range id=blur min=0 max=24 value=10><output id=blurV>10px</output></label>
     <label>Saturate <input type=range id=sat min=100 max=250 value=100><output id=satV>1.00</output></label>
     <label class=inline><input type=checkbox id=autoink checked> auto ink <span id=inkSwatch class=sw></span></label>
@@ -110,7 +110,7 @@ from the actual values as you go.
 </div>
 
 <script type="module">
-import { lcOn, inkOn } from '../../design-system/dist/lds-ink.mjs'
+import { lcOn, inkOn, mediaInkOn } from '../../design-system/dist/lds-ink.mjs'
 const s2l=c=>(c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4)
 const hx=h=>{h=h.replace('#','');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255)}
 const tohex=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(1,v))*255).toString(16).padStart(2,'0')).join('')
@@ -128,7 +128,7 @@ const PRESETS=[['MAX magenta','#ff00ff'],['MAX red','#ff0000'],['MAX blue','#000
 const $=id=>document.getElementById(id)
 $('presets').innerHTML=PRESETS.map(p=>`<button type=button data-c="${p[1]}" style="background:${p[1]}" title="${p[0]}"></button>`).join('')
 $('presets').addEventListener('click',e=>{const c=e.target.dataset.c; if(c){$('bg').value=c; render()}})
-$('reset').addEventListener('click',()=>{$('stroke').value=60;$('fill').value=0;$('blur').value=10;$('sat').value=100;$('autoink').checked=true;render()})
+$('reset').addEventListener('click',()=>{$('stroke').value=40;$('fill').value=25;$('blur').value=10;$('sat').value=100;$('autoink').checked=true;render()})
 ;['bg','stroke','fill','blur','sat','autoink'].forEach(id=>$(id).addEventListener('input',render))
 
 function verdict(v,floor){return v>=floor
@@ -142,12 +142,12 @@ function render(){
   $('fillV').textContent=Math.round(fl*100)+'%'
   $('blurV').textContent=bl+'px'
   $('satV').textContent=sa.toFixed(2)
-  const ink=inkOn(bgHex)
+  const { ink, scrim } = mediaInkOn(bgHex)
   $('inkSwatch').style.background=ink
 
-  // what the chip surface actually becomes: saturate pass, then the alpha fill
+  // the chip surface: saturate pass, then the INVERSE scrim over it
   const filtered=clamp(satM(bg,sa))
-  const chip=over(hx(ink),filtered,fl)
+  const chip=over(hx(scrim),filtered,fl)
   const chipHex=tohex(chip)
   const strokeHex=tohex(over(hx(ink),chip,st))
 
@@ -155,9 +155,10 @@ function render(){
   $('stage').style.color=ink
   document.querySelectorAll('.demo').forEach(el=>{
     el.style.setProperty('--border',`color-mix(in srgb, currentColor ${st*100}%, transparent)`)
-    el.style.setProperty('--background', fl? `color-mix(in srgb, currentColor ${fl*100}%, transparent)`:'transparent')
-    el.style.setProperty('--bg-hover',`color-mix(in srgb, currentColor ${(fl*100+12).toFixed(0)}%, transparent)`)
-    el.style.setProperty('--bg-pressed',`color-mix(in srgb, currentColor ${(fl*100+18).toFixed(0)}%, transparent)`)
+    el.style.setProperty('--media-scrim', scrim)
+    el.style.setProperty('--background', `color-mix(in srgb, ${scrim} ${fl*100}%, transparent)`)
+    el.style.setProperty('--bg-hover',   `color-mix(in srgb, ${scrim} ${(fl*100+9).toFixed(0)}%, transparent)`)
+    el.style.setProperty('--bg-pressed', `color-mix(in srgb, ${scrim} ${(fl*100+17).toFixed(0)}%, transparent)`)
     el.style.setProperty('--glass-blur',bl+'px')
     el.style.setProperty('--media-filter', sa>1? `saturate(${sa})`:'')
   })
