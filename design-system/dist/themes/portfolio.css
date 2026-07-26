@@ -1,29 +1,136 @@
-/* LDS theme: portfolio — editorial, sharp, serif. The Collletttivo brand. */
+/* ==========================================================================
+   LDS theme: portfolio — midcentury modern. Warm, soft, geometric.
+
+   Replaces the earlier sharp-editorial treatment (0px corners, no shadow,
+   13px body, Space Mono). That version was internally consistent but read as
+   sterile and flat: nothing separated a card from the page, and the type scale
+   started below the legible floor.
+
+   The five knobs below are the whole theme. Core is untouched.
+   ========================================================================== */
 .theme-portfolio{
-  /* knob 1: brand hue */
-  --c-50:#FBEEEB;--c-100:#F5D2CA;--c-200:#E9A192;--c-300:#DE7460;--c-400:#D4523A;
-  --c-500:#C8391B;--c-600:#A32D15;--c-700:#7E2310;--c-800:#5A190C;--c-900:#2E0C06;--c-950:#170603;
 
-  /* knob 2: typography */
-  --th-display:'DM Sans','Helvetica Neue',sans-serif;
-  --th-body:'DM Sans',system-ui,sans-serif;
-  --th-mono:'Space Mono',monospace;
-  
-  --text-caption: var(--size-1);
-  --text-body: var(--size-2);
-  --text-subhead: var(--size-5);
-  --text-title: var(--size-8);
+  /* ---- knob 1: brand hue — terracotta ----
+     Continuous with the vermilion this theme already shipped (that sat near
+     OKLCH hue 33; this is hue 42) but warmer and less shouty — the burnt
+     orange of the period rather than a fire-engine red.
 
-  /* knob 3: radius */
-  --radius:0px;--radius-lg:0px;--pill:0px;
+     Solved, not picked. Each step's lightness is binary-searched in OKLCH at
+     constant hue until its measured APCA lands on a fixed target:
 
-  /* knob 4: shadow / surface */
-  --card-shadow:none;--btn-shadow:none;
+         50   100  200  300  400  500  600  700  800  900  950
+          0    18   36   52   64   74   84   92   99   104  106   Lc vs white
 
-  /* knob 5: density */
+     Note this is NOT the apca-palette.css curve (0·9·17·27·40·57·72·82·91·
+     100·103). Theme brand ramps are deliberately steeper through the low
+     steps, and they have to be: on the flatter curve, c-200 measures Lc 0.0
+     against c-50, so every tinted surface loses its border. Here that pair is
+     Lc 26.6. The steepness IS the hierarchy.                              */
+  --c-50:#FEEBE3;  --c-100:#FDD3C3; --c-200:#FBA787; --c-300:#E6835C;
+  --c-400:#CE683F; --c-500:#B45227; --c-600:#973A0D; --c-700:#782900;
+  --c-800:#571D02; --c-900:#330900; --c-950:#090000;
+
+  /* ---- warm neutrals ----
+     Not new greys. Core's grey ramp converted to OKLCH, its lightness kept
+     exactly, and the hue rotated to 58 with a low chroma arc — full through
+     the mids where warmth reads, near-zero at the ends so paper stays paper
+     and ink stays ink. Same trick theme-palette used for its cool ramp.
+
+     Measured drift against core: max 0.27 Lc across all eleven steps. The
+     neutral hierarchy is unchanged; only its temperature is.               */
+  --grey-50:#FBF7F4;  --grey-100:#F4EFEB; --grey-200:#E8E1DB; --grey-300:#D2C8C1;
+  --grey-400:#B5ABA4; --grey-500:#908780; --grey-600:#726963; --grey-700:#534D48;
+  --grey-800:#37322E; --grey-900:#1F1B19; --grey-950:#100E0C;
+
+  /* ---- knob 2: typography ----
+     Jost is a Futura revival — the geometric sans of the period, circular
+     bowls and a single-storey 'a'. It is what makes this read midcentury
+     rather than merely rounded.
+
+     Body moves 13px -> 16px. Butterick puts web body text at 15-25px, so the
+     old scale started under the floor; that alone accounted for much of the
+     flatness. Leading stays at 140%, inside his 120-145%.
+
+     DM Mono replaces Space Mono for the machine-readable role: rounded
+     terminals and low stroke contrast, so it sits with a geometric sans
+     instead of fighting it. Butterick would drop the mono entirely — the role
+     is a deliberate exception, kept because the typeface carries meaning here
+     (dates, tokens, hashes) rather than mood.                              */
+  --th-display:'Jost','Futura','Century Gothic',system-ui,sans-serif;
+  --th-body:'Jost','Futura','Century Gothic',system-ui,sans-serif;
+  --th-mono:'DM Mono','SFMono-Regular',ui-monospace,monospace;
+
+  --text-caption: var(--size-1);  /* 12 */
+  --text-body:    var(--size-4);  /* 16 — was size-2 / 13px */
+  --text-subhead: var(--size-6);  /* 24 */
+  --text-title:   var(--size-8);  /* 44 */
+
+  /* Jost runs geometric and a little narrow: small text wants air, display
+     wants none. */
+  --leading-caption: var(--leading-normal); --tracking-caption: var(--tracking-wide);
+  --leading-body:    var(--leading-normal); --tracking-body:    var(--tracking-normal);
+  --leading-subhead: var(--leading-tight);  --tracking-subhead: var(--tracking-tight);
+  --leading-title:   var(--leading-none);   --tracking-title:   var(--tracking-tighter);
+
+  /* ---- knob 3: radius — the rounded-futurist corner ----
+     Was 0px across the board. These are large on purpose: the arc has to be
+     long enough to read as a drawn curve rather than a chamfer, which is what
+     separates a 1960s television cabinet from a rounded rectangle.          */
+  --radius-sm:10px; --radius-base:18px; --radius-lg:28px; --radius-xl:36px;
+  --radius:var(--radius-base);
+  --pill:999px;
+
+  /* ---- knob 4: shadow / surface ----
+     Was none, which is most of why it felt flat. The card sits at #FFFCF8
+     against a #FBF7F4 page — measured Lc 0.0 between them, i.e. deliberately
+     no contrast separation at all. The shadow does that job instead, which is
+     the softer read.
+
+     Tinted with the brand's own dark step rather than neutral black: a grey
+     shadow over warm paper turns it muddy.                                 */
+  --card-shadow:
+    0 1px 2px rgba(87,29,2,.05),
+    0 8px 20px -6px rgba(87,29,2,.10),
+    0 24px 48px -16px rgba(87,29,2,.12);
+  --btn-shadow:
+    0 1px 2px rgba(87,29,2,.10),
+    0 3px 8px -3px rgba(87,29,2,.14);
+
+  /* ---- knob 5: density ---- */
   --density:1;
 
-  /* icon alignment */
-  --icon-size:18px;--icon-weight:1.5;
+  /* icon alignment — one step heavier, so icons hold their weight next to
+     16px Jost rather than disappearing. */
+  --icon-size:20px; --icon-weight:1.75;
 }
 /* knob 6: default mode is set via .mode-light / .mode-dark on the root, not here */
+
+/* ---- emph-plain, retuned for this theme ----
+   Three overrides, each one measured against the card surface:
+
+     --background   core pins #FFFFFF; cream instead, or the warm neutrals
+                    have nothing to be warm against.
+     --text-subdued grey-500 measures Lc 58.4 on the page — under the Lc 60
+                    content floor. grey-600 lands at 75.1.
+     --border       grey-200 measures Lc 13.0 on the card — under the Lc 15
+                    non-text floor, i.e. not reliably visible. grey-300 is 27.0.
+
+   The last two are why the old theme read as having no hierarchy: its
+   secondary text and its borders were both below the floor they needed. */
+.theme-portfolio.emph-plain,
+.theme-portfolio .emph-plain{
+  --background:#FFFCF8;
+  --text-subdued:var(--grey-600);
+  --border:var(--grey-300);
+  --border-subdued:var(--grey-200);
+}
+.theme-portfolio.mode-dark.emph-plain,
+.theme-portfolio.mode-dark .emph-plain,
+.theme-portfolio .mode-dark .emph-plain{
+  /* Dark keeps core's resolution off the warm ramp; only the pinned surface
+     needs restating, one step off pure black so the shadow still reads. */
+  --background:var(--grey-950);
+  --text-subdued:var(--grey-400);
+  --border:var(--grey-700);
+  --border-subdued:var(--grey-800);
+}

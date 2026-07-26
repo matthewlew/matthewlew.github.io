@@ -1,6 +1,9 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>LDS — decisions and why</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../design-system/dist/apca-palette.css">
 <link rel="stylesheet" href="../../design-system/dist/lds.css">
 <link rel="stylesheet" href="../../design-system/dist/themes/portfolio.css">
@@ -34,8 +37,8 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .who{font-family:var(--th-mono);font-size:var(--size-0);line-height:1.5;
      padding:1px 7px;border-radius:var(--pill);border:1px solid;white-space:nowrap}
 .w-human{background:var(--grey-800);color:#fff;border-color:var(--grey-800)}
-.w-measured{background:#fff;color:var(--grey-700);border-color:var(--grey-400)}
-.w-ai{background:#fff;color:var(--grey-600);border-color:var(--grey-400);border-style:dashed}
+.w-measured{background:var(--background);color:var(--grey-700);border-color:var(--grey-400)}
+.w-ai{background:var(--background);color:var(--grey-600);border-color:var(--grey-400);border-style:dashed}
 
 /* ---- legend: footnote-scale, not a dashboard ---- */
 .legend{padding:var(--space-3) 0 var(--space-5);border-bottom:1px solid var(--border);
@@ -56,7 +59,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
      letter-spacing:var(--tracking-wide);color:var(--grey-500);
      flex:0 0 84px}
 .f{font:inherit;font-size:var(--size-1);cursor:pointer;border:1px solid var(--border);
-   background:#fff;color:var(--grey-800);border-radius:var(--pill);
+   background:var(--background);color:var(--grey-800);border-radius:var(--pill);
    padding:var(--space-1) var(--space-3);min-height:0;display:inline-flex;align-items:center;gap:6px}
 .f:hover{background:var(--grey-100)}
 .f[aria-pressed=true]{background:var(--c-600);border-color:var(--c-600);color:#fff}
@@ -84,7 +87,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .more{font:inherit;font-size:var(--size-1);font-family:var(--th-mono);cursor:pointer;
       background:none;border:1px dashed var(--grey-300);border-radius:var(--radius);
       color:var(--grey-600);padding:var(--space-2) var(--space-4);margin:0 0 var(--space-6)}
-.more:hover{background:#fff;color:var(--grey-900)}
+.more:hover{background:var(--background);color:var(--grey-900)}
 
 /* ---- milestone: a bare label, no dot, no expansion ---- */
 .ms{padding:0 0 var(--space-5)}
@@ -106,6 +109,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .tags{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);
       font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500)}
 .tags .rev{color:var(--c-600);font-weight:var(--weight-medium)}
+.tags .sec{color:var(--grey-600);white-space:nowrap}
 .body{padding:0 0 var(--space-5) 26px;max-width:66ch}
 .body > *:first-child{margin-top:0}
 .body p{margin:0 0 var(--space-3)}
@@ -153,7 +157,12 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 }
 </style>
 
-<div class="wrap theme-portfolio emph-plain">
+<!-- Theme goes on the root, per the LDS README. It was on .wrap, which is a
+     DESCENDANT of body, so body could not see the theme's tokens at all and
+     kept resolving core defaults: 13px system-ui on a cold grey page. -->
+<body class="theme-portfolio emph-plain">
+
+<div class=wrap>
 
 <h1>LDS — decisions and why</h1>
 <p class=lede>
@@ -208,6 +217,11 @@ const who = w => '<b class="who w-' + w + '">' + WHO[w] + '</b>'
 
 /* ---------- markdown: only the constructs decisions.md actually uses ---------- */
 
+// Private-use sentinel: cannot occur in prose, and unlike a NUL byte it
+// leaves this file as text rather than binary.
+const SENTINEL = '\uE000'
+const SENTINEL_RE = /\uE000(\d+)\uE000/g
+
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
 
 // Code spans are parked in placeholders first, so **bold** or _underscores_
@@ -216,13 +230,13 @@ function inline (s) {
   const parked = []
   let out = esc(s).replace(/`([^`]+)`/g, (_, c) => {
     parked.push(c)
-    return ' ' + (parked.length - 1) + ' '
+    return SENTINEL + (parked.length - 1) + SENTINEL
   })
   out = out
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
     .replace(/(^|[\s(])\*([^*]+)\*/g, '$1<i>$2</i>')
-  return out.replace(/ (\d+) /g, (_, i) => '<code>' + parked[+i] + '</code>')
+  return out.replace(SENTINEL_RE, (_, i) => '<code>' + parked[+i] + '</code>')
 }
 
 const isDivider = r => /^\|[\s:|-]+\|$/.test(r)
@@ -288,7 +302,16 @@ function parse (md) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
 
-    if (line.startsWith('## ')) { close(); section = line.slice(3).trim(); continue }
+    if (line.startsWith('## ')) {
+      close()
+      const raw = line.slice(3).trim()
+      // Butterick: the section mark is for documents with numbered sections,
+      // which this is. Unnumbered ones (Milestones, Pre-history) get no mark
+      // rather than a decorative one.
+      const m = /^(\d+)\.\s*(.+)$/.exec(raw)
+      section = m ? { num: m[1], name: m[2] } : { num: null, name: raw }
+      continue
+    }
 
     if (line.startsWith('### ')) {
       close()
@@ -348,8 +371,14 @@ function entryEl (e) {
   const q = el.dataset.quality
   // Quality is named in text only when it is a reversal — that is the one a
   // reader must not miss. The dot carries it for every other row.
+  // A nonbreaking space after the mark, per Butterick: the space is glue, so
+  // the mark can never end a line with its number orphaned onto the next.
+  // Written as &nbsp; here rather than a literal U+00A0, which is invisible.
+  const sec = e.section && e.section.num
+    ? '<span class=sec>&sect;&nbsp;' + e.section.num + '</span>'
+    : ''
   const tags = (q === 'reversal' ? '<span class=rev>reversal</span>' : '') +
-    '<span>' + e.meta.area + '</span>' + who(e.meta.attribution)
+    sec + '<span>' + e.meta.area + '</span>' + who(e.meta.attribution)
 
   el.innerHTML =
     '<summary>' + dot(q) +
@@ -360,7 +389,9 @@ function entryEl (e) {
       blocks(e.body) +
       (e.ruled ? '<div class=ruled><b>Ruled out</b>' + blocks(e.ruled) + '</div>' : '') +
       (e.cost ? '<div class=cost><b>Cost</b>' + blocks(e.cost) + '</div>' : '') +
-      '<p class=src>' + q + ' · ' + WHO_LONG[e.meta.attribution] +
+      '<p class=src>' + (e.section && e.section.num
+          ? '&sect;&nbsp;' + e.section.num + ' ' + e.section.name + ' · ' : '') +
+        q + ' · ' + WHO_LONG[e.meta.attribution] +
         (e.meta.commit
           ? ' · <a href="' + REPO + e.meta.commit + '"><code>' + e.meta.commit + '</code></a>'
           : '') + '</p>' +

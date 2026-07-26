@@ -34,7 +34,7 @@ the entry says why it didn't hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 32 decisions: **18 human · 14 measured · 2 ai**.
+The split as it stands, across the 38 decisions: **20 human · 16 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -161,6 +161,26 @@ accidents as everyone's API.
 **Cost:** this rule was broken once, on purpose, and it worked — `--dur-slow`
 and `emph-media` were both contributed up from `palette`. See those entries. The
 rule holds for *components*; primitives discovered in the field are fair game.
+
+### Showcase pages paint from tokens, never their own fonts
+
+`2026-07-26` · `foundations` · `human` · `notable`
+
+`design-system/index.html` is the LDS showcase. It hardcoded `font-family: 'DM
+Sans'` on `body` and `monospace` in five places, so switching the theme changed
+the components but never the page's own type — the showcase silently contradicted
+the thing it was showcasing.
+
+The related trap, hit the same day: a theme class must sit on the **root**, not on
+an inner wrapper. `decisions.html` had `theme-portfolio` on a `div` inside
+`body`. Custom properties inherit downward only, so `body` could not see any of
+the theme's tokens and kept resolving core defaults — 13px `system-ui` on a cold
+grey page — while the components inside looked correctly themed. It fails quietly
+and looks like the theme is broken.
+
+**Ruled out:** letting demo pages style themselves for convenience. A showcase
+that overrides the tokens it demonstrates is worse than no showcase, because it
+reports success while the theme is doing nothing.
 
 ### LDS must not absorb the gradient canvas
 
@@ -555,6 +575,15 @@ value came from a machine and is exact."
 **Ruled out:** mono as a stylistic accent, which is the common editorial use and
 would destroy the signal.
 
+**Amended 2026-07-26.** The role survives; the typeface changed. Space Mono gave
+way to DM Mono in `theme-portfolio` — rounded terminals, low stroke contrast, so
+it sits with a geometric sans instead of reading as a terminal.
+
+**Cost:** Butterick's advice is to avoid monospaced fonts outright. This role is a
+deliberate exception to it, kept because the typeface is carrying *meaning* here
+(this value came from a machine and is exact) rather than mood. Worth re-opening
+if the signal ever stops earning the cost. Noted, not endorsed by him.
+
 ---
 
 ## 5. Motion
@@ -590,11 +619,17 @@ The range is deliberately extreme: `theme-portfolio` sets every radius to **0px*
 (sharp, editorial), `theme-palette` is bubbly. Same components, and the shift
 alone changes the character of the whole UI.
 
-**Ruled out:** a fixed radius scale with per-theme nudges. The 0px case proves
-the token has to be able to go all the way.
+**Ruled out:** a fixed radius scale with per-theme nudges. The token has to be
+able to go all the way.
 
-**Cost:** a component that hardcodes even one corner breaks visibly in
-`theme-portfolio`, where the mismatch against 0px is obvious.
+**Cost:** a component that hardcodes even one corner breaks visibly under any
+theme whose radius is far from that value.
+
+**Amended 2026-07-26.** This entry originally cited `theme-portfolio`'s 0px as
+the proof that the token must reach the extremes. That theme is now 18px — see
+*`theme-portfolio` is midcentury, not sharp-editorial*. The argument is
+unchanged and arguably better evidenced: the same components have now rendered at
+both 0px and 18px with no component-level change.
 
 ### `--target-min` is a floor of 44px that themes may raise
 
@@ -612,6 +647,116 @@ unraisable by a theme that needs more.
 ---
 
 ## 7. Themes
+
+### `theme-portfolio` is midcentury, not sharp-editorial
+
+`2026-07-26` · `themes` · `human` · `reversal`
+
+The theme is warm, soft and geometric: terracotta brand ramp, Jost, large
+rounded corners, layered warm shadows, cream surfaces.
+
+It previously ran the opposite way — 0px corners everywhere, no shadow at all,
+13px body, Space Mono — and that version was internally consistent but read as
+sterile and flat. Nothing separated a card from the page, and the type scale
+started below the legible floor.
+
+Jost is doing the specific work: a Futura revival, so circular bowls and a
+single-storey `a`. That is what makes it read midcentury rather than merely
+rounded. The corners are deliberately large — the arc has to be long enough to
+read as a drawn curve rather than a chamfer, which is the difference between a
+1960s television cabinet and a rounded rectangle.
+
+**Ruled out:** the sharp-editorial treatment, in full. Also ruled out: doing this
+as a fourth theme. A new theme would have left the portfolio and every docs page
+looking exactly as before, which was the actual complaint.
+
+**Cost:** `docs/lew-design-system/pitch.html` overrides `.theme-portfolio` inline
+with `--radius:0px` and `--card-shadow:none`, so that page still renders the old
+treatment. Left alone deliberately — it may be demonstrating the sharp look on
+purpose.
+
+### Body text is 16px, because 13px was under the floor
+
+`2026-07-26` · `themes` · `human` · `reversal`
+
+`--text-body` moves from `--size-2` (13px) to `--size-4` (16px), and the scale
+above it re-spaces to 12 / 16 / 24 / 44.
+
+Butterick puts web body text at **15–25px**. The old scale started below his
+minimum, which is a large part of why the theme read as having no hierarchy:
+when body copy is already too small, every level above it has to fight for
+separation. Leading stays at 140%, inside his 120–145%.
+
+**Ruled out:** 13px body, and the 13 / 19 / 44 progression — which had a hole at
+the subhead level and a 2.3× jump to the title.
+
+**Cost:** `--density` multiplies `--text-body` for button labels, so every button
+in the theme grew from 13px to 16px. That is a real layout change for consumers,
+not just a type change.
+
+### Warm neutrals are the grey ramp rotated, not new greys
+
+`2026-07-26` · `themes` · `measured` · `notable`
+
+The theme overrides `--grey-50…950` with a warm set. They are not invented:
+core's greys converted to OKLCH, **lightness kept exactly**, hue rotated to 58
+with a low chroma arc — fullest through the mids where warmth reads, near-zero at
+the ends so paper stays paper and ink stays ink.
+
+Measured drift against core: **max 0.27 Lc across all eleven steps.** The neutral
+hierarchy is unchanged; only its temperature is.
+
+Same method `theme-palette` used for its cool ramp, which is why it was reached
+for here — it is the established way to warm a ramp in this system without
+disturbing contrast.
+
+**Ruled out:** picking cream neutrals by eye, which would have shifted contrast
+somewhere and required re-verifying every emphasis pair.
+
+### Card and page separate by shadow, not by contrast
+
+`2026-07-26` · `themes` · `measured` · `notable`
+
+The card sits at `#FFFCF8` against a `#FBF7F4` page. Measured separation between
+them: **Lc 0.0** — deliberately none.
+
+The shadow does that job instead, tinted with the brand's own dark step rather
+than neutral black, because a grey shadow over warm paper turns it muddy. The
+result reads softer than a contrast edge would.
+
+**Ruled out:** separating the card from the page by lightness, which is the
+conventional approach and reintroduces exactly the crispness this theme is
+moving away from.
+
+**Cost:** the whole surface hierarchy now depends on the shadow rendering. Print
+styles, forced-colors mode, or any consumer that strips shadows gets a flat page
+with no card boundaries at all.
+
+### `emph-plain` is retuned per-theme, against measured floors
+
+`2026-07-26` · `themes` · `measured` · `notable`
+
+The theme overrides three of `emph-plain`'s roles. Two are contrast fixes, each
+measured against the card surface:
+
+- `--text-subdued` was `grey-500`, which measures **Lc 58.4** on the page — under
+  the Lc 60 content floor. `grey-600` lands at **75.1**.
+- `--border` was `grey-200`, which measures **Lc 13.0** on the card — under the
+  Lc 15 non-text floor, i.e. not reliably visible at all. `grey-300` is **27.0**.
+- `--background` is cream, because core pins it to `#FFFFFF` and warm neutrals
+  need something warm to sit on.
+
+This is the concrete answer to "it has no hierarchy": the old theme's secondary
+text and its borders were **both below the floor they needed**. Not a matter of
+taste — they were under-specified.
+
+**Ruled out:** leaving emphasis resolution entirely to core. A theme overriding
+role resolution is arguably outside its remit, and it is accepted here only
+because the measurements showed core's defaults failing on this surface.
+
+**Cost:** these are theme-level overrides of core behaviour, so a future change
+to core's `emph-plain` will not reach `theme-portfolio`. Widening the floors in
+core would be the better long-term fix.
 
 ### `theme-palette` ships no brand hue
 

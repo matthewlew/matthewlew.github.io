@@ -8,7 +8,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="dist/apca-palette.css">
   <link rel="stylesheet" href="dist/lds.css">
@@ -25,7 +25,7 @@
     html { scroll-behavior: smooth; }
     body {
       display: flex; min-height: 100vh;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--th-body, system-ui, sans-serif);
       -webkit-font-smoothing: antialiased;
       background: var(--background, #fff);
       color: var(--text, #111);
@@ -42,7 +42,7 @@
       transition: background 0.3s, border-color 0.3s, color 0.3s;
     }
     .sidebar-header { margin-bottom: 24px; }
-    .sidebar-header h1 { font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+    .sidebar-header h1 { font-family: var(--th-display, sans-serif); font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
     .sidebar-header h1 span { color: var(--text-accent); }
     .sidebar-header p { font-family: var(--th-mono, monospace); font-size: 10px; color: var(--text-subdued); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.1em; }
     
@@ -79,7 +79,7 @@
     /* Spec / Label rows inside demos */
     .spec-row { display: flex; align-items: baseline; gap: 32px; padding: 16px 0; border-bottom: 1px solid var(--border); }
     .spec-row:last-child { border-bottom: none; }
-    .spec-lbl { width: 140px; font-family: monospace; font-size: 12px; color: var(--text-accent); flex-shrink: 0; }
+    .spec-lbl { width: 140px; font-family: var(--th-mono, monospace); font-size: 12px; color: var(--text-accent); flex-shrink: 0; }
     .spec-val { color: var(--text); }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
@@ -87,7 +87,7 @@
     /* Inspector Tooltip */
     #inspector-tooltip {
       position: fixed; display: none; background: rgba(0, 0, 0, 0.85); color: #4ade80;
-      font-family: monospace; font-size: 11px; padding: 8px 12px; border-radius: 6px;
+      font-family: var(--th-mono, monospace); font-size: 11px; padding: 8px 12px; border-radius: 6px;
       z-index: 9999; pointer-events: none; white-space: pre-wrap;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
@@ -97,7 +97,7 @@
     .rule-col { padding: 32px 40px; }
     .rule-col.do { border-right: 1px solid #E2E2E2; }
     .rule-col h3 {
-      font-family: monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+      font-family: var(--th-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
       padding-bottom: 16px; margin-bottom: 8px;
     }
     .rule-col.do h3 { color: #111; }
