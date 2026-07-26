@@ -3,8 +3,10 @@
   "configurations": [
     {
       "name": "Static HTML Server",
-      "runtimeExecutable": "/bin/sh",
-      "runtimeArgs": ["-c", "ruby -run -e httpd -- . -p $PORT"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/matthewlewair/Documents/matthewlew.github.io/.claude/static-server.mjs"
+      ],
       "port": 3000,
       "autoPort": true
     }
