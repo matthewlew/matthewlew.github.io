@@ -24,51 +24,44 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
 .lede{max-width:64ch;color:var(--grey-700);margin:0 0 var(--space-5)}
 .lede a{color:var(--c-600)}
 
-/* ---- the dot. One glyph-free mark; size carries weight, ring carries reversal. ---- */
-.dot{flex:0 0 auto;width:14px;display:flex;align-items:center;justify-content:center;
-     align-self:center;height:1.4em}
-.dot i{display:block;border-radius:50%;background:var(--grey-500)}
-.dot.q-minor i{width:4px;height:4px}
-.dot.q-notable i{width:7px;height:7px}
-.dot.q-structural i{width:11px;height:11px;background:var(--grey-800)}
-.dot.q-reversal i{width:11px;height:11px;background:transparent;
-                  border:2.5px solid var(--c-500);box-sizing:border-box}
+/* ---- metadata as words, not marks ----
+   The dots that used to live here encoded quality by size and reversal by a
+   ring. They read fine but they copy as nothing: select a row, paste it, and
+   the weight of the change is gone. A word survives the clipboard.
 
-/* ---- who decided. The word always carries it; fill and border only reinforce,
-       so it survives greyscale and colour-blindness. ---- */
-.who{font-family:var(--th-mono);font-size:var(--text-caption);line-height:1.5;
-     padding:1px 7px;border-radius:var(--pill);border:1px solid;white-space:nowrap}
-.w-human{background:var(--grey-800);color:#fff;border-color:var(--grey-800)}
-.w-measured{background:var(--background);color:var(--grey-700);border-color:var(--grey-400)}
-.w-ai{background:var(--background);color:var(--grey-600);border-color:var(--grey-400);border-style:dashed}
+   Reversal still stands out, by weight and colour on the word itself rather
+   than by a glyph beside it. */
+.meta{flex:0 0 auto;display:flex;align-items:baseline;gap:var(--space-2);
+      font-size:var(--text-caption);color:var(--grey-600);white-space:nowrap}
+.meta .sep{color:var(--grey-400)}
+.meta .rev{color:var(--c-700);font-weight:var(--weight-semibold)}
+.meta .num{font-family:var(--th-mono)}
 
-/* ---- legend: footnote-scale, not a dashboard ---- */
+/* ---- legend: footnote-scale, not a dashboard ----
+   A two-column grid, and the value column is ordinary flowing text. It was a
+   flex row, which turned every text node and nested <b> into a separate flex
+   item — so the prose broke apart mid-sentence. Prose wants normal flow.
+   In the body face, not mono: it is a sentence, not a machine value. */
 .legend{padding:var(--space-3) 0 var(--space-5);border-bottom:1px solid var(--border);
-        margin-bottom:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
-.lrow{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-5);
-      font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-600)}
-.lrow > span{display:flex;align-items:center;gap:var(--space-2)}
-/* :not(.who) — otherwise this beats .w-human on specificity and paints the
-   white badge label grey-on-grey, i.e. invisible. */
-.lrow b:not(.who){color:var(--grey-800);font-weight:var(--weight-medium)}
+        margin-bottom:var(--space-5);display:flex;flex-direction:column;gap:var(--space-2)}
+.lrow{display:grid;grid-template-columns:104px 1fr;gap:var(--space-4);
+      align-items:baseline;font-size:var(--text-caption);color:var(--grey-600)}
+.lrow > b{color:var(--grey-800);font-weight:var(--weight-semibold)}
+.lrow .rev{color:var(--c-700);font-weight:var(--weight-semibold)}
+@media(max-width:700px){.lrow{grid-template-columns:1fr;gap:0}}
 
 /* ---- filters ---- */
 /* One row per group. Wrapping all three together buries the group labels
    mid-line and the whole control reads as one undifferentiated pile of chips. */
 .filters{display:flex;flex-direction:column;gap:var(--space-2);margin:0 0 var(--space-6)}
 .fgrp{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
-.grp{font-family:var(--th-mono);font-size:var(--text-caption);text-transform:uppercase;
-     letter-spacing:var(--tracking-wide);color:var(--grey-500);
-     flex:0 0 84px}
+.grp{font-size:var(--text-caption);color:var(--grey-600);
+     font-weight:var(--weight-semibold);flex:0 0 104px}
 .f{font:inherit;font-size:var(--text-caption);cursor:pointer;border:1px solid var(--border);
    background:var(--background);color:var(--grey-800);border-radius:var(--pill);
    padding:var(--space-1) var(--space-3);min-height:0;display:inline-flex;align-items:center;gap:6px}
 .f:hover{background:var(--grey-100)}
 .f[aria-pressed=true]{background:var(--c-600);border-color:var(--c-600);color:#fff}
-.f[aria-pressed=true] .dot i{background:#fff}
-.f[aria-pressed=true] .dot.q-reversal i{background:transparent;border-color:#fff}
-.f .who{pointer-events:none}
-.f[aria-pressed=true] .who{background:transparent;color:#fff;border-color:#fff}
 .count{font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-500);margin-left:var(--space-2)}
 
 /* ---- timeline ---- */
@@ -108,10 +101,6 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
 .entry > summary:hover .claim{color:var(--c-600)}
 .entry > summary:focus-visible{outline:2px solid var(--c-600);outline-offset:2px}
 .claim{font-weight:var(--weight-medium);flex:1 1 auto;min-width:0}
-.tags{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);
-      font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-500)}
-.tags .rev{color:var(--c-600);font-weight:var(--weight-medium)}
-.tags .sec{color:var(--grey-600);white-space:nowrap}
 .body{padding:0 0 var(--space-5) 26px;max-width:66ch}
 .body > *:first-child{margin-top:0}
 .body p{margin:0 0 var(--space-3)}
@@ -151,10 +140,11 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
   .day{grid-template-columns:52px 1fr;gap:var(--space-4)}
   .offset,.date{padding-right:var(--space-3)}
   .gap{grid-column:1 / -1}
-  .tags{gap:var(--space-2)}
-  /* Area loses to who-decided for the remaining width — it is still on the
-     expanded row, and squeezing the claim to three lines costs more. */
-  .tags span:not(.rev){display:none}
+  /* The metadata drops under the claim instead of competing with it for width.
+     Beside it, nowrap meta was crushing the claim column to nine lines. Nothing
+     is hidden — it all still copies. */
+  .entry > summary{flex-direction:column;align-items:flex-start;gap:var(--space-1)}
+  .meta{white-space:normal;flex-wrap:wrap}
   .grp{flex:0 0 100%}
 }
 </style>
@@ -169,23 +159,21 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
 <h1>LDS — decisions and why</h1>
 <p class=lede>
   Footnotes on a system that keeps moving. Each entry is a change and the reasoning
-  behind it, so a settled question doesn't get re-opened by accident. The ringed dot
-  marks a <b>reversal</b> — already tried the other way. Source of truth is
+  behind it, so a settled question doesn't get re-opened by accident. Anything marked
+  <b>Reversal</b> was already tried the other way. Source of truth is
   <a href="decisions.md">decisions.md</a>.
 </p>
 
 <div class=legend>
   <div class=lrow>
-    <span><i class="dot q-minor"><i></i></i> <b>minor</b> refinement</span>
-    <span><i class="dot q-notable"><i></i></i> <b>notable</b> new constraint</span>
-    <span><i class="dot q-structural"><i></i></i> <b>structural</b> changes the shape</span>
-    <span><i class="dot q-reversal"><i></i></i> <b>reversal</b> undoes a prior call</span>
+    <b>Weight</b> <span>Minor, a refinement · Notable, a new constraint ·
+    Structural, changes the shape · <b class=rev>Reversal</b>, undoes a prior call</span>
   </div>
   <div class=lrow>
-    <span><b class="who w-human">human</b> Matthew's call</span>
-    <span><b class="who w-measured">measured</b> the numbers only went one way</span>
-    <span><b class="who w-ai">AI</b> proposed, then approved</span>
+    <b>Decided by</b> <span>Human, Matthew's call · Measured, the numbers only went
+    one way · AI, proposed then approved</span>
   </div>
+</div>
 </div>
 
 <div id=status>Loading <code>decisions.md</code>…</div>
@@ -205,7 +193,9 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
 
 const REPO = 'https://github.com/matthewlew/matthewlew.github.io/commit/'
 const QUALITY = ['reversal', 'structural', 'notable', 'minor']
-const WHO = { human: 'human', measured: 'measured', ai: 'AI' }
+const WHO = { human: 'Human', measured: 'Measured', ai: 'AI' }
+const QUAL = { minor: 'Minor', notable: 'Notable', structural: 'Structural',
+               reversal: 'Reversal' }
 const WHO_LONG = {
   human: 'a human call',
   measured: 'settled by measurement',
@@ -214,8 +204,10 @@ const WHO_LONG = {
 const META = /^`(\d{4}-\d{2}(?:-\d{2})?)`\s*·\s*`([a-z-]+)`\s*·\s*`(human|measured|ai)`(?:\s*·\s*`(minor|notable|structural|reversal)`)?(?:\s*·\s*`([0-9a-f]{7,40})`)?$/
 
 const $ = id => document.getElementById(id)
-const dot = q => '<i class="dot q-' + q + '" title="' + q + '"><i></i></i>'
-const who = w => '<b class="who w-' + w + '">' + WHO[w] + '</b>'
+const sep = ' <span class=sep>·</span> '
+// Capitalised in the markup, not with text-transform: a copy takes the source
+// text, so a CSS-only capital would paste back lowercase.
+const cap = w => w.charAt(0).toUpperCase() + w.slice(1)
 
 /* ---------- markdown: only the constructs decisions.md actually uses ---------- */
 
@@ -371,31 +363,31 @@ function entryEl (e) {
   el.dataset.quality = e.meta.quality || 'notable'
 
   const q = el.dataset.quality
-  // Quality is named in text only when it is a reversal — that is the one a
-  // reader must not miss. The dot carries it for every other row.
-  // A nonbreaking space after the mark, per Butterick: the space is glue, so
-  // the mark can never end a line with its number orphaned onto the next.
-  // Written as &nbsp; here rather than a literal U+00A0, which is invisible.
-  const sec = e.section && e.section.num
-    ? '<span class=sec>&sect;&nbsp;' + e.section.num + '</span>'
-    : ''
-  const tags = (q === 'reversal' ? '<span class=rev>reversal</span>' : '') +
-    sec + '<span>' + e.meta.area + '</span>' + who(e.meta.attribution)
+  // Everything the row says, it says in words: section, area, weight, who. Copy
+  // a row and you get "Stroke-defined, not fill-defined - Reversal, Emphasis,
+  // Measured" rather than a claim with its metadata silently dropped.
+  // &nbsp; after the section mark, per Butterick: the space is glue, so the mark
+  // can never end a line with its number orphaned onto the next.
+  const bits = []
+  if (e.section && e.section.num) bits.push('<span class=num>&sect;&nbsp;' + e.section.num + '</span>')
+  bits.push(cap(e.meta.area))
+  bits.push(q === 'reversal' ? '<span class=rev>Reversal</span>' : QUAL[q])
+  bits.push(WHO[e.meta.attribution])
 
   el.innerHTML =
-    '<summary>' + dot(q) +
+    '<summary>' +
       '<span class=claim>' + inline(e.title) + '</span>' +
-      '<span class=tags>' + tags + '</span>' +
+      '<span class=meta>' + bits.join(sep) + '</span>' +
     '</summary>' +
     '<div class=body>' +
       blocks(e.body) +
       (e.ruled ? '<div class=ruled><b>Ruled out</b>' + blocks(e.ruled) + '</div>' : '') +
       (e.cost ? '<div class=cost><b>Cost</b>' + blocks(e.cost) + '</div>' : '') +
       '<p class=src>' + (e.section && e.section.num
-          ? '&sect;&nbsp;' + e.section.num + ' ' + e.section.name + ' · ' : '') +
-        q + ' · ' + WHO_LONG[e.meta.attribution] +
+          ? '&sect;&nbsp;' + e.section.num + ' ' + e.section.name + ' — ' : '') +
+        QUAL[q] + ', ' + WHO_LONG[e.meta.attribution] +
         (e.meta.commit
-          ? ' · <a href="' + REPO + e.meta.commit + '"><code>' + e.meta.commit + '</code></a>'
+          ? ' — <a href="' + REPO + e.meta.commit + '"><code>' + e.meta.commit + '</code></a>'
           : '') + '</p>' +
     '</div>'
   return el
@@ -554,9 +546,9 @@ function buildFilters (all) {
   }
 
   const present = QUALITY.filter(q => all.some(e => (e.meta.quality || 'notable') === q))
-  group('Weight', 'quality', present, v => dot(v) + v)
-  group('Decided by', 'attribution', ['human', 'measured', 'ai'], v => who(v))
-  const last = group('Area', 'area', [...new Set(all.map(e => e.meta.area))], v => v)
+  group('Weight', 'quality', present, v => QUAL[v])
+  group('Decided by', 'attribution', ['human', 'measured', 'ai'], v => WHO[v])
+  const last = group('Area', 'area', [...new Set(all.map(e => e.meta.area))], v => cap(v))
 
   const c = document.createElement('span')
   c.className = 'count'

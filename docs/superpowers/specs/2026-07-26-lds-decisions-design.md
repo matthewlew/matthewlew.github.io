@@ -177,21 +177,29 @@ horizontal density spine with per-day ticks; it was cut. The page exists to show
 that LDS keeps moving and has reasons for having moved, not to be a data
 visualisation of itself.
 
-### The dot
+### Metadata is words, not marks
 
-Each entry carries one dot. Size is the weight of the change; a ring means a
-reversal. No glyphs — a sized circle reads at footnote scale where `◆`/`◇`/`○`
-did not.
+Each entry states its section, area, quality and who decided — all as plain text,
+capitalised in the markup.
 
-| Dot | Value | Meaning |
-|---|---|---|
-| 4px filled | `minor` | A refinement inside an existing decision. |
-| 7px filled | `notable` | A new role, component, or constraint. |
-| 11px filled | `structural` | Changes the shape of the system. |
-| 11px ring | `reversal` | Undoes a previous call. |
+An earlier version encoded quality as a dot: size for weight, a ring for
+reversal. It read well and it was wrong for this page. A dot copies as nothing,
+so selecting a row and pasting it elsewhere silently dropped the weight of the
+change — on a document whose entire purpose is that the reasoning survives being
+moved around. Words survive the clipboard.
 
-`reversal` is the load-bearing value: it is the one that stops a mistake being
-repeated. It is the only quality also named in text on the collapsed row.
+| Value | Shown as |
+|---|---|
+| `minor` | Minor |
+| `notable` | Notable |
+| `structural` | Structural |
+| `reversal` | **Reversal** — brand colour and semibold on the word itself |
+
+Capitalisation lives in the markup rather than in `text-transform`, because a
+copy takes the source text and a CSS-only capital pastes back lowercase.
+
+`reversal` is still the load-bearing value. It is emphasised by weight and colour
+on the word, not by a mark beside it.
 
 ### Order and focus
 

@@ -15,16 +15,16 @@ Each entry carries one metadata line:
 `date` · `area` · `attribution` · `quality` · `commit`
 ```
 
-**Quality** is the weight of the change — one dot in the timeline. `reversal` is
-the one that matters most: it means this was already tried the other way, and
-the entry says why it didn't hold.
+**Quality** is the weight of the change. `reversal` is the one that matters most:
+it means this was already tried the other way, and the entry says why it didn't
+hold.
 
-| | | |
-|---|---|---|
-| · | `minor` | A refinement inside an existing decision. |
-| • | `notable` | A new role, component, or constraint. |
-| ⬤ | `structural` | Changes the shape of the system. |
-| ◎ | `reversal` | Undoes a previous call. **Read before re-deciding.** |
+| | |
+|---|---|
+| `minor` | A refinement inside an existing decision. |
+| `notable` | A new role, component, or constraint. |
+| `structural` | Changes the shape of the system. |
+| `reversal` | Undoes a previous call. **Read before re-deciding.** |
 
 **Who decided** — a human, a measurement, or the AI:
 
