@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="theme-portfolio emph-plain">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design System Tools — Matthew Lew</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-system/dist/apca-palette.css">
+  <link rel="stylesheet" href="design-system/dist/lds.css">
+  <link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
+
   <style>
     :root {
-      --bg:      #FFFFFF;
-      --bg-soft: #F6F6F4;
-      --paper:   #F5F0E8;
-      --ink:     #0A0A0A;
-      --ink-2:   #5C5C5A;
-      --ink-3:   #B5B5B2;
-      --rule:    #D8D8D5;
-      --red:     #C8391B;
-      --font-display: 'Bricolage Grotesque', 'DM Sans', 'Helvetica Neue', sans-serif;
-      --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
-      --font-mono:    'Space Mono', 'Courier New', monospace;
+      --bg: var(--background);
+      --bg-soft: var(--grey-100);
+      --paper: var(--c-50);
+      --ink: var(--grey-900);
+      --ink-2: var(--grey-600);
+      --ink-3: var(--grey-400);
+      --rule: var(--grey-300);
+      --red: var(--c-600);
+      --font-display: var(--th-display);
+      --font-body: var(--th-body);
+      --font-mono: var(--th-mono);
       --nav-h: 48px;
     }
 
@@ -191,19 +195,19 @@
           <tbody>
             <tr>
               <td>Typography</td>
-              <td>'DM Sans', 16px, 400</td>
+              <td>'Spectral', 16px, 400</td>
               <td class="drift-val">'Inter', 15px, 500</td>
               <td class="drift-val">High (Drift)</td>
             </tr>
             <tr>
               <td>Primary Color</td>
-              <td>#C8391B</td>
-              <td>#C8391B</td>
+              <td>#973A0D</td>
+              <td>#973A0D</td>
               <td>None</td>
             </tr>
             <tr>
               <td>Border Radius</td>
-              <td>0px</td>
+              <td>18px</td>
               <td class="drift-val">4px, 8px</td>
               <td class="drift-val">Med (Local Override)</td>
             </tr>

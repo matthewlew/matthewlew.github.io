@@ -1,23 +1,28 @@
+<html lang="en" class="theme-portfolio emph-plain">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Matthew Lew — Personal brand system. Color, type, mark, and rules. The system is the statement.">
 <title>Matthew Lew — Brand System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500;1,9..40,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500;1,9..40,600&family=Space+Mono:wght@400;700&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system/dist/apca-palette.css">
+<link rel="stylesheet" href="design-system/dist/lds.css">
+<link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
+
 <style>
   :root {
-    --bg:      #FFFFFF;
-    --bg-soft: #F6F6F4;
-    --paper:   #F5F0E8;
-    --ink:     #0A0A0A;
-    --ink-2:   #5C5C5A;
-    --ink-3:   #B5B5B2;
-    --rule:    #D8D8D5;
-    --red:     #C8391B;
-    --font-display: 'DM Sans', 'Helvetica Neue', sans-serif;
-    --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
-    --font-mono:    'Space Mono', 'Courier New', monospace;
+    --bg: var(--background);
+    --bg-soft: var(--grey-100);
+    --paper: var(--c-50);
+    --ink: var(--grey-900);
+    --ink-2: var(--grey-600);
+    --ink-3: var(--grey-400);
+    --rule: var(--grey-300);
+    --red: var(--c-600);
+    --font-display: var(--th-display);
+    --font-body: var(--th-body);
+    --font-mono: var(--th-mono);
     --nav-h: 48px;
   }
 
@@ -279,7 +284,7 @@
     .marquee-track { animation: none; }
     html { scroll-behavior: auto; }
   }
-  /* DM Sans display weight — headings hold up without a serif */
+  /* Display weight — headings hold up without a serif */
   .nav-name, .section-title, .hero-title, .spec .display,
   .type-scale td.sample, .mark .glyph, .biz .b-name, .sys-name,
   .marquee-track { font-weight: 600; letter-spacing: -0.02em; }
@@ -318,37 +323,37 @@
   <div class="section-header"><span>Color Tokens</span><span class="num">01 / 06</span></div>
   <div class="section-title-row"><h2 class="section-title">Color.</h2></div>
   <div class="color-grid">
-    <div class="swatch">
-      <div class="chip" style="background:#FFFFFF;"></div>
-      <div class="meta"><div class="name">Background</div><div class="tok">--bg</div><div class="hex">#FFFFFF</div></div>
+    <div class="swatch" data-token="--bg">
+      <div class="chip" style="background:var(--bg);"></div>
+      <div class="meta"><div class="name">Background</div><div class="tok">--bg</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#F6F6F4;"></div>
-      <div class="meta"><div class="name">Surface Soft</div><div class="tok">--bg-soft</div><div class="hex">#F6F6F4</div></div>
+    <div class="swatch" data-token="--bg-soft">
+      <div class="chip" style="background:var(--bg-soft);"></div>
+      <div class="meta"><div class="name">Surface Soft</div><div class="tok">--bg-soft</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#F5F0E8;"></div>
-      <div class="meta"><div class="name">Paper (Card)</div><div class="tok">--paper</div><div class="hex">#F5F0E8</div></div>
+    <div class="swatch" data-token="--paper">
+      <div class="chip" style="background:var(--paper);"></div>
+      <div class="meta"><div class="name">Paper (Card)</div><div class="tok">--paper</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#0A0A0A;"></div>
-      <div class="meta"><div class="name">Ink</div><div class="tok">--ink</div><div class="hex">#0A0A0A</div></div>
+    <div class="swatch" data-token="--ink">
+      <div class="chip" style="background:var(--ink);"></div>
+      <div class="meta"><div class="name">Ink</div><div class="tok">--ink</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#5C5C5A;"></div>
-      <div class="meta"><div class="name">Ink Secondary</div><div class="tok">--ink-2</div><div class="hex">#5C5C5A</div></div>
+    <div class="swatch" data-token="--ink-2">
+      <div class="chip" style="background:var(--ink-2);"></div>
+      <div class="meta"><div class="name">Ink Secondary</div><div class="tok">--ink-2</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#B5B5B2;"></div>
-      <div class="meta"><div class="name">Ink Ghost</div><div class="tok">--ink-3</div><div class="hex">#B5B5B2</div></div>
+    <div class="swatch" data-token="--ink-3">
+      <div class="chip" style="background:var(--ink-3);"></div>
+      <div class="meta"><div class="name">Ink Ghost</div><div class="tok">--ink-3</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#D8D8D5;"></div>
-      <div class="meta"><div class="name">Rule / Divider</div><div class="tok">--rule</div><div class="hex">#D8D8D5</div></div>
+    <div class="swatch" data-token="--rule">
+      <div class="chip" style="background:var(--rule);"></div>
+      <div class="meta"><div class="name">Rule / Divider</div><div class="tok">--rule</div><div class="hex"></div></div>
     </div>
-    <div class="swatch">
-      <div class="chip" style="background:#C8391B;"></div>
-      <div class="meta"><div class="name">Signature Red</div><div class="tok" style="color:var(--red);">--red</div><div class="hex">#C8391B</div></div>
+    <div class="swatch" data-token="--red">
+      <div class="chip" style="background:var(--red);"></div>
+      <div class="meta"><div class="name">Signature Red</div><div class="tok" style="color:var(--red);">--red</div><div class="hex"></div></div>
     </div>
   </div>
 </section>
@@ -367,20 +372,20 @@
   <div class="section-title-row"><h2 class="section-title">Type.</h2></div>
   <div class="type-specimen">
     <div class="spec">
-      <div class="lbl">Display<br><span class="r">DM Sans*</span><br>Aa — Semibold</div>
+      <div class="lbl">Display<br><span class="r"><span data-font="--th-display"></span>*</span><br>Aa — Semibold</div>
       <div class="display">The system is the statement</div>
     </div>
     <div class="spec">
-      <div class="lbl">Display Italic<br><span class="r">DM Sans*</span><br>Aa — Italic</div>
+      <div class="lbl">Display Italic<br><span class="r"><span data-font="--th-display"></span>*</span><br>Aa — Italic</div>
       <div class="display it">Declared, not drawn</div>
     </div>
     <div class="spec">
-      <div class="lbl">Body<br>DM Sans<br>Aa — 300 / 400</div>
+      <div class="lbl">Body<br><span data-font="--th-body"></span><br>Aa — 300 / 400</div>
       <div class="sans"><span class="sans-light">Machine-readable design systems</span> humans &amp; agents can use.</div>
     </div>
     <div class="spec">
-      <div class="lbl">Mono<br>Space Mono<br>metadata · tokens · code</div>
-      <div class="mono">--red: #C8391B; // signature accent</div>
+      <div class="lbl">Mono<br><span data-font="--th-mono"></span><br>metadata · tokens · code</div>
+      <div class="mono"><span data-token-line="--red"></span> // signature accent</div>
     </div>
   </div>
   <div class="type-scale">
@@ -464,9 +469,9 @@
     <div class="rule-col do">
       <h3>✓ Do</h3>
       <div class="rule-item"><strong>Let red earn its place</strong>Reserve the signature red for accents — labels, active states, one rule line. Scarcity is the point.</div>
-      <div class="rule-item"><strong>Keep every edge sharp</strong>Zero border-radius. Angular, deliberate, structural — the system has corners.</div>
-      <div class="rule-item"><strong>Separate with 1px rules</strong>Hairlines divide sections. No shadows, no soft cards — structure carries hierarchy.</div>
-      <div class="rule-item"><strong>Set metadata in mono</strong>Dates, tokens, numbers, and labels always use Space Mono. It signals machine-readability.</div>
+      <div class="rule-item"><strong>Let the corner carry the era</strong>Radius is a theme knob, not a constant — this theme runs 18px, and the portfolio ran 0px before it. Components never hardcode one.</div>
+      <div class="rule-item"><strong>Separate by shadow or by rule</strong>Hairlines divide sections; cards lift on a warm, brand-tinted shadow. Card and page sit at the same lightness on purpose.</div>
+      <div class="rule-item"><strong>Set metadata in mono</strong>Dates, tokens, numbers, and labels always use the mono role, <code>--th-mono</code>. It signals machine-readability.</div>
     </div>
     <div class="rule-col dont">
       <h3>✕ Don't</h3>
@@ -520,4 +525,53 @@
     });
   }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
   document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+
+<script>
+// The brand page reports the system rather than restating it. Every swatch and
+// typeface label below is read from the live computed tokens, so this page
+// cannot drift from the theme the way it did when the hexes were typed in by
+// hand — it spent a while showing #C8391B under a --red that had already moved.
+(function () {
+  var cs = getComputedStyle(document.documentElement);
+  var hex = function (c) {
+    var m = c.match(/rgba?\(([^)]+)\)/);
+    if (!m) return c.trim().toUpperCase();
+    var p = m[1].split(',').map(Number);
+    return '#' + p.slice(0, 3).map(function (n) {
+      return ('0' + n.toString(16)).slice(-2);
+    }).join('').toUpperCase();
+  };
+  // Resolve through a probe element: var() chains need computing, not reading.
+  var probe = document.createElement('span');
+  probe.style.display = 'none';
+  document.body.appendChild(probe);
+  var resolve = function (prop, token) {
+    probe.style[prop] = 'var(' + token + ')';
+    var v = getComputedStyle(probe)[prop];
+    probe.style[prop] = '';
+    return v;
+  };
+
+  document.querySelectorAll('.swatch[data-token]').forEach(function (el) {
+    var token = el.getAttribute('data-token');
+    // The chip is painted from the token in the markup, so it survives JS being
+    // off. Only the hex caption needs computing — and if this never runs, the
+    // caption stays empty, which is honest, rather than stale, which is not.
+    el.querySelector('.hex').textContent = hex(resolve('color', token));
+  });
+
+  document.querySelectorAll('[data-font]').forEach(function (el) {
+    // First family in the stack, unquoted.
+    el.textContent = resolve('fontFamily', el.getAttribute('data-font'))
+      .split(',')[0].replace(/["']/g, '');
+  });
+
+  document.querySelectorAll('[data-token-line]').forEach(function (el) {
+    var token = el.getAttribute('data-token-line');
+    el.textContent = token + ': ' + hex(resolve('color', token)) + ';';
+  });
+
+  probe.remove();
+})();
 </script>

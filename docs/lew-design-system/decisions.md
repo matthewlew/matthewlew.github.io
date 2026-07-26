@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 43 decisions: **23 human · 18 measured · 2 ai**.
+The split as it stands, across the 44 decisions: **24 human · 18 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -865,13 +865,15 @@ core would be the better long-term fix.
 
 `2026-07-26` · `themes` · `human` · `reversal` 
 
-`index.html` and `about.html` now alias their eleven private tokens onto LDS —
+All five pages — `index`, `about`, `brand-identity`, `system-ops`, `tools` —
+now alias their eleven private tokens onto LDS —
 `--red: var(--c-600)`, `--ink: var(--grey-900)`, `--font-body: var(--th-body)`
 and so on — with `theme-portfolio emph-plain` on `<html>` so `:root` can resolve
 the emphasis roles.
 
-Before this, `theme-portfolio` appeared **once per page**, on a `<span>` wrapping
-the footer badge. Everything visible ran on a parallel, divergent copy of a
+Before this, `theme-portfolio` appeared **once per page** on two of the five, on
+a `<span>` wrapping the footer badge; the other three did not link `lds.css` at
+all. Everything visible ran on a parallel, divergent copy of a
 design system, while the badge in the corner read "Built on Lew Design System".
 The claim was true of one element on the page.
 
@@ -889,6 +891,37 @@ leaving it and recording the gap, which keeps the badge overstating things.
 `BackCompat`. This change deliberately did not add one, because flipping to
 standards mode carries its own layout risk and deserves its own change. An
 `<html>` tag alone does not affect the mode.
+
+### Documentation pages report the system, they do not restate it
+
+`2026-07-26` · `foundations` · `human` · `notable`
+
+`brand-identity.html` documents the palette and the type stack. Its swatches now
+carry `data-token="--red"` and fill their own hex and typeface labels from the
+live computed values at load.
+
+They used to be typed in. So when the brand moved to terracotta, the page went on
+displaying a chip labelled `--red` with `#C8391B` beside it — a brand page
+asserting a value the brand no longer held. Same for the type specimens, which
+named "DM Sans" and "Space Mono" as content while the tokens resolved to Jost and
+Spectral.
+
+This is the sharpest version of a rule already in the record: a page that
+demonstrates the system must paint from it. Documentation restating values by
+hand is not documentation, it is a second source of truth with no way to notice
+it has diverged.
+
+The same page also stated rules the theme had reversed — "zero border-radius,
+the system has corners" and "no shadows, no soft cards". Both corrected: radius
+is a theme knob that has now run at 0px and 18px, and cards lift on a
+brand-tinted shadow.
+
+**Ruled out:** updating the hexes by hand to the new values, which is what the
+page had already proved does not hold.
+
+**Cost:** the swatches need JS. With scripting off the chips still paint from
+`var(--token)` via CSS, but the hex captions render empty rather than wrong —
+chosen deliberately, since a blank label is honest and a stale one is not.
 
 ### A `data:` URI cannot read a token
 
