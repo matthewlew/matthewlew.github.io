@@ -34,7 +34,7 @@ the entry says why it didn't hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 31 decisions: **18 human · 13 measured · 2 ai**.
+The split as it stands, across the 32 decisions: **18 human · 14 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -367,6 +367,11 @@ the art at all.
 **Ruled out:** the translucent fill, i.e. the standard glass recipe and the
 thing the original `.lds-glass` did.
 
+**Cost:** with no fill at all the stroke had to carry the chip alone at 60%,
+which left the worst-case label at Lc 60.9 — under the body floor. Resolved the
+same day by an *inverse* scrim; the finding above is unchanged, because the
+problem was the scrim's **colour**, not its existence.
+
 ### The stroke is 60%, because 28% measures Lc 0.0
 
 `2026-07-26` · `emphasis` · `measured` · `notable` · `8b47a4a`
@@ -385,6 +390,52 @@ Being 1px, its own effect on the artwork is negligible. That is exactly what
 lets it be strong.
 
 **Ruled out:** 28%, 40% and 50%, each by measurement rather than taste.
+
+**Cost:** superseded the same day — the stroke is now **40%**, see *An inverse
+scrim, not an ink scrim*. The measurement above still explains why a stroke
+carrying the chip *alone* needs 60%; 40% only works because the scrim shares
+edge duty.
+
+### An inverse scrim, not an ink scrim
+
+`2026-07-26` · `emphasis` · `measured` · `notable` · `ce297a8`
+
+`emph-media` regains a scrim — but made of the **opposite** polarity to the ink:
+white behind dark text, black behind white text. Shipped at 25% scrim / 40%
+stroke.
+
+This is a polarity change, **not** a reversal of the no-fill decision. The
+earlier finding stands exactly as written: a scrim made of the *ink* is a dimmer.
+It desaturates the artwork and, because the label is that same colour, eats the
+label's own contrast.
+
+An inverse scrim inverts the second half of that. It still costs saturation, but
+it pushes the backdrop *away* from the ink, so the label gets easier to read
+rather than harder. Measured across ten backdrops — dark through near-white
+through max-chroma primaries:
+
+| scrim | stroke | edge | label | chroma kept |
+|---|---|---|---|---|
+| 0% | 60% | 20.6 | 60.9 | 100% |
+| 15% | 45% | 16.3 | 72.1 | 89% |
+| **25%** | **40%** | **16.2** | **79.2** | **81%** |
+| 30% | 35% | 15.5 | 82.3 | 77% |
+
+25/40 is where the label first clears the Lc 75 body floor while keeping the most
+chroma, and it lets the stroke soften from 60% to 40%.
+
+`--media-scrim` defaults to `transparent`, degrading to the previous pure-stroke
+behaviour, because no single colour is correct for both polarities. The
+`--on-dark`/`--on-light` helpers set the matching pair, and `mediaInkOn()` in
+`lew-design-system/ink` now returns `{ ink, scrim }` so sampling stays one call.
+
+**Ruled out:** stroke-only at 60%, which was shipped hours earlier — its
+worst-case label lands at Lc 60.9 and misses the Lc 75 body floor. Also ruled
+out again, on the same evidence as before: a scrim made of the ink.
+
+**Cost:** ~19% of the artwork's chroma under the chip, bought for +18 Lc of
+label legibility and a visibly softer edge. Stated explicitly in the source
+because for a gradient tool it is a real price, not a free win.
 
 ### `backdrop-filter: saturate()` rejected as the default
 
