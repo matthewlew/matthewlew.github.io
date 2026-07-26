@@ -20,6 +20,10 @@
   "exports": {
     ".": "./design-system/dist/lds.css",
     "./lds.css": "./design-system/dist/lds.css",
+    "./ink": {
+      "types": "./design-system/dist/lds-ink.d.mts",
+      "default": "./design-system/dist/lds-ink.mjs"
+    },
     "./hues.css": "./design-system/dist/apca-palette.css",
     "./themes/*.css": "./design-system/dist/themes/*.css",
     "./icons.svg": "./design-system/dist/icons.svg",
