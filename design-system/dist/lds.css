@@ -335,7 +335,7 @@
   border:1px solid var(--border);
   border-radius:var(--radius-lg);
   padding:calc(20px * var(--density));
-  box-shadow:var(--card-shadow,none);
+  box-shadow:var(--shadow-base,var(--card-shadow,none));
 }
 .lds-card__kicker{font-family:var(--th-mono);font-size:var(--text-caption);font-weight:700;letter-spacing:var(--tracking-widest);text-transform:uppercase;color:var(--text-accent);}
 .lds-card__title{font-family:var(--th-display);font-weight:var(--weight-medium);font-size:var(--text-title);line-height:var(--leading-title);color:var(--text);margin:8px 0 6px;letter-spacing:var(--tracking-title);}
@@ -510,7 +510,7 @@
   display:flex;align-items:center;gap:18px;
   padding:12px 16px;border:1px solid var(--border);
   border-radius:var(--radius-lg);
-  background:var(--background);box-shadow:var(--card-shadow,none);
+  background:var(--background);box-shadow:var(--shadow-base,var(--card-shadow,none));
 }
 .lds-nav__logo{font-family:var(--th-display);font-weight:var(--weight-medium);font-size:var(--text-subhead);letter-spacing:var(--tracking-subhead);color:var(--text);}
 .lds-nav__logo b{color:var(--text-accent);font-weight:inherit;}
@@ -524,7 +524,7 @@
 .lds-modal{
   background:var(--background);color:var(--text);
   border:1px solid var(--border);border-radius:var(--radius-lg);
-  box-shadow:var(--card-shadow,0 20px 50px rgba(0,0,0,.25));
+  box-shadow:var(--shadow-lg,var(--card-shadow,0 20px 50px rgba(0,0,0,.25)));
   padding:calc(22px * var(--density));max-width:420px;width:100%;
 }
 .lds-modal__title{font-family:var(--th-display);font-size:var(--text-subhead);font-weight:var(--weight-medium);margin-bottom:8px;line-height:var(--leading-subhead);letter-spacing:var(--tracking-subhead);}
@@ -544,7 +544,7 @@
   background:var(--glass-bg,rgba(255,255,255,.14));
   backdrop-filter:blur(var(--glass-blur,14px));-webkit-backdrop-filter:blur(var(--glass-blur,14px));
   border:1px solid var(--glass-border,rgba(255,255,255,.28));
-  box-shadow:var(--card-shadow,0 8px 24px rgba(0,0,0,.22));
+  box-shadow:var(--shadow-base,var(--card-shadow,0 8px 24px rgba(0,0,0,.22)));
 }
 
 /* ==========================================================================

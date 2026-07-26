@@ -644,6 +644,39 @@ surrounding container to help the user aim.
 **Ruled out:** hardcoding 44px in components. It would be correct today and
 unraisable by a theme that needs more.
 
+### Elevation is three steps, not one
+
+`2026-07-26` · `geometry` · `measured` · `notable` · `f6d3373`
+
+`--shadow-sm`, `--shadow-base`, `--shadow-lg`. Themes define all three;
+`--card-shadow` survives as an alias for base.
+
+LDS shipped exactly two shadow tokens, `--card-shadow` and `--btn-shadow`, and
+that turned out to be a defect rather than a simplification. `.lds-modal` and
+`.lds-glass` were written wanting deeper elevation than a card — they carried
+`0 20px 50px` and `0 8px 24px` fallbacks to say so — but the fallback only fires
+when the theme is silent. **Every theme defines `--card-shadow`, so every theme
+silently flattened its modals onto card elevation.** The intent was in the
+stylesheet and unreachable in practice.
+
+`palette` found it, and `palette` also supplied the scale. Its 16 hand-written
+box-shadows collapse onto three geometries that were already there, drifting
+only in alpha — `0 2px 8px` at .20–.30 (thumbs, chips, the tab switcher),
+`0 4px 16px` at .18–.35 (cards and floating pills), `0 12px 32px` (modals). Three
+steps because three is what the components reached for on their own.
+
+**Ruled out:** a full 5- or 6-step elevation ramp of the kind most systems ship.
+Nothing in three consumers wanted a fourth step, and the unused steps would have
+been invented rather than measured — which is how a scale stops meaning anything.
+
+Also ruled out: fixing this by deleting `--card-shadow`. Themes and consumers
+already reference it, and an alias costs nothing.
+
+**Cost:** components now read `var(--shadow-lg, var(--card-shadow, …))`, a
+two-deep fallback. That is the price of staying backwards-compatible with a
+theme that defines only `--card-shadow` — such a theme behaves exactly as it did
+before, which is the point.
+
 ---
 
 ## 7. Themes

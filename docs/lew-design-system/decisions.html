@@ -3,7 +3,7 @@
 <title>LDS — decisions and why</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../design-system/dist/apca-palette.css">
 <link rel="stylesheet" href="../../design-system/dist/lds.css">
 <link rel="stylesheet" href="../../design-system/dist/themes/portfolio.css">
@@ -17,8 +17,10 @@ body{
 }
 .wrap{max-width:880px;margin:0 auto}
 
-h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leading-none);
-   letter-spacing:var(--tracking-tighter);margin:0 0 var(--space-3);font-weight:var(--weight-semibold)}
+/* The whole composite, not a raw size: --text-title also carries the theme's
+   leading and tracking, so changing the theme moves all three together. */
+h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--leading-title);
+   letter-spacing:var(--tracking-title);margin:0 0 var(--space-3);font-weight:var(--weight-semibold)}
 .lede{max-width:64ch;color:var(--grey-700);margin:0 0 var(--space-5)}
 .lede a{color:var(--c-600)}
 
@@ -34,7 +36,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 
 /* ---- who decided. The word always carries it; fill and border only reinforce,
        so it survives greyscale and colour-blindness. ---- */
-.who{font-family:var(--th-mono);font-size:var(--size-0);line-height:1.5;
+.who{font-family:var(--th-mono);font-size:var(--text-caption);line-height:1.5;
      padding:1px 7px;border-radius:var(--pill);border:1px solid;white-space:nowrap}
 .w-human{background:var(--grey-800);color:#fff;border-color:var(--grey-800)}
 .w-measured{background:var(--background);color:var(--grey-700);border-color:var(--grey-400)}
@@ -44,7 +46,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .legend{padding:var(--space-3) 0 var(--space-5);border-bottom:1px solid var(--border);
         margin-bottom:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
 .lrow{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-5);
-      font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-600)}
+      font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-600)}
 .lrow > span{display:flex;align-items:center;gap:var(--space-2)}
 /* :not(.who) — otherwise this beats .w-human on specificity and paints the
    white badge label grey-on-grey, i.e. invisible. */
@@ -55,10 +57,10 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
    mid-line and the whole control reads as one undifferentiated pile of chips. */
 .filters{display:flex;flex-direction:column;gap:var(--space-2);margin:0 0 var(--space-6)}
 .fgrp{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
-.grp{font-family:var(--th-mono);font-size:var(--size-0);text-transform:uppercase;
+.grp{font-family:var(--th-mono);font-size:var(--text-caption);text-transform:uppercase;
      letter-spacing:var(--tracking-wide);color:var(--grey-500);
      flex:0 0 84px}
-.f{font:inherit;font-size:var(--size-1);cursor:pointer;border:1px solid var(--border);
+.f{font:inherit;font-size:var(--text-caption);cursor:pointer;border:1px solid var(--border);
    background:var(--background);color:var(--grey-800);border-radius:var(--pill);
    padding:var(--space-1) var(--space-3);min-height:0;display:inline-flex;align-items:center;gap:6px}
 .f:hover{background:var(--grey-100)}
@@ -67,7 +69,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .f[aria-pressed=true] .dot.q-reversal i{background:transparent;border-color:#fff}
 .f .who{pointer-events:none}
 .f[aria-pressed=true] .who{background:transparent;color:#fff;border-color:#fff}
-.count{font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500);margin-left:var(--space-2)}
+.count{font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-500);margin-left:var(--space-2)}
 
 /* ---- timeline ---- */
 .day{display:grid;grid-template-columns:78px 1fr;gap:var(--space-5);align-items:start}
@@ -76,15 +78,15 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
              width:1px;background:var(--grey-300)}
 .node{position:absolute;right:-4px;top:6px;width:7px;height:7px;border-radius:50%;
       background:var(--grey-400);border:2px solid var(--grey-50)}
-.offset{font-family:var(--th-mono);font-size:var(--size-1);font-weight:var(--weight-medium);
+.offset{font-family:var(--th-mono);font-size:var(--text-caption);font-weight:var(--weight-medium);
         display:block;padding-right:var(--space-4)}
-.date{font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500);
+.date{font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-500);
       display:block;padding-right:var(--space-4)}
 .stack{padding-bottom:var(--space-6);min-width:0}
-.gap{grid-column:2;font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-400);
+.gap{grid-column:2;font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-400);
      padding:0 0 var(--space-6);letter-spacing:var(--tracking-wide)}
 #earlier[hidden]{display:none}
-.more{font:inherit;font-size:var(--size-1);font-family:var(--th-mono);cursor:pointer;
+.more{font:inherit;font-size:var(--text-caption);font-family:var(--th-mono);cursor:pointer;
       background:none;border:1px dashed var(--grey-300);border-radius:var(--radius);
       color:var(--grey-600);padding:var(--space-2) var(--space-4);margin:0 0 var(--space-6)}
 .more:hover{background:var(--background);color:var(--grey-900)}
@@ -107,7 +109,7 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .entry > summary:focus-visible{outline:2px solid var(--c-600);outline-offset:2px}
 .claim{font-weight:var(--weight-medium);flex:1 1 auto;min-width:0}
 .tags{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);
-      font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500)}
+      font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-500)}
 .tags .rev{color:var(--c-600);font-weight:var(--weight-medium)}
 .tags .sec{color:var(--grey-600);white-space:nowrap}
 .body{padding:0 0 var(--space-5) 26px;max-width:66ch}
@@ -119,29 +121,29 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
            border-radius:var(--radius-sm);padding:1px 5px}
 .body pre{background:var(--grey-100);border-radius:var(--radius-sm);
           padding:var(--space-3) var(--space-4);overflow-x:auto;margin:0 0 var(--space-3)}
-.body pre code{background:none;padding:0;font-size:var(--size-1)}
-.body table{border-collapse:collapse;font-family:var(--th-mono);font-size:var(--size-0);
+.body pre code{background:none;padding:0;font-size:var(--text-caption)}
+.body table{border-collapse:collapse;font-family:var(--th-mono);font-size:var(--text-caption);
             margin:0 0 var(--space-3);display:block;overflow-x:auto;white-space:nowrap}
 .body th,.body td{border:1px solid var(--border);padding:3px 7px;text-align:left}
 .body th{background:var(--grey-100);font-weight:var(--weight-medium)}
 .ruled,.cost{border-left:2px solid var(--grey-300);padding-left:var(--space-4);margin:0 0 var(--space-3)}
 .ruled{border-left-color:var(--c-400)}
-.ruled b,.cost b{font-family:var(--th-mono);font-size:var(--size-0);text-transform:uppercase;
+.ruled b,.cost b{font-family:var(--th-mono);font-size:var(--text-caption);text-transform:uppercase;
                  letter-spacing:var(--tracking-wide);display:block;margin-bottom:2px}
 .ruled b{color:var(--c-600)}
 .cost b{color:var(--grey-600)}
-.src{font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500)}
+.src{font-family:var(--th-mono);font-size:var(--text-caption);color:var(--grey-500)}
 .src a{color:var(--c-600)}
 
 .pre{margin:var(--space-6) 0 0;padding-top:var(--space-5);border-top:1px solid var(--border)}
-.pre-h{font-family:var(--th-mono);font-size:var(--size-0);text-transform:uppercase;
+.pre-h{font-family:var(--th-mono);font-size:var(--text-caption);text-transform:uppercase;
        letter-spacing:var(--tracking-wide);color:var(--grey-500);margin:0 0 var(--space-2)}
 
 .warn{border:1px solid #F5C4BD;background:#FDECEA;color:#8A1C10;border-radius:var(--radius);
-      padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);font-size:var(--size-1)}
+      padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);font-size:var(--text-caption)}
 .warn code{font-family:var(--th-mono)}
 #status{padding:var(--space-5);border:1px solid var(--border);border-radius:var(--radius);
-        font-size:var(--size-2);color:var(--grey-700)}
+        font-size:var(--text-body);color:var(--grey-700)}
 #status a{color:var(--c-600)}
 
 @media(max-width:700px){

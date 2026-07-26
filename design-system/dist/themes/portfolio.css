@@ -42,22 +42,33 @@
   --grey-400:#B5ABA4; --grey-500:#908780; --grey-600:#726963; --grey-700:#534D48;
   --grey-800:#37322E; --grey-900:#1F1B19; --grey-950:#100E0C;
 
-  /* ---- knob 2: typography ----
-     Jost is a Futura revival — the geometric sans of the period, circular
-     bowls and a single-storey 'a'. It is what makes this read midcentury
-     rather than merely rounded.
+  /* ---- knob 2: typography — geometric sans heads, serif text ----
+     Three families, one job each.
 
-     Body moves 13px -> 16px. Butterick puts web body text at 15-25px, so the
-     old scale started under the floor; that alone accounted for much of the
-     flatness. Leading stays at 140%, inside his 120-145%.
+     DISPLAY is Jost, a Futura revival: circular bowls, single-storey 'a'. It
+     is what makes headings read midcentury rather than merely rounded.
 
-     DM Mono replaces Space Mono for the machine-readable role: rounded
-     terminals and low stroke contrast, so it sits with a geometric sans
-     instead of fighting it. Butterick would drop the mono entirely — the role
-     is a deliberate exception, kept because the typeface carries meaning here
-     (dates, tokens, hashes) rather than mood.                              */
+     BODY is Spectral, and this is the split that matters. A geometric sans is
+     a poster face — it sets a headline well and reads technical the moment you
+     ask it to carry a paragraph. Spectral is drawn for screen text: low stroke
+     contrast, sturdy at 16px, and quiet enough to disappear behind the prose.
+     It is the closest free equivalent in ROLE to the Equity that Butterick
+     sets his own body text in.
+
+     Sans heads over serif text is not a compromise between the two — it is a
+     period pattern in its own right, the standard midcentury magazine
+     arrangement.
+
+     Body stays 16px. Butterick puts web body text at 15-25px; the old theme
+     started at 13px, under the floor. Leading stays at 140%, inside his
+     120-145%.
+
+     MONO is DM Mono: rounded terminals, low contrast, so it sits with the
+     other two instead of fighting them. Butterick would drop mono entirely —
+     the role is a deliberate exception, kept because the typeface carries
+     meaning here (dates, tokens, hashes) rather than mood.                 */
   --th-display:'Jost','Futura','Century Gothic',system-ui,sans-serif;
-  --th-body:'Jost','Futura','Century Gothic',system-ui,sans-serif;
+  --th-body:'Spectral','Iowan Old Style','Georgia',serif;
   --th-mono:'DM Mono','SFMono-Regular',ui-monospace,monospace;
 
   --text-caption: var(--size-1);  /* 12 */
@@ -65,8 +76,10 @@
   --text-subhead: var(--size-6);  /* 24 */
   --text-title:   var(--size-8);  /* 44 */
 
-  /* Jost runs geometric and a little narrow: small text wants air, display
-     wants none. */
+  /* Tracking follows the family, not the size. Spectral is a text serif and is
+     already correctly fitted — added tracking only loosens it, so body sits at
+     normal. Jost is geometric and sets tight at display sizes. Captions are
+     mono, which wants air to stay scannable. */
   --leading-caption: var(--leading-normal); --tracking-caption: var(--tracking-wide);
   --leading-body:    var(--leading-normal); --tracking-body:    var(--tracking-normal);
   --leading-subhead: var(--leading-tight);  --tracking-subhead: var(--tracking-tight);
@@ -88,10 +101,20 @@
 
      Tinted with the brand's own dark step rather than neutral black: a grey
      shadow over warm paper turns it muddy.                                 */
-  --card-shadow:
+  --shadow-sm:
+    0 1px 2px rgba(87,29,2,.05),
+    0 4px 10px -4px rgba(87,29,2,.08);
+  --shadow-base:
     0 1px 2px rgba(87,29,2,.05),
     0 8px 20px -6px rgba(87,29,2,.10),
     0 24px 48px -16px rgba(87,29,2,.12);
+  /* A modal has to clear a page that already has soft shadows everywhere, so
+     it goes deeper rather than just bigger. */
+  --shadow-lg:
+    0 2px 4px rgba(87,29,2,.06),
+    0 16px 32px -8px rgba(87,29,2,.14),
+    0 40px 72px -24px rgba(87,29,2,.18);
+  --card-shadow:var(--shadow-base);
   --btn-shadow:
     0 1px 2px rgba(87,29,2,.10),
     0 3px 8px -3px rgba(87,29,2,.14);

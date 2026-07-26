@@ -9,6 +9,16 @@
       ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "palette",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/matthewlewair/Documents/palette && npm run dev -- --port 5173 --strictPort"
+      ],
+      "port": 5173,
+      "autoPort": false
     }
   ]
 }

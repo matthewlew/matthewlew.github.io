@@ -59,9 +59,23 @@
   --radius:var(--radius-base);
 
   /* ---- Elevation ----
-     Matched to palette's real .glass-surface recipe. Floating chrome sits on
-     artwork, so shadows stay tight — a large soft shadow muddies a gradient. */
-  --card-shadow:0 4px 16px rgba(0,0,0,.25);
+     Floating chrome sits on artwork, so shadows stay tight — a large soft
+     shadow muddies a gradient.
+
+     Three steps, measured from palette's own CSS rather than invented. Its 16
+     box-shadows collapse onto three geometries that were already there, each
+     drifting in alpha only (sm ran .20–.30, base .18–.35):
+
+       sm    0 2px 8px    4 uses — thumbs, chips, the tab switcher
+       base  0 4px 16px   5 uses — cards and floating pills (was --card-shadow)
+       lg    0 12px 32px  2 uses — modals, which must clear everything
+
+     --card-shadow stays as the alias .lds-card and .lds-nav were written
+     against; it is now just another name for base. */
+  --shadow-sm:0 2px 8px rgba(0,0,0,.25);
+  --shadow-base:0 4px 16px rgba(0,0,0,.25);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.45);
+  --card-shadow:var(--shadow-base);
   --btn-shadow:none;
 
   /* ---- Motion ----
