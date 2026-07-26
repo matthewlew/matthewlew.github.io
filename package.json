@@ -1,7 +1,7 @@
 {
   "name": "lew-design-system",
-  "version": "1.0.0",
-  "description": "Lew Design System — primitives, One Token semantics, and components as plain CSS.",
+  "version": "1.4.0",
+  "description": "Lew Design System \u2014 primitives, One Token semantics, and components as plain CSS.",
   "license": "MIT",
   "author": "Matthew Lew",
   "repository": {
@@ -10,8 +10,16 @@
     "directory": "design-system"
   },
   "homepage": "https://matthewlew.github.io/design-system/",
-  "keywords": ["design-system", "css", "design-tokens", "one-token", "apca"],
-  "sideEffects": ["*.css"],
+  "keywords": [
+    "design-system",
+    "css",
+    "design-tokens",
+    "one-token",
+    "apca"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
   "files": [
     "design-system/dist",
     "design-system/tokens.json",
