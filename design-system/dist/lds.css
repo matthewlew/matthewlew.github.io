@@ -19,6 +19,12 @@
 
   --weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;
   --ease-standard:cubic-bezier(.2,.8,.2,1);--dur-fast:120ms;--dur-base:180ms;
+  /* --dur-slow + --ease-decelerate cover the large-object case: sheets, drawers
+     and view-transition groups, where the standard 180ms ease lands too abrupt.
+     Contributed up from palette, which drives every view-transition group off
+     this pair — mismatched easing between a resizing card and a sliding sheet
+     reads as jank even at full frame rate. */
+  --dur-slow:320ms;--ease-decelerate:cubic-bezier(.22,1,.36,1);
 
   /* ---- Brand Expression Levers ---- */
   /* typography primitives */
@@ -38,12 +44,17 @@
   --text-title: var(--size-6); --leading-title: var(--leading-none); --tracking-title: var(--tracking-tighter);
 
   /* radius */
-  --radius-sm: 4px; --radius-base: 8px; --radius-lg: 12px; --radius-pill: 999px;
+  --radius-sm: 4px; --radius-base: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-pill: 999px;
   --radius: var(--radius-base);
   --pill: var(--radius-pill);
 
   /* density multiplier */
   --density: 1;
+
+  /* minimum interactive target. Themes may raise it (palette uses 44px for
+     chrome that sits over artwork); components should never hardcode a size
+     below it. */
+  --target-min: 44px;
 
   /* iconography */
   --icon-size: 20px;
@@ -85,6 +96,53 @@
    pages: intentionally inverted to a near-white surface. Maximum contrast. */
 .emph-stark {--background:var(--c-800);--text:#FFFFFF;--text-accent:var(--c-100);--text-subdued:var(--c-300);--icon:var(--c-200);--border:var(--c-700);--border-subdued:var(--c-600);--bg-hover:var(--c-700);--bg-pressed:var(--c-900);}
 .mode-dark.emph-stark, .mode-dark .emph-stark {--background:var(--grey-50);--text:var(--grey-900);--text-accent:var(--c-600);--text-subdued:var(--grey-600);--icon:var(--grey-500);--border:var(--grey-200);--border-subdued:var(--grey-100);--bg-hover:var(--grey-100);--bg-pressed:var(--grey-200);}
+
+/* MEDIA — the on-artwork role. Every emphasis above resolves against a surface
+   colour known at author time. This one does not: it is for chrome that sits on
+   a photo, video, album art, or a generated gradient, where the backdrop is
+   decided at runtime and changes as the user scrolls.
+
+   The whole role derives from `currentColor`, so the CONSUMER owns exactly one
+   decision — what the ink should be — and every other role follows. Set it and
+   the surface, border, hover and pressed states all fall out:
+
+       <div class="lds-card emph-media" style="color:#fff">
+
+   The mix percentages are palette's shipped .ghost-chip values, which have been
+   in production over arbitrary user gradients.
+
+   CHOOSING the ink is deliberately out of scope here. That is a sampling
+   problem (read the backdrop at the element's position, pick the most legible
+   ink), and it is where the unresolved contrast question lives: palette
+   enforces WCAG 4.5:1, LDS standardises on APCA Lc, and the two disagree
+   precisely in the mid-tones where gradients sit. Until that is settled, LDS
+   ships the half that needs no threshold and leaves the ink to the consumer —
+   see docs/lew-design-system/palette-adoption-delta.md. The two --on-* helpers
+   below cover the common static cases without any sampling at all. */
+.emph-media{
+  --text:currentColor;
+  --text-accent:currentColor;
+  --icon:currentColor;
+  --text-subdued:color-mix(in srgb,currentColor 70%,transparent);
+  --background:color-mix(in srgb,currentColor 10%,transparent);
+  --bg-hover:color-mix(in srgb,currentColor 18%,transparent);
+  --bg-pressed:color-mix(in srgb,currentColor 24%,transparent);
+  --border:color-mix(in srgb,currentColor 28%,transparent);
+  --border-subdued:color-mix(in srgb,currentColor 14%,transparent);
+  /* glass-specific aliases. .lds-glass reads THESE rather than --background, so
+     that it stays translucent inside a normal emphasis context — reading the
+     inherited --background would turn it opaque white inside any .emph-plain. */
+  --glass-bg:color-mix(in srgb,currentColor 10%,transparent);
+  --glass-border:color-mix(in srgb,currentColor 28%,transparent);
+}
+/* Media chrome is backdrop-relative, not mode-relative, so .mode-dark must NOT
+   flip it — a white pill over a bright photo stays wrong in either mode. The
+   role is intentionally identical in both; the ink is what changes. */
+
+/* Static ink for backdrops you already know the tone of (a dark hero image, a
+   light product shot). Skips sampling entirely. */
+.emph-media--on-dark{color:#FFFFFF;}
+.emph-media--on-light{color:var(--grey-900);}
 
 /* semantic banner shortcuts (fixed hues regardless of theme brand) */
 .banner-success{--background:#E7F6EC;--text:#0B5A26;--border:#B7E4C6;--icon:#0B5A26;}
@@ -154,6 +212,11 @@
 
 .lds-btn--sm{font-size:calc(var(--size-1) * var(--density));padding:calc(6px * var(--density)) calc(12px * var(--density));}
 
+/* icon-only — drops the horizontal padding so the button is square at exactly
+   --target-min. Without this an icon button inherits the label padding and
+   comes out oblong. Give it an accessible name (aria-label / title). */
+.lds-btn--icon{padding:0;min-width:var(--target-min);min-height:var(--target-min);justify-content:center;}
+
 /* Emphasis-driven buttons — the one-token-pure path. A primary button is
    just a strong-emphasis surface: <button class="lds-btn emph-strong">.
    Add emph-subtle/soft/plain/stark to re-tone the same button per object. */
@@ -166,6 +229,17 @@
   background:var(--bg-hover);border-color:transparent;
 }
 .lds-btn.emph-plain:hover{border-color:var(--border);}
+
+/* media buttons keep their border — a translucent fill needs the edge to read
+   as a control at all over busy artwork — and drop the shadow, which muddies
+   the backdrop it floats on. */
+.lds-btn.emph-media{
+  background:var(--background);color:var(--text);border-color:var(--border);
+  box-shadow:none;backdrop-filter:blur(var(--glass-blur,10px));-webkit-backdrop-filter:blur(var(--glass-blur,10px));
+  min-height:var(--target-min);min-width:var(--target-min);
+}
+.lds-btn.emph-media:hover{background:var(--bg-hover);border-color:var(--border);}
+.lds-btn.emph-media:active{background:var(--bg-pressed);}
 
 /* Named button variants — plain-language presets so authors don't touch the
    abstract emphasis/hue layer directly. Each one is literally a hue × emphasis
@@ -269,6 +343,9 @@
 .lds-tag.emph-plain,.lds-tag.emph-subtle,.lds-tag.emph-soft,.lds-tag.emph-strong,.lds-tag.emph-stark{
   background:var(--background);color:var(--text);border-color:transparent;
 }
+/* media tags keep the border, same reasoning as media buttons */
+.lds-tag.emph-media{background:var(--background);color:var(--text);border-color:var(--border);}
+.mode-dark .lds-tag.emph-media{background:var(--background);color:var(--text);border-color:var(--border);}
 /* plain = colored outline: white bg, hue border, hue label (not neutral grey).
    The icon sits one step stronger than the label so it still reads on white. */
 .lds-tag.emph-plain{--icon:var(--c-600);background:#FFFFFF;color:var(--c-800);border-color:var(--c-300);}
@@ -324,6 +401,21 @@
 .lds-chip--selected:hover{background:var(--grey-800);border-color:var(--grey-800);}
 .mode-dark .lds-chip--selected{--icon:var(--grey-900);background:#FFFFFF;color:var(--grey-900);border-color:#FFFFFF;}
 .mode-dark .lds-chip--selected:hover{background:var(--grey-200);border-color:var(--grey-200);}
+/* media chips — the filter row over artwork. --selected steps the same mix up
+   rather than switching to a fixed grey, so the active state stays legible on
+   any backdrop. Beats .mode-dark, which must not touch media chrome. */
+.lds-chip.emph-media,.mode-dark .lds-chip.emph-media{
+  background:var(--background);color:var(--text);border-color:var(--border);
+  backdrop-filter:blur(var(--glass-blur,10px));-webkit-backdrop-filter:blur(var(--glass-blur,10px));
+}
+.lds-chip.emph-media:hover,.mode-dark .lds-chip.emph-media:hover{background:var(--bg-hover);border-color:var(--border);}
+.lds-chip.emph-media:active,.mode-dark .lds-chip.emph-media:active{background:var(--bg-pressed);}
+.lds-chip.emph-media.lds-chip--selected,.mode-dark .lds-chip.emph-media.lds-chip--selected{
+  --icon:currentColor;
+  background:var(--bg-pressed);color:var(--text);
+  border-color:color-mix(in srgb,currentColor 45%,transparent);
+}
+
 /* parts: leading icon, dropdown caret (rotates when open), remove button */
 .lds-chip__icon,.lds-chip__caret,.lds-chip__remove{flex-shrink:0;color:var(--icon);display:inline-flex;align-items:center;justify-content:center;}
 .lds-chip__icon{width:14px;height:14px;}
@@ -390,12 +482,20 @@
 .lds-modal__body{font-family:var(--th-body);font-size:var(--text-body);color:var(--text-subdued);line-height:var(--leading-body);letter-spacing:var(--tracking-body);}
 .lds-modal__actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
 
-/* ---- Glass surface recipe (opt-in, theme sets --surface-glass:1 to enable via .lds-glass) ---- */
+/* ---- Glass surface ----
+   The blur half of media chrome. Paints the .emph-media tokens, so it adapts to
+   whatever ink the consumer set instead of assuming a white knockout — the old
+   fixed rgba(255,255,255,.14) recipe was invisible on a light backdrop.
+
+       <div class="lds-glass emph-media" style="color:#fff">
+
+   Falls back to the white recipe when used without emph-media, so it still does
+   something sensible on its own. --glass-blur is a theme knob. */
 .lds-glass{
-  background:rgba(255,255,255,.14);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.28);
-  box-shadow:0 8px 24px rgba(0,0,0,.22);
+  background:var(--glass-bg,rgba(255,255,255,.14));
+  backdrop-filter:blur(var(--glass-blur,14px));-webkit-backdrop-filter:blur(var(--glass-blur,14px));
+  border:1px solid var(--glass-border,rgba(255,255,255,.28));
+  box-shadow:var(--card-shadow,0 8px 24px rgba(0,0,0,.22));
 }
 
 /* ---- Icon ---- */

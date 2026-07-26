@@ -1,0 +1,137 @@
+<meta charset=utf-8>
+<title>emph-media — chrome on artwork</title>
+<link rel="stylesheet" href="../../design-system/dist/apca-palette.css">
+<link rel="stylesheet" href="../../design-system/dist/lds.css">
+<link rel="stylesheet" href="../../design-system/dist/themes/palette.css">
+<style>
+body{margin:0;font:14px/1.6 system-ui;color:#161616;background:#fbfbfa;padding:30px 28px 80px;max-width:1000px}
+h1{font:600 24px system-ui;margin:0 0 6px}
+h2{font:600 15px system-ui;margin:34px 0 4px;display:flex;align-items:baseline;gap:10px}
+h2 code{font:400 12px ui-monospace;color:#9a9a9a}
+.k{color:#5a5a5a;max-width:700px}
+code.live{background:#f0f0ee;border-radius:5px;padding:1px 6px;font:12px ui-monospace}
+pre{background:#f4f4f2;border-radius:8px;padding:12px 14px;font:12px/1.55 ui-monospace;overflow-x:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+.art{border-radius:16px;padding:20px;min-height:190px;display:flex;flex-direction:column;gap:12px;justify-content:flex-end}
+.art h3{font:600 11px ui-monospace;letter-spacing:.05em;text-transform:uppercase;margin:0;opacity:.75}
+.chrome{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+/* The four backdrops are deliberately extreme: two dark, two light. Nothing
+   below changes per-panel except the ink, set inline on the panel. */
+.a1{background:linear-gradient(135deg,#3b1d5e,#0d0d14 70%)}
+.a2{background:linear-gradient(135deg,#0f3d3a,#101014 70%)}
+.a3{background:linear-gradient(135deg,#ffd9a0,#ffb3c8 70%)}
+.a4{background:linear-gradient(135deg,#dff5c8,#a8e6f0 70%)}
+.note{font:12px ui-monospace;color:#9a9a9a;margin-top:6px}
+.bad{border:1px dashed #d9534f;border-radius:10px;padding:10px;margin-top:10px}
+</style>
+
+<h1><code>emph-media</code> — chrome that sits on artwork</h1>
+<p class=k>
+Every other emphasis in LDS resolves against a surface colour that is known when you write the
+CSS. <b>This one does not.</b> It is for controls layered over a photo, a video still, album art,
+or a generated gradient — surfaces whose colour is decided at runtime and changes as the user
+scrolls.
+</p>
+
+<h2>The whole API is one decision <code>color</code></h2>
+<p class=k>
+Set the ink. Surface, border, hover and pressed states are all <code class=live>color-mix</code>
+derivations of it, so they follow automatically:
+</p>
+<pre>&lt;div class="lds-card emph-media" style="color:#fff"&gt;…&lt;/div&gt;
+
+&lt;button class="lds-btn lds-btn--icon emph-media"&gt;★&lt;/button&gt;
+&lt;button class="lds-chip emph-media lds-chip--selected"&gt;Linear&lt;/button&gt;</pre>
+<p class=k>
+The mix percentages (10% fill, 28% border, 18% hover, 24% pressed) are not invented — they are
+<a href="https://github.com/matthewlew/palette">palette</a>'s shipped <code class=live>.ghost-chip</code>
+values, which have run in production over arbitrary user gradients. An
+<code class=live>emph-media</code> button reproduces that recipe exactly, at the same 44&times;44
+target.
+</p>
+
+<h2>Dark artwork <code>color:#fff</code></h2>
+<div class=two>
+  <div class="art a1" style="color:#fff">
+    <h3>emph-media</h3>
+    <div class=chrome>
+      <button class="lds-btn lds-btn--icon emph-media">★</button>
+      <button class="lds-btn emph-media">Share</button>
+      <span class="lds-chip emph-media">Linear</span>
+      <span class="lds-chip emph-media lds-chip--selected">Mirror</span>
+    </div>
+  </div>
+  <div class="art a2" style="color:#fff">
+    <h3>emph-media</h3>
+    <div class=chrome>
+      <button class="lds-btn lds-btn--icon emph-media">★</button>
+      <button class="lds-btn emph-media">Share</button>
+      <span class="lds-chip emph-media">Linear</span>
+      <span class="lds-chip emph-media lds-chip--selected">Mirror</span>
+    </div>
+  </div>
+</div>
+
+<h2>Light artwork <code>color:var(--grey-900)</code></h2>
+<p class=k>
+Same markup, same classes — only the ink changed. This is the case the old fixed
+<code class=live>.lds-glass</code> recipe could not serve: a white-on-white wash over a bright
+backdrop is invisible.
+</p>
+<div class=two>
+  <div class="art a3 emph-media--on-light">
+    <h3>emph-media</h3>
+    <div class=chrome>
+      <button class="lds-btn lds-btn--icon emph-media">★</button>
+      <button class="lds-btn emph-media">Share</button>
+      <span class="lds-chip emph-media">Linear</span>
+      <span class="lds-chip emph-media lds-chip--selected">Mirror</span>
+    </div>
+  </div>
+  <div class="art a4 emph-media--on-light">
+    <h3>emph-media</h3>
+    <div class=chrome>
+      <button class="lds-btn lds-btn--icon emph-media">★</button>
+      <button class="lds-btn emph-media">Share</button>
+      <span class="lds-chip emph-media">Linear</span>
+      <span class="lds-chip emph-media lds-chip--selected">Mirror</span>
+    </div>
+  </div>
+</div>
+
+<h2>What this replaces</h2>
+<div class="art a3" style="min-height:120px">
+  <div class=bad style="color:#fff">
+    <div class=chrome>
+      <span class=lds-glass style="padding:9px 16px;border-radius:999px;display:inline-flex">Old fixed .lds-glass</span>
+    </div>
+  </div>
+</div>
+<p class=note>
+The previous <code class=live>.lds-glass</code> hardcoded <code>rgba(255,255,255,.14)</code> fill and
+<code>rgba(255,255,255,.28)</code> border, so it dissolved on any light backdrop. It now paints the
+media tokens and adapts, falling back to the old recipe only when used without
+<code class=live>emph-media</code>.
+</p>
+
+<h2>Mode does not flip it</h2>
+<p class=k>
+<code class=live>.mode-dark</code> deliberately has <b>no effect</b> on media chrome. Media chrome is
+backdrop-relative, not mode-relative — a white pill over a bright photo is equally wrong in light
+mode and dark mode. What changes is the ink, and the ink comes from the backdrop.
+</p>
+
+<h2>Choosing the ink is out of scope <span><code>on purpose</code></span></h2>
+<p class=k>
+LDS ships the half that needs no contrast threshold. Picking the ink is a <i>sampling</i> problem —
+read the backdrop at the element's position, choose the most legible foreground — and that is where
+an unresolved question sits: palette enforces <b>WCAG 4.5:1</b>, LDS standardises on <b>APCA Lc</b>,
+and the two disagree precisely in the mid-tones where gradients live. Shipping a sampler before
+settling that would bake the disagreement into the system.
+</p>
+<p class=k>
+Until then: use <code class=live>emph-media--on-dark</code> / <code class=live>emph-media--on-light</code>
+for backdrops whose tone you already know, or set <code class=live>color</code> yourself from your own
+sampler. See <a href="palette-adoption-delta.md">palette-adoption-delta.md</a>.
+</p>

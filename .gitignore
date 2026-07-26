@@ -1,2 +1,6 @@
 .superpowers/
 .DS_Store
+
+# npm — the repo root doubles as the lew-design-system package manifest
+node_modules/
+*.tgz
