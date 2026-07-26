@@ -5,7 +5,7 @@
 <title>Matthew Lew — Brand System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500;1,9..40,600&family=Space+Mono:wght@400;700&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="design-system/dist/apca-palette.css">
 <link rel="stylesheet" href="design-system/dist/lds.css">
 <link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
@@ -468,18 +468,24 @@
   <div class="rules-grid">
     <div class="rule-col do">
       <h3>✓ Do</h3>
-      <div class="rule-item"><strong>Let red earn its place</strong>Reserve the signature red for accents — labels, active states, one rule line. Scarcity is the point.</div>
-      <div class="rule-item"><strong>Let the corner carry the era</strong>Radius is a theme knob, not a constant — this theme runs 18px, and the portfolio ran 0px before it. Components never hardcode one.</div>
-      <div class="rule-item"><strong>Separate by shadow or by rule</strong>Hairlines divide sections; cards lift on a warm, brand-tinted shadow. Card and page sit at the same lightness on purpose.</div>
-      <div class="rule-item"><strong>Set metadata in mono</strong>Dates, tokens, numbers, and labels always use the mono role, <code>--th-mono</code>. It signals machine-readability.</div>
-    </div>
+      <ul class="lds-list emph-plain hue-success">
+      <li class="lds-list__item"><span class="lds-list__title">Let red earn its place</span>Reserve the signature red for accents — labels, active states, one rule line. Scarcity is the point.</li>
+      <li class="lds-list__item"><span class="lds-list__title">Let the corner carry the era</span>Radius is a theme knob, not a constant — this theme runs 18px, and the portfolio ran 0px before it. Components never hardcode one.</li>
+      <li class="lds-list__item"><span class="lds-list__title">Separate by shadow or by rule</span>Hairlines divide sections; cards lift on a warm, brand-tinted shadow. Card and page sit at the same lightness on purpose.</li>
+      <li class="lds-list__item"><span class="lds-list__title">Set metadata in mono</span>Dates, tokens, numbers, and labels always use the mono role, <code>--th-mono</code>. It signals machine-readability.</li>
+    
+      </ul>
+      </div>
     <div class="rule-col dont">
       <h3>✕ Don't</h3>
-      <div class="rule-item"><strong>Don't flood with red</strong>Never use red as a background fill or for body copy. If it feels loud, there's too much.</div>
-      <div class="rule-item"><strong>Don't add shadows or rounding</strong>No drop shadows, no rounded corners, no gradients-as-decoration. It breaks the language.</div>
-      <div class="rule-item"><strong>Don't hardcode values</strong>Never bypass a token with a raw hex. The token is the contract — honor it everywhere.</div>
-      <div class="rule-item"><strong>Don't mix type roles</strong>Display for statements, sans for reading, mono for data. Don't blur the three.</div>
-    </div>
+      <ul class="lds-list emph-plain hue-error">
+      <li class="lds-list__item"><span class="lds-list__title">Don't flood with red</span>Never use red as a background fill or for body copy. If it feels loud, there's too much.</li>
+      <li class="lds-list__item"><span class="lds-list__title">Don't add shadows or rounding</span>No drop shadows, no rounded corners, no gradients-as-decoration. It breaks the language.</li>
+      <li class="lds-list__item"><span class="lds-list__title">Don't hardcode values</span>Never bypass a token with a raw hex. The token is the contract — honor it everywhere.</li>
+      <li class="lds-list__item"><span class="lds-list__title">Don't mix type roles</span>Display for statements, sans for reading, mono for data. Don't blur the three.</li>
+    
+      </ul>
+      </div>
   </div>
 </section>
 

@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 44 decisions: **24 human · 18 measured · 2 ai**.
+The split as it stands, across the 48 decisions: **27 human · 19 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -321,6 +321,55 @@ the semantics.
 ---
 
 ## 3. Emphasis ladder
+
+### `lds-list` — do/don't is a hue, not a variant
+
+`2026-07-26` · `emphasis` · `human` · `notable`
+
+A list component: `.lds-list`, `.lds-list__item`, `.lds-list__title`, plus a
+`--flush` variant for lists inside an already-bordered container.
+
+It replaces three near-identical `.rule-item` implementations across the site,
+each with its own hardcoded greys and its own copy of the layout.
+
+Do and don't are **not** variants. They ride the existing mechanism:
+
+```html
+<ul class="lds-list emph-plain hue-success"> … </ul>
+<ul class="lds-list emph-plain hue-error">   … </ul>
+```
+
+`.lds-list--do` deliberately does not exist. Bespoke colour variants are exactly
+what One Token replaces, and the rule against them is written on the very page
+this component was built to render.
+
+**Ruled out:** `--do`/`--dont` modifier classes. Simpler to write and they would
+have needed a dark-mode twin each, plus a new pair for every future semantic.
+
+**Cost:** `hue-*` must sit on the **same element** as an `emph-*` class. See
+*A hue only retints where emphasis resolves*.
+
+### A hue only retints where emphasis resolves
+
+`2026-07-26` · `emphasis` · `measured` · `notable`
+
+`.hue-*` retints only when it is on the same element as an `.emph-*` class, or on
+an ancestor of it. Putting it lower has no effect at all.
+
+Custom property substitution happens where the property is **declared**.
+`.emph-plain` declares `--text-accent: var(--c-600)`, so on the element carrying
+that class it computes to a concrete colour and inherits down as that colour.
+Re-pointing `--c-600` further down the tree cannot reach back and change it.
+
+Measured while building `lds-list`: `<ul class="lds-list hue-error">` inside an
+`.emph-plain` body produced a "don't" column identical to the "do" column —
+both terracotta. Adding `emph-plain` to the `ul` fixed it: green `rgb(39,132,69)`
+against red `rgb(190,81,68)`.
+
+**Ruled out:** nothing was rejected here — this is how CSS custom properties
+work. Recorded because it fails **silently**, produces a plausible-looking
+result, and the existing hue documentation says "drop on any element together
+with an emph-x class" without saying what happens if you don't.
 
 ### Five roles, assigned by object size
 
@@ -629,6 +678,27 @@ The lesson beyond the fix: reach for the **composite**, not just the size.
 `--text-title` also carries the theme's leading and tracking, so a page that
 takes only the font-size still drifts.
 
+### A page loads only the faces it renders
+
+`2026-07-26` · `type` · `human` · `minor`
+
+Every page was still requesting Bricolage Grotesque, DM Sans and Space Mono after
+the theme had moved to Jost, Spectral and DM Mono. Nothing rendered them —
+aliasing the pages' token layers had already redirected every rule — but the
+downloads stayed, so the site *looked* like it was running several sans faces to
+anyone inspecting it.
+
+Kept: Caveat on `index`/`about`, which really is used for the hand-drawn notes,
+and Inter on the LDS showcase, which `theme-product` sets.
+
+Also fixed here: `.menu-btn` rendered in **Arial**. A `<button>` does not inherit
+`font-family`, so any button without one falls back to the UA default — a third
+apparent sans, from a single missing declaration.
+
+**Ruled out:** leaving the requests in place as harmless. They are not free, and
+a font list that disagrees with what renders is a false description of the
+system.
+
 ### Mono means machine-readable
 
 `2026-07-24` · `type` · `human` · `minor`
@@ -697,6 +767,34 @@ the proof that the token must reach the extremes. That theme is now 18px — see
 *`theme-portfolio` is midcentury, not sharp-editorial*. The argument is
 unchanged and arguably better evidenced: the same components have now rendered at
 both 0px and 18px with no component-level change.
+
+### Corners are round by default, and squircle by shape
+
+`2026-07-26` · `geometry` · `human` · `reversal`
+
+Core's radius scale moves from 4/8/12/16 to **8/14/22/30**, and a second axis
+arrives: `--corner-shape: squircle`.
+
+The old scale read sharp on anything large enough to show a corner, and an
+unthemed LDS should not look severe by default. The two themes that set their own
+radius — product and palette — are untouched, because they override it.
+
+`corner-shape` is a real CSS property here, not an approximation: `squircle` is a
+continuous superellipse rather than a circular arc, so the curve starts earlier
+and flattens through the corner. Verified against the whole ladder before
+choosing — the `superellipse()` numbers run the *other* way, higher being
+**squarer**, so `squircle` is the rounded end of that range and `superellipse(6)`
+is nearly a box.
+
+**Ruled out:** approximating a squircle with a very large `border-radius`, which
+gives a rounder arc rather than a different curve. Also ruled out:
+`superellipse(4)` and above, which are squarer than the default `round`.
+
+**Cost:** applied to rectangular components only. At `--pill` (999px) the radius
+clamps to half the short side, and a squircle there flattens the ends of what
+should be a stadium — pills keep a circular arc. Browsers without `corner-shape`
+drop the declaration and get the plain radius, so it degrades to the previous
+look rather than breaking.
 
 ### `--target-min` is a floor of 44px that themes may raise
 

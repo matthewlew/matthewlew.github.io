@@ -43,10 +43,25 @@
   --text-subhead: var(--size-4); --leading-subhead: var(--leading-tight); --tracking-subhead: var(--tracking-tight);
   --text-title: var(--size-6); --leading-title: var(--leading-none); --tracking-title: var(--tracking-tighter);
 
-  /* radius */
-  --radius-sm: 4px; --radius-base: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-pill: 999px;
+  /* ---- radius + corner shape ----
+     The scale was 4/8/12/16, which read sharp on every surface large enough to
+     show a corner. Raised across the board so an unthemed LDS is soft by
+     default; themes still override freely, and the two that do (product,
+     palette) are unaffected because they set their own.
+
+     --corner-shape is the second axis. `squircle` is a continuous superellipse
+     rather than a circular arc: the curve starts earlier and flattens through
+     the corner, which is the shape that reads as drawn rather than filleted.
+     Note the superellipse() ladder runs the other way — higher numbers are
+     SQUARER, not rounder, so squircle is the rounded end of that range.
+
+     Applied only to rectangular components. At --pill (999px) the radius
+     clamps to half the short side, and a squircle there flattens the ends of
+     what should be a stadium — pills stay round. */
+  --radius-sm: 8px; --radius-base: 14px; --radius-lg: 22px; --radius-xl: 30px; --radius-pill: 999px;
   --radius: var(--radius-base);
   --pill: var(--radius-pill);
+  --corner-shape: squircle;
 
   /* density multiplier */
   --density: 1;
@@ -576,3 +591,72 @@
   stroke-width:var(--icon-weight);
   flex-shrink:0;
 }
+
+/* ==========================================================================
+   Corner shape
+   One place, so a component never has to remember it. Rectangular surfaces
+   only: --pill clamps its radius to half the short side, and a squircle there
+   flattens the ends of what should be a stadium, so pills keep a circular arc.
+   Browsers without corner-shape drop the declaration and get the plain radius.
+   ========================================================================== */
+.lds-card,
+.lds-banner,
+.lds-modal,
+.lds-field input,
+.lds-field textarea,
+.lds-list__item{
+  corner-shape:var(--corner-shape);
+}
+
+/* ==========================================================================
+   List — do / don't, rules, guidance
+   Was three near-identical .rule-item implementations across the site, each
+   with its own hardcoded greys, and each pointing at a --accent token that has
+   never existed in this system — so the "don't" side silently lost its colour.
+
+   Colour comes from the emphasis + hue mechanism, not from do/dont variants:
+
+       <ul class="lds-list hue-success"> … </ul>
+       <ul class="lds-list hue-error">   … </ul>
+
+   That is the whole reason .lds-list--do does not exist. Bespoke variants are
+   what the One Token architecture replaces.
+   ========================================================================== */
+.lds-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.lds-list__item{
+  position:relative;
+  padding:calc(14px * var(--density)) calc(16px * var(--density));
+  padding-left:calc(18px * var(--density));
+  border-left:2px solid var(--text-accent);
+  border-radius:var(--radius-sm);
+  background:var(--background);
+  color:var(--text-subdued);
+  font-size:var(--text-body);
+  line-height:var(--leading-body);
+}
+.lds-list__item + .lds-list__item{
+  margin-top:calc(8px * var(--density));
+}
+/* The lead-in. A block so the rule reads as heading-then-explanation rather
+   than one run-on sentence. */
+.lds-list__title{
+  display:block;
+  color:var(--text);
+  font-weight:var(--weight-semibold);
+  margin-bottom:calc(3px * var(--density));
+}
+/* Flush variant for lists that sit inside an already-bordered container and
+   should not look like stacked cards. */
+.lds-list--flush .lds-list__item{
+  background:none;
+  border-radius:0;
+  corner-shape:round;
+  margin-top:0;
+  border-top:1px solid var(--border-subdued);
+  padding-left:calc(16px * var(--density));
+}
+.lds-list--flush .lds-list__item:first-child{border-top:none;}

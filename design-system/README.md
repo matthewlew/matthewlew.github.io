@@ -4,7 +4,7 @@ Plain CSS. No build step, no runtime, no framework binding.
 
 - **Layer 1 — primitives:** greys, space, size, weight, motion, radius.
 - **Layer 2 — One Token semantics:** `mode × emphasis → seven object-colour roles`.
-- **Layer 3 — components:** `.lds-btn`, `.lds-card`, `.lds-field`, `.lds-tag`, `.lds-chip`, `.lds-banner`, `.lds-modal`, …
+- **Layer 3 — components:** `.lds-btn`, `.lds-card`, `.lds-field`, `.lds-tag`, `.lds-chip`, `.lds-banner`, `.lds-modal`, `.lds-list`, …
 - **Layer 4 — themes:** a theme supplies the `--c-*` brand ramp, `--th-*` fonts, radius, shadows, density, iconography. Core never hardcodes a hex.
 
 Docs and live examples: <https://matthewlew.github.io/design-system/>

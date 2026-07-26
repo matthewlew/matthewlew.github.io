@@ -8,7 +8,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="dist/apca-palette.css">
   <link rel="stylesheet" href="dist/lds.css">
@@ -48,14 +48,14 @@
     
     .sidebar-controls { display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
     .ctl-group label { display: block; font-family: var(--th-mono, monospace); font-size: 10px; color: var(--text-subdued); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
-    .seg { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .seg { display: flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
     .seg button { flex: 1; padding: 8px 4px; background: transparent; color: var(--text-subdued); border: none; font-size: 11px; cursor: pointer; transition: 0.2s; font-family: var(--th-mono, monospace); }
     .seg button.on { background: var(--text); color: var(--background); font-weight: 700; }
     
     .nav-links { display: flex; flex-direction: column; gap: 4px; list-style: none; overflow-y: auto; }
     .nav-links a {
       text-decoration: none; color: var(--text-subdued); font-size: 13px; font-weight: 500;
-      padding: 8px 12px; border-radius: 6px; display: block; transition: 0.2s;
+      padding: 8px 12px; border-radius: var(--radius-sm); display: block; transition: 0.2s;
     }
     .nav-links a:hover { color: var(--text); background: var(--bg-hover); }
     .nav-links a.active { color: var(--text); background: var(--bg-hover); font-weight: 600; }
@@ -87,7 +87,7 @@
     /* Inspector Tooltip */
     #inspector-tooltip {
       position: fixed; display: none; background: rgba(0, 0, 0, 0.85); color: #4ade80;
-      font-family: var(--th-mono, monospace); font-size: 11px; padding: 8px 12px; border-radius: 6px;
+      font-family: var(--th-mono, monospace); font-size: 11px; padding: 8px 12px; border-radius: var(--radius-sm);
       z-index: 9999; pointer-events: none; white-space: pre-wrap;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
@@ -95,23 +95,25 @@
     /* Rules Grid */
     .rules-grid { display: grid; grid-template-columns: 1fr 1fr; }
     .rule-col { padding: 32px 40px; }
-    .rule-col.do { border-right: 1px solid #E2E2E2; }
+    /* Layout only. Colour, spacing and the left rule are .lds-list's job now;
+       the do/don't distinction rides the hue classes. The old rules here
+       hardcoded #E2E2E2/#111/#555 (cold, on a warm theme) and pointed the
+       "don't" side at var(--accent), a token that has never existed in this
+       system — so that column silently had no accent at all. */
+    .rule-col.do { border-right: 1px solid var(--border); }
     .rule-col h3 {
-      font-family: var(--th-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
-      padding-bottom: 16px; margin-bottom: 8px;
+      font-family: var(--th-mono, monospace); font-size: var(--text-caption);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding-bottom: 16px; margin-bottom: 8px; color: var(--text-accent);
     }
-    .rule-col.do h3 { color: #111; }
-    .rule-col.dont h3 { color: var(--accent); }
-    .rule-item {
-      padding: 16px 0 16px 16px; border-top: 1px solid #E2E2E2;
-      font-size: 14.5px; line-height: 1.5; color: #555;
-    }
-    .rule-col.do .rule-item { border-left: 2px solid #111; }
-    .rule-col.dont .rule-item { border-left: 2px solid var(--accent); }
-    .rule-item strong { color: #111; font-weight: 600; display: block; margin-bottom: 4px; font-size: 15px; }
 
     /* Mobile Menu */
-    .menu-btn { display: none; position: fixed; top: 16px; left: 16px; z-index: 101; background: #111; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; }
+        /* font: inherit — a <button> does not inherit the family, so without this
+       it renders the UA default (Arial) next to Jost and Spectral. */
+    .menu-btn { display: none; position: fixed; top: 16px; left: 16px; z-index: 101;
+      background: var(--text); color: var(--background); border: none; padding: 8px 12px;
+      border-radius: var(--radius-sm); corner-shape: var(--corner-shape);
+      cursor: pointer; font: inherit; font-size: var(--text-caption); font-weight: 500; }
     
     @media (max-width: 900px) {
       .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -121,7 +123,7 @@
       .grid-2 { grid-template-columns: 1fr; }
       .spec-row { flex-direction: column; gap: 8px; }
       .rules-grid { grid-template-columns: 1fr; }
-      .rule-col.do { border-right: none; border-bottom: 1px solid #E2E2E2; }
+      .rule-col.do { border-right: none; border-bottom: 1px solid var(--border); }
     }
     
     /* We override the body theme class application and only apply it to the .demo-box wrappers
@@ -432,14 +434,20 @@
       <div class="rules-grid">
         <div class="rule-col do">
           <h3>✓ Do</h3>
-          <div class="rule-item"><strong>Inherit by default</strong><br>Let components inherit their environment (<code>var(--text)</code>, <code>var(--background)</code>) so they adapt contextually.</div>
-          <div class="rule-item"><strong>Use explicit overrides</strong><br>Always use explicit <code>.emph-*</code> classes to drive bespoke component color changes.</div>
-        </div>
+          <ul class="lds-list emph-plain hue-success">
+          <li class="lds-list__item"><span class="lds-list__title">Inherit by default</span>Let components inherit their environment (<code>var(--text)</code>, <code>var(--background)</code>) so they adapt contextually.</li>
+          <li class="lds-list__item"><span class="lds-list__title">Use explicit overrides</span>Always use explicit <code>.emph-*</code> classes to drive bespoke component color changes.</li>
+        
+          </ul>
+          </div>
         <div class="rule-col dont">
           <h3>✕ Don't</h3>
-          <div class="rule-item"><strong>No raw hex values</strong><br>Never use raw hex values or bypass the One-Token architecture.</div>
-          <div class="rule-item"><strong>No bespoke color classes</strong><br>Never create bespoke CSS classes (like <code>--btn-primary-bg</code>) to color a component.</div>
-        </div>
+          <ul class="lds-list emph-plain hue-error">
+          <li class="lds-list__item"><span class="lds-list__title">No raw hex values</span>Never use raw hex values or bypass the One-Token architecture.</li>
+          <li class="lds-list__item"><span class="lds-list__title">No bespoke color classes</span>Never create bespoke CSS classes (like <code>--btn-primary-bg</code>) to color a component.</li>
+        
+          </ul>
+          </div>
       </div>
       
       <!-- Group 2: Color & Surfaces -->
@@ -450,14 +458,20 @@
       <div class="rules-grid">
         <div class="rule-col do">
           <h3>✓ Do</h3>
-          <div class="rule-item"><strong>Reserve accent colors</strong><br>Reserve signature accent colors for active states, labels, or a single rule line. Scarcity is the point.</div>
-          <div class="rule-item"><strong>Apply emphasis directly</strong><br>Use <code>.emph-*</code> classes directly on HTML elements to create overrides without breaking the parent surface.</div>
-        </div>
+          <ul class="lds-list emph-plain hue-success">
+          <li class="lds-list__item"><span class="lds-list__title">Reserve accent colors</span>Reserve signature accent colors for active states, labels, or a single rule line. Scarcity is the point.</li>
+          <li class="lds-list__item"><span class="lds-list__title">Apply emphasis directly</span>Use <code>.emph-*</code> classes directly on HTML elements to create overrides without breaking the parent surface.</li>
+        
+          </ul>
+          </div>
         <div class="rule-col dont">
           <h3>✕ Don't</h3>
-          <div class="rule-item"><strong>Don't flood with strong emphasis</strong><br>Don't flood the UI with <code>.emph-strong</code>. If it feels loud, there's too much.</div>
-          <div class="rule-item"><strong>No arbitrary shadows</strong><br>Don't add shadows or gradients-as-decoration. It breaks the structural language.</div>
-        </div>
+          <ul class="lds-list emph-plain hue-error">
+          <li class="lds-list__item"><span class="lds-list__title">Don't flood with strong emphasis</span>Don't flood the UI with <code>.emph-strong</code>. If it feels loud, there's too much.</li>
+          <li class="lds-list__item"><span class="lds-list__title">No arbitrary shadows</span>Don't add shadows or gradients-as-decoration. It breaks the structural language.</li>
+        
+          </ul>
+          </div>
       </div>
 
       <!-- Group 3: Components & Layout -->
@@ -468,16 +482,22 @@
       <div class="rules-grid">
         <div class="rule-col do">
           <h3>✓ Do</h3>
-          <div class="rule-item"><strong>Use 1px hairlines</strong><br>Separate UI sections with 1px hairlines (<code>var(--border)</code>). Structure carries hierarchy.</div>
-          <div class="rule-item"><strong>Use semantic radii</strong><br>Always use <code>--radius-sm</code>, <code>--radius</code>, <code>--radius-lg</code>, or <code>--pill</code>.</div>
-          <div class="rule-item"><strong>Cards for rich media</strong><br>Use Cards only for standalone content with rich media and multiple actions. Lists for scannable content.</div>
-        </div>
+          <ul class="lds-list emph-plain hue-success">
+          <li class="lds-list__item"><span class="lds-list__title">Use 1px hairlines</span>Separate UI sections with 1px hairlines (<code>var(--border)</code>). Structure carries hierarchy.</li>
+          <li class="lds-list__item"><span class="lds-list__title">Use semantic radii</span>Always use <code>--radius-sm</code>, <code>--radius</code>, <code>--radius-lg</code>, or <code>--pill</code>.</li>
+          <li class="lds-list__item"><span class="lds-list__title">Cards for rich media</span>Use Cards only for standalone content with rich media and multiple actions. Lists for scannable content.</li>
+        
+          </ul>
+          </div>
         <div class="rule-col dont">
           <h3>✕ Don't</h3>
-          <div class="rule-item"><strong>No hardcoded radii</strong><br>Never hardcode pixel values for border-radius. These shift dynamically based on the active brand theme.</div>
-          <div class="rule-item"><strong>Don't mix cards and lists</strong><br>Don't mix cards and list items for the same content type. Keep structural patterns consistent.</div>
-          <div class="rule-item"><strong>Don't stack strong CTAs</strong><br>Don't put two <code>.emph-strong</code> buttons next to each other. One primary action per view context.</div>
-        </div>
+          <ul class="lds-list emph-plain hue-error">
+          <li class="lds-list__item"><span class="lds-list__title">No hardcoded radii</span>Never hardcode pixel values for border-radius. These shift dynamically based on the active brand theme.</li>
+          <li class="lds-list__item"><span class="lds-list__title">Don't mix cards and lists</span>Don't mix cards and list items for the same content type. Keep structural patterns consistent.</li>
+          <li class="lds-list__item"><span class="lds-list__title">Don't stack strong CTAs</span>Don't put two <code>.emph-strong</code> buttons next to each other. One primary action per view context.</li>
+        
+          </ul>
+          </div>
       </div>
       
     </div>
