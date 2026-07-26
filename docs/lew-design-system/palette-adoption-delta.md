@@ -72,9 +72,37 @@ opaque white inside any `.emph-plain`).
 `.mode-dark` deliberately does **not** flip the role: media chrome is backdrop-relative, not
 mode-relative.
 
-**Still open — the WCAG/APCA question, deliberately not papered over.** Only the half that needs no
-threshold shipped. Choosing the ink is a sampling problem, and that is where the two standards
-disagree. `emph-media--on-dark` / `--on-light` cover known-tone backdrops without any sampling.
+**RESOLVED 2026-07-26 — APCA, and the sampler shipped.** `lew-design-system/ink` (LDS v1.1.0)
+implements APCA and is verified against the `apca-w3` reference across a 3,456-pair gamut sweep
+(exact agreement). Palette migrated off WCAG; measured across all 146 published gradients at the
+eight anchors `titleColorAt` is really called with (1,160 samples):
+
+| | old (WCAG) | new (APCA) |
+|---|---:|---:|
+| mean APCA Lc of chosen ink | 62.9 | **71.3** |
+| below the Lc 75 floor | 69.3% | **46.6%** |
+| on-brand palette ink retained | 42.6% | **49.3%** |
+
+60.3% of samples got more legible, 23.2% less, 16.6% unchanged — and **all** of the "less legible"
+ones still clear the floor (they are cases where on-brand ink beats a max-contrast white knockout,
+which is the intended trade). **Zero** samples regressed below the floor.
+
+The residual 46.6% is not a shortfall: it is *exactly* the set of backdrops where no ink of any
+colour can reach Lc 75. On mid-tones APCA's body floor is unreachable, so the sampler takes the best
+available. It hits the floor in 100% of cases where the floor is physically achievable.
+
+Two findings worth carrying to other consumers:
+
+- **Enforcing the floor naively destroys on-brand ink.** Only ~6% of palette stops clear Lc 75
+  outright, so ~94% of labels would collapse to flat white/black. The fix is to walk the chosen
+  colour along its OKLCH lightness axis with hue held.
+- **That walk needs real gamut mapping.** Per-channel sRGB clamping shifts hue — a vivid pink pushed
+  lighter drifted ~29° toward magenta, defeating the point. Backing chroma off until the round-trip
+  preserves hue brings worst-case drift to 2.0°.
+
+Still worth knowing: APCA and WCAG disagree on **6 of 21** chart swatches, all mid-tones, with APCA
+choosing white where WCAG chooses black. Side-by-side, black reads better on those swatches — so
+treat APCA's near-ties (<2 Lc apart) as genuinely undecided rather than a verdict.
 
 Original writeup:
 
@@ -134,7 +162,7 @@ Palette layers a lot of floating chrome and standardizes on 44px touch targets. 
 
 **Pass A — tokens (palette side, ~half a day, low risk).** Replace `src/index.css`'s ad-hoc vars with LDS roles. Palette only references 14 unique custom properties and uses `var()` 83 times, so the surface is small. Real debt to retire: **73 raw hex occurrences (9 unique) and 184 `rgba()` literals** across the modules, plus **12 distinct border-radius values** collapsing to LDS's four. Biggest consistency win available, nothing structural changes.
 
-**Pass B — adaptive ink (joint). 🟡 LDS SIDE DONE 2026-07-26.** `emph-media` is landed, wired into button/tag/chip, demoed, and verified to reproduce `.ghost-chip` exactly. Two items remain, both needing a decision rather than code: **(a)** resolve WCAG-vs-APCA before shipping a sampler; **(b)** port palette's `.ghost-chip` call sites onto the role — blocked on the same push/tag as Pass A.
+**Pass B — adaptive ink (joint). ✅ DONE 2026-07-26.** `emph-media` landed, wired into button/tag/chip, demoed, and verified to reproduce `.ghost-chip` exactly. WCAG-vs-APCA resolved in favour of **APCA**; `lew-design-system/ink` shipped in v1.1.0 and palette migrated onto it with measured results (above). What remains is cosmetic rather than blocking: porting palette's `.ghost-chip` *markup* onto the role, which folds naturally into Pass C.
 
 **Pass C — component swap (palette side, ~2 days).** Bucket A: SearchBar, UndoToast, Drawer, GeometryTabs, CollectionsRow, ShortcutHints, Hint, GrainButton, LikeButton, TabBar, BlockStack → `.lds-*`. Contribute the six missing components upward as you go, per the audit's rule that new shared components land in LDS first.
 
