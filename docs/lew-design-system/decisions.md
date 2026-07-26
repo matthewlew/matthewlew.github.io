@@ -34,7 +34,7 @@ the entry says why it didn't hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 38 decisions: **20 human · 16 measured · 2 ai**.
+The split as it stands, across the 40 decisions: **21 human · 17 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -546,6 +546,33 @@ one component whose entire job is to stay translucent.
 
 ## 4. Typography
 
+### Sans heads, serif text
+
+`2026-07-26` · `type` · `human` · `reversal`
+
+`--th-display` stays Jost. `--th-body` becomes **Spectral**. `--th-mono` stays
+DM Mono.
+
+A geometric sans is a poster face. It sets a headline well and reads *technical*
+the moment you ask it to carry a paragraph — which is most of what a rationale
+document is. Spectral is drawn for screen text: low stroke contrast, sturdy at
+16px, quiet enough to disappear behind the prose. It is the closest free
+equivalent in **role** to the Equity that Butterick sets his own body text in.
+
+Sans heads over serif text is not a compromise between the two. It is the
+standard midcentury magazine arrangement, and it keeps the geometric voice
+exactly where it works.
+
+**Ruled out:** serif for display too, which would have retired Jost and with it
+the single clearest midcentury signal in the theme. Also ruled out: serif
+everywhere including the mono role — that would reverse *Mono means
+machine-readable*, and the role is still earning its keep.
+
+**Cost:** three families now load on every themed page. Spectral also runs a
+smaller x-height than Jost at the same nominal size, so 16px body reads slightly
+smaller than it did — still inside Butterick's 15–25px, but it is the floor of
+the range now rather than comfortably above it.
+
 ### Semantic roles for UI, primitives inside components
 
 `2026-07-25` · `type` · `human` · `notable`
@@ -561,6 +588,17 @@ consumer reading `--size-8` does not.
 
 **Ruled out:** exposing only the numeric scale, which is simpler and what most
 token sets do.
+
+**Cost:** this is the rule most easily broken by accident, and it fails silently.
+Audited 2026-07-26: `decisions.html` was using 18 raw primitives against 2
+semantic roles. Its `h1` was pinned to `--size-7` (32px) while the theme set
+`--text-title` to 44px, so the page's own heading ignored the theme — a token
+change moved every component except the title it was supposed to move. Now 20
+semantic, 0 primitives.
+
+The lesson beyond the fix: reach for the **composite**, not just the size.
+`--text-title` also carries the theme's leading and tracking, so a page that
+takes only the font-size still drifts.
 
 ### Mono means machine-readable
 
@@ -698,6 +736,9 @@ single-storey `a`. That is what makes it read midcentury rather than merely
 rounded. The corners are deliberately large — the arc has to be long enough to
 read as a drawn curve rather than a chamfer, which is the difference between a
 1960s television cabinet and a rounded rectangle.
+
+**Amended 2026-07-26.** Jost was set on `--th-body` as well as `--th-display`;
+body has since moved to Spectral. See *Sans heads, serif text*.
 
 **Ruled out:** the sharp-editorial treatment, in full. Also ruled out: doing this
 as a fourth theme. A new theme would have left the portfolio and every docs page
