@@ -1,5 +1,9 @@
 # LDS Do's and Don'ts
 
+> These are the **rules**. The reasoning behind them — and what each one ruled
+> out — is in [`decisions.md`](decisions.md). Check there before arguing with a
+> rule: several of them are reversals, meaning the other way was already tried.
+
 🚨 **Critical Rules**
 
 **Token Hierarchy & Inheritance:**

@@ -34,8 +34,8 @@ the entry says why it didn't hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands: **20 human · 13 measured · 3 ai**. The judgment is human;
-the verification is machine.
+The split as it stands, across the 31 decisions: **18 human · 13 measured · 2 ai**.
+The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
 fact about the system, not a decision, and it belongs in the README. Some

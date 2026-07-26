@@ -1,7 +1,7 @@
 # LDS Decision Record — Design Spec
 
 **Date:** 2026-07-26
-**Status:** Approved for planning
+**Status:** Built — see `decisions.md` / `decisions.html`
 **Owner:** Matthew Lew
 
 ---
@@ -70,9 +70,14 @@ their jobs and link into it:
 - `lds-dos-and-donts.md` keeps the rules. That is *what*.
 - `decisions.md` owns *why*, and is the only place the reasoning is written out.
 
-`apca-palette.md`'s "Why APCA over WCAG" section and `lds-dos-and-donts.md`'s
-"**Why:**" line are replaced by links to their `decisions.md` entries. No
-duplicated prose to drift apart.
+`apca-palette.md` and `lds-dos-and-donts.md` each gain a pointer block to
+`decisions.md`. Their existing "Why" prose is **kept, not deleted** — a
+deliberate deviation from the original plan, which called for replacing it.
+Deleting published writing to remove a duplication risk is the author's call to
+make, not a side effect of adding a doc. The pointers frame the split (`how`,
+`what`, `why`) so the redundancy is at least signposted.
+
+Revisit if the two ever actually contradict each other.
 
 ---
 
@@ -85,7 +90,7 @@ settled debate from recurring.
 ```markdown
 ### APCA, not WCAG 2.x
 
-`2026-07-26` · `color` · `derived` · `c7f9ade`
+`2026-07-26` · `color` · `measured` · `structural` · `c7f9ade`
 
 WCAG's ratio is a symmetric luminance quotient: it ignores polarity, so it
 scores light-on-dark and dark-on-light identically, and it misjudges the
@@ -114,11 +119,13 @@ Fields:
   README.
 - **`**Cost:**`** — optional. The live gotcha a reader must know. This is what
   makes the doc worth consulting rather than merely worth writing.
+- **`quality`** — optional in the grammar, defaulting to `notable` when absent,
+  so an entry is never rejected for omitting it. Always written in practice.
 
 ### Metadata line grammar
 
 ```
-`YYYY-MM-DD` · `area` · `attribution` · `commit`
+`YYYY-MM-DD` · `area` · `who` · `quality` · `commit`
 ```
 
 Backtick-wrapped, separated by ` · `. Commit is optional; all other fields
@@ -128,7 +135,7 @@ that dates, tokens and system info always use `--th-mono`.
 Parser contract:
 
 ```js
-/^`(\d{4}-\d{2}-\d{2})`\s*·\s*`([a-z-]+)`\s*·\s*`(judgment|derived|proposed)`(?:\s*·\s*`([0-9a-f]{7,40})`)?$/
+/^`(\d{4}-\d{2}(?:-\d{2})?)`\s*·\s*`([a-z-]+)`\s*·\s*`(human|measured|ai)`(?:\s*·\s*`(minor|notable|structural|reversal)`)?(?:\s*·\s*`([0-9a-f]{7,40})`)?$/
 ```
 
 - `^## ` opens a section. `^### ` opens an entry. Body runs to the next `##` or
@@ -140,123 +147,109 @@ Parser contract:
 
 ---
 
-## Attribution
+## Who decided
 
 Three values, because a human/AI binary would tag nearly every entry "AI" — the
 commits and measurements were authored by Claude — while the judgment calls in
 LDS are Matthew's. A binary would credit the wrong party on a portfolio site.
 
-| Glyph | Value | Meaning |
+The values are named for what they say rather than for how they were reached:
+`judgment`/`derived`/`proposed` was the first draft and did not read as
+human-vs-machine to anyone but its author.
+
+| Value | Meaning | Rendered as |
 |---|---|---|
-| ◆ | `judgment` | A taste, product, or scope call. Human. The deciding input was Matthew's constraint or approval. |
-| ◇ | `derived` | Forced by measurement or verification; neither party had latitude. The OKLCH ramp match, the 3,456-pair APCA sweep, the 29° hue shift, the Lc 15 stroke floor. |
-| ○ | `proposed` | AI-originated and human-ratified. |
+| `human` | Matthew's call — taste, product, or scope. | Solid dark badge |
+| `measured` | The measurement decided it; neither person nor AI had latitude. | Outlined badge |
+| `ai` | AI-proposed, human-approved. | Dashed badge |
 
-The distinction the timeline makes visible: the system's spine is human, its
-verification is machine.
+Measured split across the 31 decisions: **18 human · 13 measured · 2 ai**. The
+system's spine is human; its verification is machine.
 
-**Meaning is carried by glyph shape, never by colour alone.** A system whose
-entire thesis is measured contrast cannot encode a dimension in hue. Each glyph
-also carries a text label in the legend and on expansion.
-
----
+**The word always carries the meaning.** Fill and border style only reinforce
+it, so the distinction survives greyscale and colour-blindness — mandatory in a
+system whose entire thesis is measured contrast.
 
 ## Timeline
 
-```
-PRE ──┬─ Oct 2025 rebrand (APCA method inherited)      ◇
-      └─ One Token (pre-existing colour layer)         ◆
-         ╎
-DAY 0 ┼─ Jul 14 · spec written                    ← milestone, no glyph
-         ╎
-         ╎  ·········· 10 days quiet ··········
-         ╎
-   +10 ┼─ Jul 24 · first code lands               ← milestone
-   +11 ●─ Jul 25 · APCA ladder · status semantics       ◇ ◇ ○
-   +12 ●─ Jul 26 · npm · emph-media · ink · rework  ◆ ◇ ◇ ○ ◆ ◇ ◆
-```
+Deliberately **footnote-scale, not a dashboard**. An earlier draft carried a
+horizontal density spine with per-day ticks; it was cut. The page exists to show
+that LDS keeps moving and has reasons for having moved, not to be a data
+visualisation of itself.
 
-`┼` = milestone tick, `●` = a day carrying decisions. Glyphs to the right are
-that day's decision entries.
+### The dot
 
-Deliberately **not** a hollow circle for the milestone tick: `○` is already the
-`proposed` attribution glyph, and reusing it on the axis would make a milestone
-read as an AI-proposed decision.
+Each entry carries one dot. Size is the weight of the change; a ring means a
+reversal. No glyphs — a sized circle reads at footnote scale where `◆`/`◇`/`○`
+did not.
+
+| Dot | Value | Meaning |
+|---|---|---|
+| 4px filled | `minor` | A refinement inside an existing decision. |
+| 7px filled | `notable` | A new role, component, or constraint. |
+| 11px filled | `structural` | Changes the shape of the system. |
+| 11px ring | `reversal` | Undoes a previous call. |
+
+`reversal` is the load-bearing value: it is the one that stops a mistake being
+repeated. It is the only quality also named in text on the collapsed row.
+
+### Order and focus
+
+**Newest first.** The page is about what is changing now. Day 0 is still the
+earliest date, so the `+N` offsets read identically either way.
+
+The most recent day renders expanded; every earlier day sits behind one
+`+ show N earlier decisions` control. The backfill is kept — it is the reasoning
+that would otherwise be lost to `git log` — but it does not greet the reader as a
+wall.
+
+Turning on any filter auto-reveals the earlier block, so a match can never be
+silently hidden behind that control.
 
 ### Axis
 
-**Day-grouped with ordinal spacing.** Each date carrying entries is one node,
-equally spaced regardless of the real interval. LDS is 12 days old and ~80% of
-its decisions landed in the final 48 hours; a proportional axis would render as
-a blob at the right edge preceded by ten days of dead space.
-
-Gaps of more than one day get an explicit marker — `10 days quiet` — so elapsed
-time stays legible without consuming proportional space. This reads correctly
-now and still works when decisions spread over months.
+Day-grouped with ordinal spacing: each date with entries is one row, equally
+spaced regardless of the real interval. LDS is 12 days old with ~80% of its
+decisions in the last 48 hours, so a proportional axis would be a blob against
+ten days of dead space. Gaps over one day get a `N days quiet` marker.
 
 ### Milestones vs. decisions
 
-The axis needs anchors that are not decisions. "Spec written" (2026-07-14) and
-"first code lands" (2026-07-24) are events — they ruled nothing out, so by the
-entry bar they are not decisions, yet day 0 is one of them and the axis is
-meaningless without it.
+The axis needs anchors that are not decisions. "Spec written" and "first code
+lands" ruled nothing out, so by the entry bar they are not decisions — yet day 0
+is one of them.
 
 So the doc carries a `## Milestones` section. Its entries use area `milestone`,
-are **exempt from the `**Ruled out:**` requirement**, and render as bare labelled
-nodes on the axis — no glyph, no expansion, no filter participation. They exist
-to give the decisions somewhere to hang.
+are exempt from the `**Ruled out:**` requirement, and render as a bare labelled
+row with no dot and no expansion.
 
-They still carry an attribution value, because the regex requires one and
-because "who decided to start this" is worth recording.
+### Pre-history
 
-### Day 0 and pre-history
+A third category: decisions LDS *inherited* rather than made — APCA's
+construction from the Oct 2025 rebrand, One Token predating LDS. Area
+`prehistory`, rendered in a cluster at the foot of the page, and **excluded from
+day-0 arithmetic** so a nine-month gap does not swamp the axis.
 
-Day 0 is the **earliest non-prehistory date** in the doc (2026-07-14, the spec
-milestone). Each node is labelled with its offset (`+10`, `+11`).
+Dates may be month-precision (`YYYY-MM`) here, because One Token's origin date is
+not recorded anywhere in this repo and inventing a day would be worse than
+admitting the imprecision.
 
-Pre-history is a third category, distinct from both: decisions LDS *inherited*
-rather than made. The Oct 2025 rebrand that APCA's construction comes from, and
-One Token predating LDS. They carry area `prehistory`, render as a compact
-cluster above the spine, and are **excluded from day-0 arithmetic** — otherwise
-day 0 moves to Oct 2025 and a nine-month gap swamps the axis.
-
-Summary of the three:
-
-| Kind | Area | Ruled out required | On the axis |
+| Kind | Area | Ruled out required | On the page |
 |---|---|---|---|
-| Decision | any | yes | Glyph + expandable entry |
-| Milestone | `milestone` | no | Bare labelled node, anchors day 0 |
-| Pre-history | `prehistory` | yes | Cluster above the spine, outside day-0 math |
-
-### Layout
-
-- **Horizontal spine strip** at the top: one tick per active day, tick height
-  proportional to that day's entry count. Serves as density overview and
-  jump-navigation. Clicking a tick scrolls to that day.
-- **Vertical list** below: a day node per date, entries to its right. The
-  vertical axis carries the prose; entries have paragraphs, which a horizontal
-  timeline cannot hold.
-- **Entries collapse** to glyph + claim, and expand to body, ruled-out, cost and
-  commit link. Implemented with native `<details>`/`<summary>` — keyboard
-  support and no JS for the interaction.
-- **Filter chips** for attribution and area. Real `<button>`s with
-  `aria-pressed`.
+| Decision | any | yes | Dot + expandable row |
+| Milestone | `milestone` | no | Bare row, anchors day 0 |
+| Pre-history | `prehistory` | yes | Cluster at the foot, outside day-0 math |
 
 ### Styling
 
-Built from `.lds-*` and `emph-*` classes against `theme-portfolio` in light
-mode, matching the other pages in `docs/lew-design-system/`. Dates and metadata
-use `--th-mono`, spacing uses `--space-*`, type uses `--text-*`.
-
-Consequence worth stating: the page doubles as an LDS showcase, and any
-regression in LDS surfaces here first.
-
----
+Built from `.lds-*` and `emph-*` against `theme-portfolio`, matching the other
+pages in `docs/lew-design-system/`. Dates and metadata use `--th-mono`. The page
+doubles as an LDS showcase, so a regression in LDS surfaces here first.
 
 ## Sections and seed entries
 
-Eight decision sections, ordered foundation-outward, plus `## Milestones` and
-`## Pre-history`. All 28 seed decisions are harvested from existing material —
+Eight decision sections (31 decisions, 3 milestones, 2 pre-history), ordered foundation-outward, plus `## Milestones` and
+`## Pre-history`. All 31 seed decisions are harvested from existing material —
 commit bodies, CSS comments, the delta doc. Nothing invented.
 
 **0. Milestones** — spec written (2026-07-14, day 0) · first code lands

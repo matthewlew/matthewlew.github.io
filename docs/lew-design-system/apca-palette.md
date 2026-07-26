@@ -29,6 +29,10 @@ WCAG 2.x contrast ratio is a simple luminance ratio that misjudges mid-tones and
 dark mode. APCA models perceived lightness difference and polarity, so a step that
 "passes" actually reads. It reports **Lc 0–106** with published use-case ranges.
 
+> This page is the **how** — the curve, the construction, the ranges. The
+> decision itself, what it ruled out, and where WCAG still applies live in
+> [`decisions.md`](decisions.md).
+
 ## Use-case ranges → which step for what (light mode, text on white)
 
 | APCA | Use | Palette step on white |

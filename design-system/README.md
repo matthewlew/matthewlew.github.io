@@ -74,3 +74,16 @@ New shared components land in LDS first, then get consumed — not built in a
 product and back-ported later. See
 [`docs/lew-design-system/adoption-audit.md`](../docs/lew-design-system/adoption-audit.md)
 and [`lds-dos-and-donts.md`](../docs/lew-design-system/lds-dos-and-donts.md).
+
+**Record the decision.** A change that alters a token's meaning, adds or removes
+a role, reverses a prior call, or sets a constraint consumers must respect needs
+an entry in [`decisions.md`](../docs/lew-design-system/decisions.md) **in the
+same commit**. Trivial changes — typos, `dist` rebuilds, new examples — are
+exempt.
+
+If you cannot name what the change *ruled out*, it is not a decision: it is a
+fact about the system, and it belongs here in the README instead.
+
+The point is the reversals. `decisions.md` is where you find out that something
+was already tried the other way and why it didn't hold, before you try it again.
+Timeline view: [`decisions.html`](../docs/lew-design-system/decisions.html).

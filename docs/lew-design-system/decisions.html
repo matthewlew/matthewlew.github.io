@@ -29,19 +29,32 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .dot.q-reversal i{width:11px;height:11px;background:transparent;
                   border:2.5px solid var(--c-500);box-sizing:border-box}
 
+/* ---- who decided. The word always carries it; fill and border only reinforce,
+       so it survives greyscale and colour-blindness. ---- */
+.who{font-family:var(--th-mono);font-size:var(--size-0);line-height:1.5;
+     padding:1px 7px;border-radius:var(--pill);border:1px solid;white-space:nowrap}
+.w-human{background:var(--grey-800);color:#fff;border-color:var(--grey-800)}
+.w-measured{background:#fff;color:var(--grey-700);border-color:var(--grey-400)}
+.w-ai{background:#fff;color:var(--grey-600);border-color:var(--grey-400);border-style:dashed}
+
 /* ---- legend: footnote-scale, not a dashboard ---- */
-.legend{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-5);
-        font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-600);
-        padding:var(--space-3) 0 var(--space-5);border-bottom:1px solid var(--border);
-        margin-bottom:var(--space-5)}
-.legend span{display:flex;align-items:center;gap:var(--space-2)}
-.legend b{color:var(--grey-800);font-weight:var(--weight-medium)}
+.legend{padding:var(--space-3) 0 var(--space-5);border-bottom:1px solid var(--border);
+        margin-bottom:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)}
+.lrow{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-5);
+      font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-600)}
+.lrow > span{display:flex;align-items:center;gap:var(--space-2)}
+/* :not(.who) — otherwise this beats .w-human on specificity and paints the
+   white badge label grey-on-grey, i.e. invisible. */
+.lrow b:not(.who){color:var(--grey-800);font-weight:var(--weight-medium)}
 
 /* ---- filters ---- */
-.filters{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center;margin:0 0 var(--space-6)}
+/* One row per group. Wrapping all three together buries the group labels
+   mid-line and the whole control reads as one undifferentiated pile of chips. */
+.filters{display:flex;flex-direction:column;gap:var(--space-2);margin:0 0 var(--space-6)}
+.fgrp{display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center}
 .grp{font-family:var(--th-mono);font-size:var(--size-0);text-transform:uppercase;
-     letter-spacing:var(--tracking-wide);color:var(--grey-500)}
-.grp+.f{margin-left:var(--space-1)}
+     letter-spacing:var(--tracking-wide);color:var(--grey-500);
+     flex:0 0 84px}
 .f{font:inherit;font-size:var(--size-1);cursor:pointer;border:1px solid var(--border);
    background:#fff;color:var(--grey-800);border-radius:var(--pill);
    padding:var(--space-1) var(--space-3);min-height:0;display:inline-flex;align-items:center;gap:6px}
@@ -49,6 +62,8 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .f[aria-pressed=true]{background:var(--c-600);border-color:var(--c-600);color:#fff}
 .f[aria-pressed=true] .dot i{background:#fff}
 .f[aria-pressed=true] .dot.q-reversal i{background:transparent;border-color:#fff}
+.f .who{pointer-events:none}
+.f[aria-pressed=true] .who{background:transparent;color:#fff;border-color:#fff}
 .count{font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500);margin-left:var(--space-2)}
 
 /* ---- timeline ---- */
@@ -88,8 +103,8 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 .entry > summary:hover .claim{color:var(--c-600)}
 .entry > summary:focus-visible{outline:2px solid var(--c-600);outline-offset:2px}
 .claim{font-weight:var(--weight-medium);flex:1 1 auto;min-width:0}
-.tags{flex:0 0 auto;display:flex;gap:var(--space-3);font-family:var(--th-mono);
-      font-size:var(--size-0);color:var(--grey-500)}
+.tags{flex:0 0 auto;display:flex;align-items:center;gap:var(--space-3);
+      font-family:var(--th-mono);font-size:var(--size-0);color:var(--grey-500)}
 .tags .rev{color:var(--c-600);font-weight:var(--weight-medium)}
 .body{padding:0 0 var(--space-5) 26px;max-width:66ch}
 .body > *:first-child{margin-top:0}
@@ -130,7 +145,11 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
   .day{grid-template-columns:52px 1fr;gap:var(--space-4)}
   .offset,.date{padding-right:var(--space-3)}
   .gap{grid-column:1 / -1}
-  .tags{font-size:9px;gap:var(--space-2)}
+  .tags{gap:var(--space-2)}
+  /* Area loses to who-decided for the remaining width — it is still on the
+     expanded row, and squeezing the claim to three lines costs more. */
+  .tags span:not(.rev){display:none}
+  .grp{flex:0 0 100%}
 }
 </style>
 
@@ -145,10 +164,17 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 </p>
 
 <div class=legend>
-  <span><i class="dot q-minor"><i></i></i> <b>minor</b> refinement</span>
-  <span><i class="dot q-notable"><i></i></i> <b>notable</b> new constraint</span>
-  <span><i class="dot q-structural"><i></i></i> <b>structural</b> changes the shape</span>
-  <span><i class="dot q-reversal"><i></i></i> <b>reversal</b> undoes a prior call</span>
+  <div class=lrow>
+    <span><i class="dot q-minor"><i></i></i> <b>minor</b> refinement</span>
+    <span><i class="dot q-notable"><i></i></i> <b>notable</b> new constraint</span>
+    <span><i class="dot q-structural"><i></i></i> <b>structural</b> changes the shape</span>
+    <span><i class="dot q-reversal"><i></i></i> <b>reversal</b> undoes a prior call</span>
+  </div>
+  <div class=lrow>
+    <span><b class="who w-human">human</b> Matthew's call</span>
+    <span><b class="who w-measured">measured</b> the numbers only went one way</span>
+    <span><b class="who w-ai">AI</b> proposed, then approved</span>
+  </div>
 </div>
 
 <div id=status>Loading <code>decisions.md</code>…</div>
@@ -168,10 +194,17 @@ h1{font-family:var(--th-display);font-size:var(--size-7);line-height:var(--leadi
 
 const REPO = 'https://github.com/matthewlew/matthewlew.github.io/commit/'
 const QUALITY = ['reversal', 'structural', 'notable', 'minor']
-const META = /^`(\d{4}-\d{2}(?:-\d{2})?)`\s*·\s*`([a-z-]+)`\s*·\s*`(judgment|derived|proposed)`(?:\s*·\s*`(minor|notable|structural|reversal)`)?(?:\s*·\s*`([0-9a-f]{7,40})`)?$/
+const WHO = { human: 'human', measured: 'measured', ai: 'AI' }
+const WHO_LONG = {
+  human: 'a human call',
+  measured: 'settled by measurement',
+  ai: 'AI-proposed, human-approved'
+}
+const META = /^`(\d{4}-\d{2}(?:-\d{2})?)`\s*·\s*`([a-z-]+)`\s*·\s*`(human|measured|ai)`(?:\s*·\s*`(minor|notable|structural|reversal)`)?(?:\s*·\s*`([0-9a-f]{7,40})`)?$/
 
 const $ = id => document.getElementById(id)
 const dot = q => '<i class="dot q-' + q + '" title="' + q + '"><i></i></i>'
+const who = w => '<b class="who w-' + w + '">' + WHO[w] + '</b>'
 
 /* ---------- markdown: only the constructs decisions.md actually uses ---------- */
 
@@ -231,7 +264,10 @@ function blocks (lines) {
       continue
     }
 
-    if (!line.trim()) { i++; continue }
+    // Blank lines and the `---` rules that separate sections in the source
+    // carry no content. Fences and tables are consumed above, so a bare `---`
+    // here is always a thematic break.
+    if (!line.trim() || /^-{3,}$/.test(line.trim())) { i++; continue }
 
     const buf = []
     for (; i < lines.length && lines[i].trim() && !lines[i].startsWith('```') &&
@@ -313,7 +349,7 @@ function entryEl (e) {
   // Quality is named in text only when it is a reversal — that is the one a
   // reader must not miss. The dot carries it for every other row.
   const tags = (q === 'reversal' ? '<span class=rev>reversal</span>' : '') +
-    '<span>' + e.meta.attribution + '</span><span>' + e.meta.area + '</span>'
+    '<span>' + e.meta.area + '</span>' + who(e.meta.attribution)
 
   el.innerHTML =
     '<summary>' + dot(q) +
@@ -324,10 +360,10 @@ function entryEl (e) {
       blocks(e.body) +
       (e.ruled ? '<div class=ruled><b>Ruled out</b>' + blocks(e.ruled) + '</div>' : '') +
       (e.cost ? '<div class=cost><b>Cost</b>' + blocks(e.cost) + '</div>' : '') +
-      (e.meta.commit
-        ? '<p class=src>' + q + ' · ' + e.meta.attribution + ' · <a href="' + REPO +
-          e.meta.commit + '"><code>' + e.meta.commit + '</code></a></p>'
-        : '<p class=src>' + q + ' · ' + e.meta.attribution + '</p>') +
+      '<p class=src>' + q + ' · ' + WHO_LONG[e.meta.attribution] +
+        (e.meta.commit
+          ? ' · <a href="' + REPO + e.meta.commit + '"><code>' + e.meta.commit + '</code></a>'
+          : '') + '</p>' +
     '</div>'
   return el
 }
@@ -473,22 +509,26 @@ function buildFilters (all) {
   }
 
   const group = (label, kind, values, fmtLabel) => {
+    const row = document.createElement('div')
+    row.className = 'fgrp'
     const g = document.createElement('span')
     g.className = 'grp'
     g.textContent = label
-    box.appendChild(g)
-    values.forEach(v => box.appendChild(chip(kind, v, fmtLabel(v))))
+    row.appendChild(g)
+    values.forEach(v => row.appendChild(chip(kind, v, fmtLabel(v))))
+    box.appendChild(row)
+    return row
   }
 
   const present = QUALITY.filter(q => all.some(e => (e.meta.quality || 'notable') === q))
   group('Weight', 'quality', present, v => dot(v) + v)
-  group('By', 'attribution', ['judgment', 'derived', 'proposed'], v => v)
-  group('Area', 'area', [...new Set(all.map(e => e.meta.area))], v => v)
+  group('Decided by', 'attribution', ['human', 'measured', 'ai'], v => who(v))
+  const last = group('Area', 'area', [...new Set(all.map(e => e.meta.area))], v => v)
 
   const c = document.createElement('span')
   c.className = 'count'
   c.id = 'fcount'
-  box.appendChild(c)
+  last.appendChild(c)
   apply()
 }
 
