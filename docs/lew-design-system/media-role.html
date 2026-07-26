@@ -44,11 +44,13 @@ derivations of it, so they follow automatically:
 &lt;button class="lds-btn lds-btn--icon emph-media"&gt;★&lt;/button&gt;
 &lt;button class="lds-chip emph-media lds-chip--selected"&gt;Linear&lt;/button&gt;</pre>
 <p class=k>
-The mix percentages (10% fill, 28% border, 18% hover, 24% pressed) are not invented — they are
-<a href="https://github.com/matthewlew/palette">palette</a>'s shipped <code class=live>.ghost-chip</code>
-values, which have run in production over arbitrary user gradients. An
-<code class=live>emph-media</code> button reproduces that recipe exactly, at the same 44&times;44
-target.
+The role is <b>stroke-defined, not fill-defined</b>: at rest there is no fill at all, just a 1px
+ink stroke at 60%. That is deliberate and measured — see the
+<a href="media-surface-study.html">media surface study</a>. In short, an alpha fill over artwork is
+just a dimmer: it moves lightness only, so it desaturates the very thing it sits on (a 30% fill
+costs ~36% of the backdrop's chroma), and because the fill is the same ink as the label, every
+percent of fill also eats label contrast. Dropping it fixes both, and a 1px stroke can carry the
+control on its own.
 </p>
 
 <h2>Dark artwork <code>color:#fff</code></h2>
@@ -100,6 +102,34 @@ backdrop is invisible.
   </div>
 </div>
 
+<h2>Why the stroke is 60%, not the usual 28%</h2>
+<p class=k>
+An ink-alpha mix moves mostly chroma, not luminance, so on saturated artwork a faint hairline
+simply matches its backdrop — a white 28% stroke over pure red is pink-on-red, measuring
+<b>Lc 0.0</b> on red, blue and magenta. 40% still fails magenta (7.8), 50% still fails it (13.6).
+<b>60%</b> is the first value where every backdrop tested clears the Lc 15 non-text floor.
+</p>
+<div class=two>
+  <div class="art" style="background:linear-gradient(135deg,#ff00ff,#e000e0);color:#fff;min-height:120px">
+    <h3>MAX magenta</h3>
+    <div class=chrome>
+      <button class="lds-btn lds-btn--icon emph-media">★</button>
+      <button class="lds-btn emph-media">Share</button>
+      <span class="lds-chip emph-media lds-chip--selected">Selected</span>
+      <button class="lds-btn emph-media" disabled>Off</button>
+    </div>
+  </div>
+  <div class="art" style="background:linear-gradient(135deg,#0000ff,#0000e0);color:#fff;min-height:120px">
+    <h3>MAX blue</h3>
+    <div class=chrome>
+      <button class="lds-btn lds-btn--icon emph-media">★</button>
+      <button class="lds-btn emph-media">Share</button>
+      <span class="lds-chip emph-media lds-chip--selected">Selected</span>
+      <button class="lds-btn emph-media" disabled>Off</button>
+    </div>
+  </div>
+</div>
+
 <h2>What this replaces</h2>
 <div class="art a3" style="min-height:120px">
   <div class=bad style="color:#fff">
@@ -122,16 +152,30 @@ backdrop-relative, not mode-relative — a white pill over a bright photo is equ
 mode and dark mode. What changes is the ink, and the ink comes from the backdrop.
 </p>
 
-<h2>Choosing the ink is out of scope <span><code>on purpose</code></span></h2>
+<h2>Choosing the ink <code>lew-design-system/ink</code></h2>
 <p class=k>
-LDS ships the half that needs no contrast threshold. Picking the ink is a <i>sampling</i> problem —
-read the backdrop at the element's position, choose the most legible foreground — and that is where
-an unresolved question sits: palette enforces <b>WCAG 4.5:1</b>, LDS standardises on <b>APCA Lc</b>,
-and the two disagree precisely in the mid-tones where gradients live. Shipping a sampler before
-settling that would bake the disagreement into the system.
+The role handles everything downstream of the ink; picking the ink is a <i>sampling</i> problem —
+read the backdrop at the element's position, choose the most legible foreground. That ships
+separately as <code class=live>lew-design-system/ink</code>, which resolves it against
+<b>APCA</b>, verified against the <code class=live>apca-w3</code> reference across a 3,456-pair
+gamut sweep.
+</p>
+<pre>import { bestInkOn, inkOn, Lc } from 'lew-design-system/ink'
+
+// zero-config knockout
+el.style.color = inkOn(backdropHex)
+
+// or prefer your own brand colours, falling back only when none is legible
+const { hex } = bestInkOn(backdropHex, paletteStops, Lc.BODY_LARGE)</pre>
+<p class=k>
+Two things worth knowing before you enforce a floor. On mid-tone and saturated backdrops the
+Lc 75 body floor is <b>physically unreachable by any ink</b> — take the best available rather than
+failing. And enforcing it naively destroys on-brand colour: in palette only ~6% of stops clear it
+outright, so ~94% of labels collapse to flat white or black. Walking the chosen colour along its
+OKLCH lightness axis with hue held is what keeps it — and that walk needs real gamut mapping, or
+per-channel clamping shifts the hue by ~29°.
 </p>
 <p class=k>
-Until then: use <code class=live>emph-media--on-dark</code> / <code class=live>emph-media--on-light</code>
-for backdrops whose tone you already know, or set <code class=live>color</code> yourself from your own
-sampler. See <a href="palette-adoption-delta.md">palette-adoption-delta.md</a>.
+For backdrops whose tone you already know, <code class=live>emph-media--on-dark</code> /
+<code class=live>--on-light</code> skip sampling entirely.
 </p>

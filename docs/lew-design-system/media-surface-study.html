@@ -1,0 +1,132 @@
+<meta charset=utf-8><title>Media surface study — why stroke, not fill</title>
+<link rel="stylesheet" href="../../design-system/dist/apca-palette.css">
+<link rel="stylesheet" href="../../design-system/dist/lds.css">
+<link rel="stylesheet" href="../../design-system/dist/themes/palette.css">
+<style>
+body{margin:0;font:13px system-ui;background:#fbfbfa;color:#161616;padding:22px 20px 60px}
+h1{font:600 19px system-ui;margin:0 0 4px}
+h2{font:600 13px system-ui;margin:26px 0 6px}
+p.k{color:#5a5a5a;max-width:860px;margin:0 0 14px}
+table{border-collapse:collapse}
+th{font:600 10.5px ui-monospace;color:#777;text-align:left;padding:0 6px 7px 0;vertical-align:bottom;line-height:1.35}
+th b{color:#161616;font-weight:700}
+td{padding:3px 6px 3px 0}
+.name{font:10.5px ui-monospace;color:#777;white-space:nowrap;padding-right:8px}
+.art{border-radius:11px;padding:11px 12px;display:flex;gap:6px;align-items:center}
+.c{height:34px;padding:0 13px;border-radius:999px;display:inline-flex;align-items:center;
+   justify-content:center;font:600 12.5px system-ui;white-space:nowrap;color:currentColor;
+   border:1px solid transparent}
+.blur{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.satf{backdrop-filter:blur(10px) saturate(1.6);-webkit-backdrop-filter:blur(10px) saturate(1.6)}
+.st{font:9.5px ui-monospace;color:#999;text-align:center;padding-top:2px}
+
+/* ---- W solid white (opaque) ---- */
+.W      {background:#fff;color:#1c1c1c}
+.W.h    {background:#f0f0f0;color:#1c1c1c}
+.W.p    {background:#e2e2e2;color:#1c1c1c}
+.W.i    {background:rgba(255,255,255,.45);color:rgba(28,28,28,.45)}
+/* ---- K solid dark (opaque) ---- */
+.K      {background:#16161a;color:#fff}
+.K.h    {background:#26262c;color:#fff}
+.K.p    {background:#2e303a;color:#fff}
+.K.i    {background:rgba(22,22,26,.45);color:rgba(255,255,255,.45)}
+/* ---- A  10% fill + 28% border (the original) ---- */
+.A      {background:color-mix(in srgb,currentColor 10%,transparent);border-color:color-mix(in srgb,currentColor 28%,transparent)}
+.A.h    {background:color-mix(in srgb,currentColor 18%,transparent);border-color:color-mix(in srgb,currentColor 28%,transparent)}
+.A.p    {background:color-mix(in srgb,currentColor 24%,transparent);border-color:color-mix(in srgb,currentColor 45%,transparent)}
+.A.i    {background:color-mix(in srgb,currentColor 5%,transparent); border-color:color-mix(in srgb,currentColor 12%,transparent);color:color-mix(in srgb,currentColor 45%,transparent)}
+/* ---- B  30% fill, no border ---- */
+.B      {background:color-mix(in srgb,currentColor 30%,transparent)}
+.B.h    {background:color-mix(in srgb,currentColor 38%,transparent)}
+.B.p    {background:color-mix(in srgb,currentColor 46%,transparent)}
+.B.i    {background:color-mix(in srgb,currentColor 14%,transparent);color:color-mix(in srgb,currentColor 45%,transparent)}
+/* ---- G  border only, no resting fill — THE NEW DEFAULT ---- */
+.G      {background:transparent;border-color:color-mix(in srgb,currentColor 60%,transparent)}
+.G.h    {background:color-mix(in srgb,currentColor 12%,transparent);border-color:color-mix(in srgb,currentColor 60%,transparent)}
+.G.p    {background:color-mix(in srgb,currentColor 18%,transparent);border-color:color-mix(in srgb,currentColor 90%,transparent)}
+.G.i    {background:transparent;border-color:color-mix(in srgb,currentColor 60%,transparent);opacity:.45}
+/* ---- F  = G plus the opt-in saturate pass ---- */
+.F      {background:transparent;border-color:color-mix(in srgb,currentColor 28%,transparent)}
+.F.h    {background:color-mix(in srgb,currentColor 12%,transparent);border-color:color-mix(in srgb,currentColor 28%,transparent)}
+.F.p    {background:color-mix(in srgb,currentColor 18%,transparent);border-color:color-mix(in srgb,currentColor 62%,transparent)}
+.F.i    {background:transparent;border-color:color-mix(in srgb,currentColor 12%,transparent);color:color-mix(in srgb,currentColor 45%,transparent)}
+</style>
+
+<h1>Media chrome — treatments &times; states</h1>
+<p class=k>
+Four states per treatment, left to right: <b>rest &middot; hover &middot; pressed &middot; inactive</b>.
+<b>W</b> and <b>K</b> are the conventional opaque pills — they beat everything on raw contrast
+because they delete the artwork behind them, and they lose their edge entirely when the artwork
+happens to match their own tone (white pill on near-white, dark pill on near-black).
+</p>
+
+<h2>G — the proposed default, at size</h2>
+<table id=focus><tbody id=frows></tbody></table>
+
+<h2>All treatments, side by side</h2>
+<table>
+<tr>
+  <th></th>
+  <th><b>W</b> solid white</th>
+  <th><b>K</b> solid dark</th>
+  <th><b>A</b> 10% fill + border</th>
+  <th><b>B</b> 30% fill, no border</th>
+  <th><b>G</b> border only &mdash; <b>NEW</b></th>
+  <th><b>F</b> G + saturate</th>
+</tr>
+<tbody id=rows></tbody>
+</table>
+
+<script>
+var BG=[
+  ['dark violet','linear-gradient(135deg,#3b1d5e,#1a0d2b)','#fff'],
+  ['near-black','linear-gradient(135deg,#101014,#16171d)','#fff'],
+  ['mid teal','linear-gradient(135deg,#3d6b66,#2f5450)','#fff'],
+  ['mid grey','linear-gradient(135deg,#808080,#8d8d8d)','#fff'],
+  ['busy / high-freq','linear-gradient(70deg,#ff8a3d,#6b3df5 40%,#12d9a0 70%,#f5f0e8)','#fff'],
+  ['saturated pink','linear-gradient(135deg,#ff2d8f,#ff7a3d)','#fff'],
+  ['MAX magenta','linear-gradient(135deg,#ff00ff,#e000e0)','#fff'],
+  ['MAX red','linear-gradient(135deg,#ff0000,#e00000)','#fff'],
+  ['MAX blue','linear-gradient(135deg,#0000ff,#0000e0)','#fff'],
+  ['light peach','linear-gradient(135deg,#ffd9a0,#ffb3c8)','#1c1c1c'],
+  ['near-white','linear-gradient(135deg,#f4f0e8,#e8eef4)','#1c1c1c']
+];
+var CL=['W','K','A','B','G','F'];
+var STATES=[['','rest'],['h','hover'],['p','pressed'],['i','inactive']];
+
+// --- focus block: G only, big enough to actually judge ---
+var f=document.getElementById('frows');
+BG.forEach(function(b){
+  var tr=document.createElement('tr');
+  var td0=document.createElement('td'); td0.className='name'; td0.textContent=b[0]; tr.appendChild(td0);
+  var td=document.createElement('td');
+  var art=document.createElement('div'); art.className='art';
+  art.style.background=b[1]; art.style.color=b[2]; art.style.minWidth='560px';
+  STATES.forEach(function(s){
+    var w=document.createElement('div');
+    w.innerHTML='<span class="c G '+s[0]+' blur" style="height:40px;padding:0 20px;font-size:14px">Share</span>'+
+                '<div class=st>'+s[1]+'</div>';
+    art.appendChild(w);
+  });
+  td.appendChild(art); tr.appendChild(td); f.appendChild(tr);
+});
+
+var t=document.getElementById('rows');
+BG.forEach(function(b){
+  var tr=document.createElement('tr');
+  var td0=document.createElement('td'); td0.className='name'; td0.textContent=b[0]; tr.appendChild(td0);
+  CL.forEach(function(c){
+    var td=document.createElement('td');
+    var art=document.createElement('div'); art.className='art';
+    art.style.background=b[1]; art.style.color=b[2];
+    var fx = (c==='W'||c==='K') ? '' : (c==='F' ? ' satf' : ' blur');
+    STATES.forEach(function(s){
+      var w=document.createElement('div');
+      w.innerHTML='<span class="c '+c+' '+s[0]+fx+'">Aa</span><div class=st>'+s[1]+'</div>';
+      art.appendChild(w);
+    });
+    td.appendChild(art); tr.appendChild(td);
+  });
+  t.appendChild(tr);
+});
+</script>

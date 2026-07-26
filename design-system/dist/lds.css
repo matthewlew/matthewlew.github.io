@@ -108,9 +108,6 @@
 
        <div class="lds-card emph-media" style="color:#fff">
 
-   The mix percentages are palette's shipped .ghost-chip values, which have been
-   in production over arbitrary user gradients.
-
    CHOOSING the ink is deliberately out of scope here. That is a sampling
    problem (read the backdrop at the element's position, pick the most legible
    ink), and it is where the unresolved contrast question lives: palette
@@ -124,17 +121,48 @@
   --text-accent:currentColor;
   --icon:currentColor;
   --text-subdued:color-mix(in srgb,currentColor 70%,transparent);
-  --background:color-mix(in srgb,currentColor 10%,transparent);
-  --bg-hover:color-mix(in srgb,currentColor 18%,transparent);
-  --bg-pressed:color-mix(in srgb,currentColor 24%,transparent);
-  --border:color-mix(in srgb,currentColor 28%,transparent);
-  --border-subdued:color-mix(in srgb,currentColor 14%,transparent);
+  /* NO resting fill — the stroke defines the control. See the note below. */
+  --background:transparent;
+  --bg-hover:color-mix(in srgb,currentColor 12%,transparent);
+  --bg-pressed:color-mix(in srgb,currentColor 18%,transparent);
+  --border:color-mix(in srgb,currentColor 60%,transparent);
+  --border-subdued:color-mix(in srgb,currentColor 30%,transparent);
   /* glass-specific aliases. .lds-glass reads THESE rather than --background, so
      that it stays translucent inside a normal emphasis context — reading the
      inherited --background would turn it opaque white inside any .emph-plain. */
-  --glass-bg:color-mix(in srgb,currentColor 10%,transparent);
-  --glass-border:color-mix(in srgb,currentColor 28%,transparent);
+  --glass-bg:transparent;
+  --glass-border:color-mix(in srgb,currentColor 60%,transparent);
 }
+/* Stroke, not fill — and this is the opposite of the usual glass instinct.
+   An alpha fill of the ink over the artwork is just a dimmer: it moves
+   lightness only, so it desaturates whatever is behind it. Measured across six
+   backdrops, a 10% ink fill drops backdrop chroma on 5 of 6 and a 30% fill
+   drops it by ~36% (0.084 -> 0.054) — the artwork goes muddy, which is the one
+   thing a gradient tool cannot afford.
+
+   Worse, the fill is made of the same ink as the label sitting on it, so every
+   percent of fill costs label contrast: 10% fill puts the worst-case label at
+   Lc 66.1 and 30% at Lc 50.9.
+
+   Dropping the fill entirely fixes both at once — worst-case label rises to
+   Lc 72.4 and chroma is untouched on 6 of 6, because nothing is composited over
+   the art at all. The 1px stroke then carries the whole job of defining the
+   control, and because it is 1px its own effect on the artwork is negligible,
+   which is what lets it be strong.
+
+   And it has to be strong. 28% (the usual glass hairline) fails badly on
+   saturated artwork: an ink-alpha mix moves mostly chroma, not luminance, so a
+   white hairline over pure red is just pink-on-red — measured Lc 0.0 on red,
+   blue and magenta. Stepping the alpha up: 40% still fails magenta (7.8), 50%
+   still fails magenta (13.6), and 60% is the first value where every backdrop
+   tested clears the Lc 15 non-text floor (worst case 20.6, magenta).
+
+   A `backdrop-filter: saturate()` pass was considered as an alternative and
+   rejected as a default: on already-saturated artwork it clips to a no-op on
+   pure primaries, and on near-max colours it clips asymmetrically and shifts
+   hue 4–10° — it distorts the artwork rather than enriching it, on exactly the
+   backdrops that need help most. It stays available via --media-filter for
+   consumers whose artwork is known to be low-chroma. */
 /* Media chrome is backdrop-relative, not mode-relative, so .mode-dark must NOT
    flip it — a white pill over a bright photo stays wrong in either mode. The
    role is intentionally identical in both; the ink is what changes. */
@@ -143,6 +171,11 @@
    light product shot). Skips sampling entirely. */
 .emph-media--on-dark{color:#FFFFFF;}
 .emph-media--on-light{color:var(--grey-900);}
+
+/* Inactive is handled at the end of this file — it has to beat .lds-btn:disabled
+   on source order, and it must NOT be expressed as faded tokens. See the note
+   there; the short version is that fading --text and --border independently
+   makes them multiply. */
 
 /* semantic banner shortcuts (fixed hues regardless of theme brand) */
 .banner-success{--background:#E7F6EC;--text:#0B5A26;--border:#B7E4C6;--icon:#0B5A26;}
@@ -230,15 +263,16 @@
 }
 .lds-btn.emph-plain:hover{border-color:var(--border);}
 
-/* media buttons keep their border — a translucent fill needs the edge to read
-   as a control at all over busy artwork — and drop the shadow, which muddies
-   the backdrop it floats on. */
+/* media buttons are stroke-defined, and drop the shadow, which muddies the
+   backdrop they float on. --media-filter is the opt-in saturate pass. */
 .lds-btn.emph-media{
   background:var(--background);color:var(--text);border-color:var(--border);
-  box-shadow:none;backdrop-filter:blur(var(--glass-blur,10px));-webkit-backdrop-filter:blur(var(--glass-blur,10px));
+  box-shadow:none;
+  backdrop-filter:blur(var(--glass-blur,10px)) var(--media-filter,);
+  -webkit-backdrop-filter:blur(var(--glass-blur,10px)) var(--media-filter,);
   min-height:var(--target-min);min-width:var(--target-min);
 }
-.lds-btn.emph-media:hover{background:var(--bg-hover);border-color:var(--border);}
+.lds-btn.emph-media:hover{background:var(--bg-hover);}
 .lds-btn.emph-media:active{background:var(--bg-pressed);}
 
 /* Named button variants — plain-language presets so authors don't touch the
@@ -343,9 +377,10 @@
 .lds-tag.emph-plain,.lds-tag.emph-subtle,.lds-tag.emph-soft,.lds-tag.emph-strong,.lds-tag.emph-stark{
   background:var(--background);color:var(--text);border-color:transparent;
 }
-/* media tags keep the border, same reasoning as media buttons */
-.lds-tag.emph-media{background:var(--background);color:var(--text);border-color:var(--border);}
-.mode-dark .lds-tag.emph-media{background:var(--background);color:var(--text);border-color:var(--border);}
+/* media tags are stroke-defined, same reasoning as media buttons */
+.lds-tag.emph-media,.mode-dark .lds-tag.emph-media{
+  background:var(--background);color:var(--text);border-color:var(--border);
+}
 /* plain = colored outline: white bg, hue border, hue label (not neutral grey).
    The icon sits one step stronger than the label so it still reads on white. */
 .lds-tag.emph-plain{--icon:var(--c-600);background:#FFFFFF;color:var(--c-800);border-color:var(--c-300);}
@@ -406,14 +441,18 @@
    any backdrop. Beats .mode-dark, which must not touch media chrome. */
 .lds-chip.emph-media,.mode-dark .lds-chip.emph-media{
   background:var(--background);color:var(--text);border-color:var(--border);
-  backdrop-filter:blur(var(--glass-blur,10px));-webkit-backdrop-filter:blur(var(--glass-blur,10px));
+  backdrop-filter:blur(var(--glass-blur,10px)) var(--media-filter,);
+  -webkit-backdrop-filter:blur(var(--glass-blur,10px)) var(--media-filter,);
 }
-.lds-chip.emph-media:hover,.mode-dark .lds-chip.emph-media:hover{background:var(--bg-hover);border-color:var(--border);}
+.lds-chip.emph-media:hover,.mode-dark .lds-chip.emph-media:hover{background:var(--bg-hover);}
 .lds-chip.emph-media:active,.mode-dark .lds-chip.emph-media:active{background:var(--bg-pressed);}
+/* selected strengthens the STROKE rather than flooding the fill — the same
+   reason the resting state has no fill. A light 18% wash marks it as active
+   without desaturating the artwork or eating the label's contrast. */
 .lds-chip.emph-media.lds-chip--selected,.mode-dark .lds-chip.emph-media.lds-chip--selected{
   --icon:currentColor;
   background:var(--bg-pressed);color:var(--text);
-  border-color:color-mix(in srgb,currentColor 45%,transparent);
+  border-color:color-mix(in srgb,currentColor 90%,transparent);
 }
 
 /* parts: leading icon, dropdown caret (rotates when open), remove button */
@@ -496,6 +535,28 @@
   backdrop-filter:blur(var(--glass-blur,14px));-webkit-backdrop-filter:blur(var(--glass-blur,14px));
   border:1px solid var(--glass-border,rgba(255,255,255,.28));
   box-shadow:var(--card-shadow,0 8px 24px rgba(0,0,0,.22));
+}
+
+/* ==========================================================================
+   State overrides that must win on source order
+   ========================================================================== */
+
+/* Inactive media chrome. Deliberately opacity, not faded tokens.
+   The tempting version — --text at 45% and --border at 12% — is broken: the
+   component sets `color:var(--text)`, so once the label fades, `currentColor`
+   IS the faded ink, and the border's own color-mix re-derives 12% OF 45% and
+   lands at 5.4%. The two fades multiply, and the stroke all but vanishes.
+   One opacity does the whole job correctly and in one operation: the 28%
+   stroke becomes 12.6% and the ink becomes 45%, which is exactly the intended
+   relationship.
+   .45 rather than the .38 used for ordinary disabled buttons, because media
+   chrome has no container to fade toward — drop it further and it stops
+   reading as a disabled control and starts reading as a rendering artifact. */
+.emph-media:disabled,
+.emph-media[aria-disabled="true"],
+.emph-media.is-inactive{
+  opacity:.45;
+  pointer-events:none;
 }
 
 /* ---- Icon ---- */
