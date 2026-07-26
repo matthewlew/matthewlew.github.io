@@ -177,29 +177,34 @@ horizontal density spine with per-day ticks; it was cut. The page exists to show
 that LDS keeps moving and has reasons for having moved, not to be a data
 visualisation of itself.
 
-### Metadata is words, not marks
+### The collapsed row carries two things at most
 
-Each entry states its section, area, quality and who decided — all as plain text,
-capitalised in the markup.
+A row is the claim, then **who decided**, then **Reversal** if it is one. Nothing
+else.
 
-An earlier version encoded quality as a dot: size for weight, a ring for
-reversal. It read well and it was wrong for this page. A dot copies as nothing,
-so selecting a row and pasting it elsewhere silently dropped the weight of the
-change — on a document whose entire purpose is that the reasoning survives being
-moved around. Words survive the clipboard.
+It got there by subtraction, and each cut has a reason:
 
-| Value | Shown as |
+| Dropped | Why |
 |---|---|
-| `minor` | Minor |
-| `notable` | Notable |
-| `structural` | Structural |
-| `reversal` | **Reversal** — brand colour and semibold on the word itself |
+| The `§ N` section mark | It restated the area — `§ 3` and `Emphasis` are the same fact. It was also the least legible thing on the row. |
+| The area name | The claim already says it. "APCA, not WCAG 2.x" is plainly about colour. |
+| `Minor` / `Notable` / `Structural` | None of them change what a reader does next. Only `Reversal` does. |
+| The dot | A dot copies as nothing. See below. |
 
-Capitalisation lives in the markup rather than in `text-transform`, because a
-copy takes the source text and a CSS-only capital pastes back lowercase.
+Area, quality, section name and commit all remain in the expanded entry, and they
+copy with it. The filter chips still cover area and quality, so nothing became
+unreachable — only quieter.
 
-`reversal` is still the load-bearing value. It is emphasised by weight and colour
-on the word, not by a mark beside it.
+**Words, not marks.** An earlier version encoded quality as a dot: size for
+weight, a ring for reversal. It read well on screen and it was wrong here. A dot
+copies as nothing, so selecting a row and pasting it silently dropped the weight
+of the change — on a document whose whole purpose is that reasoning survives
+being moved. Capitalisation lives in the markup rather than `text-transform`,
+because a copy takes the source text and a CSS-only capital pastes back
+lowercase.
+
+`Reversal` is emphasised by weight and brand colour on the word itself, never by
+a mark beside it.
 
 ### Order and focus
 

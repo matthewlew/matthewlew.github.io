@@ -35,7 +35,6 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
       font-size:var(--text-caption);color:var(--grey-600);white-space:nowrap}
 .meta .sep{color:var(--grey-400)}
 .meta .rev{color:var(--c-700);font-weight:var(--weight-semibold)}
-.meta .num{font-family:var(--th-mono)}
 
 /* ---- legend: footnote-scale, not a dashboard ----
    A two-column grid, and the value column is ordinary flowing text. It was a
@@ -166,13 +165,14 @@ h1{font-family:var(--th-display);font-size:var(--text-title);line-height:var(--l
 
 <div class=legend>
   <div class=lrow>
-    <b>Weight</b> <span>Minor, a refinement · Notable, a new constraint ·
-    Structural, changes the shape · <b class=rev>Reversal</b>, undoes a prior call</span>
-  </div>
-  <div class=lrow>
     <b>Decided by</b> <span>Human, Matthew's call · Measured, the numbers only went
     one way · AI, proposed then approved</span>
   </div>
+  <div class=lrow>
+    <b class=rev>Reversal</b> <span>already tried the other way — the entry says why
+    it didn't hold. Open any entry for its area, weight and commit.</span>
+  </div>
+</div>
 </div>
 </div>
 
@@ -363,15 +363,18 @@ function entryEl (e) {
   el.dataset.quality = e.meta.quality || 'notable'
 
   const q = el.dataset.quality
-  // Everything the row says, it says in words: section, area, weight, who. Copy
-  // a row and you get "Stroke-defined, not fill-defined - Reversal, Emphasis,
-  // Measured" rather than a claim with its metadata silently dropped.
-  // &nbsp; after the section mark, per Butterick: the space is glue, so the mark
-  // can never end a line with its number orphaned onto the next.
+  // Two things at most, usually one.
+  //
+  // The row used to carry four: a section mark, the area, the quality and who
+  // decided. The section mark was the area restated — "§ 3" and "Emphasis" are
+  // the same fact — and the claim itself already tells you the area in almost
+  // every case ("APCA, not WCAG 2.x" is plainly about colour). Minor/Notable/
+  // Structural were noise at a glance; only Reversal changes what you do next.
+  //
+  // So: who decided, always. Reversal, when it is one. Everything else is in the
+  // expanded entry, one click away, and still copies with it.
   const bits = []
-  if (e.section && e.section.num) bits.push('<span class=num>&sect;&nbsp;' + e.section.num + '</span>')
-  bits.push(cap(e.meta.area))
-  bits.push(q === 'reversal' ? '<span class=rev>Reversal</span>' : QUAL[q])
+  if (q === 'reversal') bits.push('<span class=rev>Reversal</span>')
   bits.push(WHO[e.meta.attribution])
 
   el.innerHTML =
@@ -383,8 +386,8 @@ function entryEl (e) {
       blocks(e.body) +
       (e.ruled ? '<div class=ruled><b>Ruled out</b>' + blocks(e.ruled) + '</div>' : '') +
       (e.cost ? '<div class=cost><b>Cost</b>' + blocks(e.cost) + '</div>' : '') +
-      '<p class=src>' + (e.section && e.section.num
-          ? '&sect;&nbsp;' + e.section.num + ' ' + e.section.name + ' — ' : '') +
+      '<p class=src>' +
+        (e.section ? e.section.name + ' — ' : '') +
         QUAL[q] + ', ' + WHO_LONG[e.meta.attribution] +
         (e.meta.commit
           ? ' — <a href="' + REPO + e.meta.commit + '"><code>' + e.meta.commit + '</code></a>'
