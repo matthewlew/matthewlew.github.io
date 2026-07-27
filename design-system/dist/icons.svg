@@ -1,5 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
   <defs>
+    <!-- Status shapes. Named for what they DRAW, not what they mean: a status is
+         bound to a colour in lds.css and to a shape here, and neither binding
+         belongs in the other's name. `checkCircle` is what success happens to
+         use today; calling the symbol `success` would freeze that. The two
+         semantic names already in this sprite (error, warning) predate the rule
+         and are kept so existing consumers do not break. -->
+    <symbol id="checkCircle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M8.2 12.3l2.6 2.6 5-5.4"/>
+    </symbol>
+    <symbol id="xCircle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M9 9l6 6M15 9l-6 6"/>
+    </symbol>
+    <symbol id="infoCircle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M12 11.2v5.3M12 7.6h.01"/>
+    </symbol>
+    <symbol id="helpCircle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M9.6 9.3a2.4 2.4 0 1 1 3.3 2.2c-.75.45-1.2.9-1.2 1.8v.45"/>
+      <path d="M12 16.6h.01"/>
+    </symbol>
+    <symbol id="chevronDown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9.5l6 6 6-6"/>
+    </symbol>
     <symbol id="document" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M6 3h8l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
       <path d="M14 3v5h5"/>

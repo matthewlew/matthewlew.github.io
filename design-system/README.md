@@ -73,15 +73,42 @@ brand hue, not a hue named "primary".
 
 `--th-display` · `--th-body` · `--th-ui` · `--th-mono`
 
-`--th-ui` is the **control** role — buttons, tags, chips, field labels. It is
-separate from `--th-body` because a body font may legitimately be a serif, and a
-serif is wrong on a button: a control is chrome, not prose. It defaults to
-`--th-display`, so a theme gets sans controls without opting in.
+`--th-ui` is the **control** role — anything interactive or chrome: buttons,
+tags, chips, field labels and inputs, nav links. It is separate from `--th-body`
+because a body font may legitimately be a serif, and a serif is wrong on a
+button: a control is chrome, not prose. It defaults to `--th-display`, so a theme
+gets sans controls without opting in.
+
+The test is *would you read it, or click it?* Prose keeps `--th-body`, and only
+four rules still take it: `lds-card__body`, `lds-card__meta`, `lds-banner` and
+`lds-modal__body`.
 
 Declare it **in the theme**, next to the other font roles — not once at `:root`.
 A `:root` default resolves against core's values at the root element and
 inherits down as a concrete font name, which then wins over a theme mounted
 lower in the tree.
+
+### Icons
+
+28 symbols in `dist/icons.svg`, all on a `0 0 24 24` grid with a 1.5 stroke.
+Reference them, never paste paths:
+
+```html
+<svg class="lds-icon" style="width:100%;height:100%">
+  <use href="design-system/dist/icons.svg#checkCircle"/>
+</svg>
+```
+
+`.lds-icon` sizes from `--icon-size`, colours from `--icon` and takes its stroke
+from `--icon-weight`, so an icon adapts to emphasis and mode without knowing they
+exist.
+
+Symbols are named for the **shape** they draw — `checkCircle`, `xCircle`,
+`infoCircle`, `chevronDown` — not for a status, for the same reason `hue-*` names
+a colour. `error` and `warning` are older semantic names, kept for consumers.
+
+External `<use>` resolves over HTTP only. Icons are invisible on a page opened
+via `file://`, so serve the site when checking them.
 
 ## Themes
 

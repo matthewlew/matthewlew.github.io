@@ -33,11 +33,17 @@
   
   --leading-none: 1; --leading-tight: 1.15; --leading-normal: 1.4; --leading-loose: 1.6;
 
-  /* Four font roles. --th-ui is the CONTROL role: buttons, tags, chips, field
-     labels. It exists because --th-body may legitimately be a serif (an
-     editorial theme), and a serif is wrong on a button label — a control is
-     chrome, not prose. Defaults to --th-display so a theme gets sans controls
-     without opting in; override --th-ui alone to decouple them. */
+  /* Four font roles. --th-ui is the CONTROL role: anything interactive or
+     chrome — buttons, tags, chips, field labels and inputs, nav links. It
+     exists because --th-body may legitimately be a serif (an editorial theme),
+     and a serif is wrong on a button label — a control is chrome, not prose.
+     Defaults to --th-display so a theme gets sans controls without opting in;
+     override --th-ui alone to decouple them.
+
+     The test: would you read it, or click it? Prose keeps --th-body, and only
+     four rules still take it — card__body, card__meta, banner, modal__body.
+
+     Declare --th-ui in the THEME, not once at :root. See decisions.md. */
   --th-body: system-ui, sans-serif;
   --th-display: system-ui, sans-serif;
   --th-ui: var(--th-display);
@@ -563,7 +569,7 @@
 }
 .lds-nav__logo{font-family:var(--th-display);font-weight:var(--weight-medium);font-size:var(--text-subhead);letter-spacing:var(--tracking-subhead);color:var(--text);}
 .lds-nav__logo b{color:var(--text-accent);font-weight:inherit;}
-.lds-nav__links{display:flex;gap:14px;font-family:var(--th-body);font-size:var(--size-1);letter-spacing:var(--tracking-body);color:var(--text-subdued);}
+.lds-nav__links{display:flex;gap:14px;font-family:var(--th-ui);font-size:var(--size-1);letter-spacing:var(--tracking-body);color:var(--text-subdued);}
 .lds-nav__links a{cursor:pointer;text-decoration:none;color:inherit;}
 .lds-nav__links a:hover{color:var(--text);}
 .lds-nav__spacer{margin-left:auto;}

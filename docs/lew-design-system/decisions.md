@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 50 decisions: **29 human · 19 measured · 2 ai**.
+The split as it stands, across the 51 decisions: **30 human · 19 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -230,6 +230,47 @@ modals, toasts, sheets — and 54% overall is a success, not a miss.
 
 **Cost:** the number looks bad out of context, so it has to be stated with the
 reasoning attached every time it comes up.
+
+### Icons come from the sprite, and are named for what they draw
+
+`2026-07-27` · `foundations` · `human` · `notable`
+
+Every icon is a `<use>` reference into `dist/icons.svg`. Pages do not carry inline
+`<path>` data.
+
+The sprite existed and was almost entirely unused — referenced once each in
+`index.html` and `about.html`, against **101** inline SVGs across the showcase,
+the tag page and the a11y page. An unused foundation is not a foundation, and the
+drift it allowed was already visible:
+
+- Icons had accumulated in **two grids**. The hand-drawn set was `0 0 16 16`; a
+  handful of Feather icons had been pasted in at `0 0 24 24` with
+  `stroke-width="2"` against the sprite's 1.5.
+- The same status was drawn by different shapes on different pages — error was
+  an ✕-in-circle in one place and an !-in-circle in another.
+
+All 101 were converted. Only shapes with a verified equivalent were mapped; the
+five the sprite was missing were added to it rather than approximated.
+
+**Symbols are named for their shape, not their meaning** — `checkCircle`,
+`xCircle`, `infoCircle`, `helpCircle`, `chevronDown`. A status is bound to a
+colour in `lds.css` and to a shape here, and neither binding belongs in the
+other's name. Naming the symbol `success` would freeze the mapping and put the
+same layering mistake in the icon set that *A hue is a colour, a status is a
+meaning* just removed from the colour set.
+
+**Ruled out:** semantic symbol names (`success`, `info`), for the reason above.
+Also ruled out: leaving the icons inline because they render fine. They do render
+fine — that is exactly why two grids and two error shapes survived unnoticed, and
+why a page could not pick up a corrected icon without being edited.
+
+**Cost:** the two semantic names already in the sprite — `error` and `warning` —
+predate the rule and are kept, so the naming is not uniform. Renaming them would
+break the pages consuming them for no rendering benefit. Also: external `<use>`
+needs a real HTTP origin, so an icon is invisible when a page is opened over
+`file://` — the same constraint `decisions.html` already carries. And the sprite
+is a 24 grid, so an icon rendered at 13px in a tag draws its 1.5 stroke at an
+effective 0.8px; verified legible at both 13px and 16px, but it is the floor.
 
 ---
 
