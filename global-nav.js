@@ -1,4 +1,8 @@
 (function() {
+  /* The hub widget is a dark island on every page, so it declares
+     .theme-portfolio.mode-dark.emph-plain on itself and paints from One Token.
+     It previously hardcoded DM Sans, Bricolage Grotesque, Space Mono, #111 and
+     a vermilion #C8391B — none of which the system still contains. */
   const style = document.createElement('style');
   style.innerHTML = `
     .lew-hub-widget {
@@ -10,7 +14,7 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 12px;
-      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      font-family: var(--th-ui);
     }
     .lew-hub-menu {
       display: flex;
@@ -20,12 +24,12 @@
       pointer-events: none;
       transform: translateY(10px) scale(0.95);
       transform-origin: bottom right;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      background: #111;
+      transition: all var(--dur-slow, 320ms) var(--ease-decelerate, cubic-bezier(.22,1,.36,1));
+      background: var(--background);
       padding: 6px;
-      border-radius: 12px;
-      border: 1px solid #2A2A28;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
     }
     .lew-hub-widget:hover .lew-hub-menu {
       opacity: 1;
@@ -33,69 +37,71 @@
       transform: translateY(0) scale(1);
     }
     .lew-hub-menu-title {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
+      font-family: var(--th-mono);
+      font-size: var(--text-caption);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #6E6E6C;
+      letter-spacing: var(--tracking-widest);
+      color: var(--text-subdued);
       padding: 8px 12px 4px;
       margin-bottom: 4px;
     }
     .lew-hub-menu a {
-      color: #B5B5B2;
+      color: var(--text-subdued);
       text-decoration: none;
-      font-size: 14px;
+      font-size: var(--size-3);
       padding: 8px 16px;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       white-space: nowrap;
-      transition: color 0.15s, background 0.15s;
+      transition: color var(--dur-fast, 120ms), background var(--dur-fast, 120ms);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 24px;
     }
     .lew-hub-menu a:hover {
-      color: #fff;
-      background: #222;
+      color: var(--text);
+      background: var(--bg-hover);
     }
     .lew-hub-menu a.active {
-      color: #fff;
-      background: rgba(200, 57, 27, 0.15);
-      font-weight: 500;
+      color: var(--text);
+      background: var(--bg-pressed);
+      font-weight: var(--weight-medium);
     }
+    .lew-hub-menu a:focus-visible { outline: 2px solid var(--text-accent); outline-offset: -2px; }
     .lew-hub-fab {
       width: 52px;
       height: 52px;
-      border-radius: 26px;
-      background: #111;
-      color: #fff;
+      border-radius: var(--pill);
+      background: var(--background);
+      color: var(--text);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Bricolage Grotesque', 'DM Sans', sans-serif;
-      font-weight: 600;
-      font-size: 16px;
-      letter-spacing: -0.02em;
+      font-family: var(--th-display);
+      font-weight: var(--weight-medium);
+      font-size: var(--size-4);
+      letter-spacing: var(--tracking-tight);
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
-      border: 1px solid #2A2A28;
+      box-shadow: var(--shadow-base);
+      transition: transform var(--dur-slow, 320ms) var(--ease-decelerate, cubic-bezier(.22,1,.36,1));
+      border: 1px solid var(--border);
     }
-    .lew-hub-fab .accent { color: #C8391B; }
-    .lew-hub-widget:hover .lew-hub-fab {
-      transform: scale(0.92);
-      background: #0A0A0A;
-    }
-    
+    /* The accent is the theme's accent — green — not a colour of the widget's own. */
+    .lew-hub-fab .accent { color: var(--text-accent); }
+    .lew-hub-widget:hover .lew-hub-fab { transform: scale(0.92); }
+
     @media (max-width: 600px) {
       .lew-hub-widget { bottom: 16px; right: 16px; }
       .lew-hub-menu { margin-bottom: -4px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .lew-hub-menu, .lew-hub-fab { transition: none; }
     }
   `;
   document.head.appendChild(style);
 
   const widget = document.createElement('div');
-  widget.className = 'lew-hub-widget';
+  widget.className = 'lew-hub-widget theme-portfolio mode-dark emph-plain';
 
   const menu = document.createElement('div');
   menu.className = 'lew-hub-menu';
@@ -117,7 +123,7 @@
   links.forEach(link => {
     const a = document.createElement('a');
     a.href = link.path;
-    a.innerHTML = \`<span>\${link.label}</span>\`;
+    a.innerHTML = `<span>${link.label}</span>`;
     
     let isActive = false;
     if (link.path === '/') {
@@ -128,7 +134,7 @@
     
     if (isActive) {
       a.className = 'active';
-      a.innerHTML += \`<span style="color: #C8391B; font-size: 10px;">●</span>\`;
+      a.innerHTML += `<span aria-hidden="true" style="color: var(--text-accent); font-size: 10px;">●</span>`;
     }
 
     menu.appendChild(a);

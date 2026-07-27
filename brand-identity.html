@@ -3,9 +3,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Matthew Lew — Personal brand system. Color, type, mark, and rules. The system is the statement.">
 <title>Matthew Lew — Brand System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <!-- No font CDN. Coconat and Ronzino are self-hosted and loaded by
+       design-system/dist/themes/portfolio.css. -->
 <link rel="stylesheet" href="design-system/dist/apca-palette.css">
 <link rel="stylesheet" href="design-system/dist/lds.css">
 <link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
@@ -14,12 +13,12 @@
   :root {
     --bg: var(--background);
     --bg-soft: var(--grey-100);
-    --paper: var(--c-50);
+    --paper: var(--grey-200);
     --ink: var(--grey-900);
     --ink-2: var(--grey-600);
     --ink-3: var(--grey-400);
     --rule: var(--grey-300);
-    --red: var(--c-600);
+    --accent: var(--c-600);       /* interactive blue, was terracotta */
     --font-display: var(--th-display);
     --font-body: var(--th-body);
     --font-mono: var(--th-mono);
@@ -37,7 +36,7 @@
     overflow-x: hidden;
   }
   a { color: inherit; text-decoration: none; }
-  ::selection { background: var(--red); color: #fff; }
+  ::selection { background: var(--accent); color: #fff; }
 
   /* NAV */
   .nav {
@@ -49,7 +48,7 @@
     border-bottom: 1px solid var(--ink);
   }
   .nav-name { font-family: var(--font-display); font-size: 20px; line-height: 1; }
-  .nav-name .accent { color: var(--red); }
+  .nav-name .accent { color: var(--accent); }
   .nav-links { display: flex; list-style: none; height: 100%; }
   .nav-links li { display: flex; }
   .nav-links a {
@@ -60,7 +59,7 @@
     transition: color 0.15s, background 0.15s;
   }
   .nav-links a:hover { color: var(--ink); background: var(--bg-soft); }
-  .nav-links a.active { color: var(--red); }
+  .nav-links a.active { color: var(--accent); }
   .nav-toggle {
     display: none; font-family: var(--font-mono); font-size: 10px;
     text-transform: uppercase; letter-spacing: 0.08em;
@@ -81,7 +80,7 @@
     line-height: 0.92; letter-spacing: -0.02em;
     font-size: clamp(52px, 8.5vw, 128px);
   }
-  .section-title .it { font-style: italic; }
+  .section-title .it { color: var(--accent); }   /* was italic; this brand sets none */
 
   /* HERO */
   .hero {
@@ -92,14 +91,14 @@
     text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-2);
     display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: clamp(24px, 5vw, 52px);
   }
-  .hero-eyebrow .dot { color: var(--red); }
+  .hero-eyebrow .dot { color: var(--accent); }
   .hero-title {
     font-family: var(--font-display); font-weight: 400;
     line-height: 0.88; letter-spacing: -0.03em;
     font-size: clamp(56px, 13vw, 200px);
   }
-  .hero-title .accent { color: var(--red); }
-  .hero-title .it { font-style: italic; }
+  .hero-title .accent { color: var(--accent); }
+  .hero-title .it { color: var(--accent); }   /* was italic; this brand sets none */
   .hero-note {
     margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--ink);
     font-size: clamp(16px, 2vw, 22px); max-width: 44ch; line-height: 1.35; color: var(--ink-2);
@@ -132,7 +131,7 @@
     font-family: var(--font-display); font-size: clamp(30px, 5vw, 60px);
     letter-spacing: -0.01em;
   }
-  .marquee-track span.sep { color: var(--red); margin: 0 0.4em; }
+  .marquee-track span.sep { color: var(--accent); margin: 0 0.4em; }
   .marquee:hover .marquee-track { animation-play-state: paused; }
   @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
@@ -143,9 +142,9 @@
     display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: center;
   }
   .spec .lbl { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); line-height: 1.8; }
-  .spec .lbl .r { color: var(--red); }
+  .spec .lbl .r { color: var(--accent); }
   .spec .display { font-family: var(--font-display); font-size: clamp(40px, 7vw, 100px); line-height: 0.95; letter-spacing: -0.02em; }
-  .spec .display.it { font-style: italic; }
+  .spec .display.it { color: var(--accent); }   /* was italic; this brand sets none */
   .spec .sans { font-family: var(--font-body); font-size: clamp(24px, 3.4vw, 44px); font-weight: 400; letter-spacing: -0.01em; }
   .spec .sans-light { font-weight: 300; }
   .spec .mono { font-family: var(--font-mono); font-size: clamp(16px, 2.2vw, 26px); letter-spacing: -0.01em; }
@@ -177,7 +176,7 @@
   .mark.dark { background: var(--ink); }
   .mark.dark .glyph { color: var(--bg); }
   .mark.dark .tag { color: var(--ink-3); }
-  .mark.red { background: var(--red); }
+  .mark.red { background: var(--accent); }
   .mark.red .glyph { color: var(--bg); }
   .mark.red .tag { color: rgba(255,255,255,0.7); }
 
@@ -205,14 +204,14 @@
   .biz.front-dark  { background: #131311; color: var(--paper); border-color: rgba(255,255,255,0.22); }
   .biz.back        { background: var(--ink); color: #EDEDEA; border-color: rgba(255,255,255,0.22); }
   .biz .b-name { font-family: var(--font-display); font-size: 26px; line-height: 1; }
-  .biz .b-name .accent { color: var(--red); }
+  .biz .b-name .accent { color: var(--accent); }
   .biz .b-role { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
   .biz .b-foot { display: flex; justify-content: space-between; align-items: flex-end; }
-  .biz .b-rule { width: 34px; height: 2px; background: var(--red); }
+  .biz .b-rule { width: 34px; height: 2px; background: var(--accent); }
   .biz .b-contact { font-family: var(--font-mono); font-size: 9px; text-align: right; line-height: 1.6; opacity: 0.8; }
   .biz.back .code { font-family: var(--font-mono); font-size: 11px; line-height: 1.7; }
   .biz.back .code .k { color: #8FB7A6; }
-  .biz.back .code .b { color: var(--red); }
+  .biz.back .code .b { color: var(--accent); }
   .biz.back .code .s { color: #E7C878; }
 
   /* 05 RULES */
@@ -224,13 +223,13 @@
     padding-bottom: 14px; margin-bottom: 4px;
   }
   .rule-col.do h3 { color: var(--ink); }
-  .rule-col.dont h3 { color: var(--red); }
+  .rule-col.dont h3 { color: var(--accent); }
   .rule-item {
     padding: 18px 0 18px 18px; border-top: 1px solid var(--rule);
     font-size: 15.5px; line-height: 1.45; color: var(--ink-2);
   }
   .rule-col.do .rule-item { border-left: 2px solid var(--ink); }
-  .rule-col.dont .rule-item { border-left: 2px solid var(--red); }
+  .rule-col.dont .rule-item { border-left: 2px solid var(--accent); }
   .rule-item strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 4px; }
 
   /* 06 SYSTEM */
@@ -240,7 +239,7 @@
     min-height: 200px; display: flex; flex-direction: column;
   }
   .sys-cell:nth-child(4n) { border-right: none; }
-  .sys-idx { font-family: var(--font-mono); font-size: 11px; color: var(--red); margin-bottom: 30px; }
+  .sys-idx { font-family: var(--font-mono); font-size: 11px; color: var(--accent); margin-bottom: 30px; }
   .sys-name { font-family: var(--font-display); font-size: 22px; line-height: 1.05; margin-bottom: 10px; }
   .sys-desc { font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-top: auto; }
 
@@ -249,7 +248,7 @@
     padding: 18px 24px; background: var(--ink); color: var(--ink-3);
     font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
   }
-  footer a:hover { color: var(--red); }
+  footer a:hover { color: var(--accent); }
 
   @media (max-width: 900px) {
     .color-grid { grid-template-columns: repeat(2, 1fr); }
@@ -352,8 +351,8 @@
       <div class="meta"><div class="name">Rule / Divider</div><div class="tok">--rule</div><div class="hex"></div></div>
     </div>
     <div class="swatch" data-token="--red">
-      <div class="chip" style="background:var(--red);"></div>
-      <div class="meta"><div class="name">Signature Red</div><div class="tok" style="color:var(--red);">--red</div><div class="hex"></div></div>
+      <div class="chip" style="background:var(--accent);"></div>
+      <div class="meta"><div class="name">Signature Red</div><div class="tok" style="color:var(--accent);">--red</div><div class="hex"></div></div>
     </div>
   </div>
 </section>
@@ -372,11 +371,11 @@
   <div class="section-title-row"><h2 class="section-title">Type.</h2></div>
   <div class="type-specimen">
     <div class="spec">
-      <div class="lbl">Display<br><span class="r"><span data-font="--th-display"></span>*</span><br>Aa — Semibold</div>
+      <div class="lbl">Display<br><span class="r"><span data-font="--th-display"></span>*</span><br>Aa — Demi</div>
       <div class="display">The system is the statement</div>
     </div>
     <div class="spec">
-      <div class="lbl">Display Italic<br><span class="r"><span data-font="--th-display"></span>*</span><br>Aa — Italic</div>
+      <div class="lbl">Display Accent<br><span class="r"><span data-font="--th-display"></span>*</span><br>Aa — Regular</div>
       <div class="display it">Declared, not drawn</div>
     </div>
     <div class="spec">
@@ -421,7 +420,7 @@
       <div class="biz front-light">
         <div>
           <div class="b-name">Matthew<span class="accent">.</span>Lew</div>
-          <div class="b-role" style="color:var(--red);margin-top:6px;">Design Systems Designer</div>
+          <div class="b-role" style="color:var(--accent);margin-top:6px;">Design Systems Designer</div>
         </div>
         <div class="b-foot">
           <div class="b-rule"></div>
@@ -434,7 +433,7 @@
       <div class="biz front-dark">
         <div>
           <div class="b-name">Matthew<span class="accent">.</span>Lew</div>
-          <div class="b-role" style="color:var(--red);margin-top:6px;">Design Systems Designer</div>
+          <div class="b-role" style="color:var(--accent);margin-top:6px;">Design Systems Designer</div>
         </div>
         <div class="b-foot">
           <div class="b-rule"></div>

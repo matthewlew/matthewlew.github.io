@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 51 decisions: **30 human · 19 measured · 2 ai**.
+The split as it stands, across the 61 decisions: **38 human · 21 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -763,6 +763,11 @@ smaller x-height than Jost at the same nominal size, so 16px body reads slightly
 smaller than it did — still inside Butterick's 15–25px, but it is the floor of
 the range now rather than comfortably above it.
 
+**Reversed 2026-07-27** by *Serif display, sans text*. The split survived; the
+sides swapped. The argument here was sound about *Jost* — a geometric sans does
+read technical in a paragraph — but it was an argument about the display face,
+not about sans in general. Change the display face and it stops applying.
+
 **Amended 2026-07-27:** this decision quietly set every *control* in the serif
 too — buttons, tags, chips and field labels all read `--th-body`. That was not
 intended and is fixed by *`--th-ui` is the control role* below. The decision
@@ -874,6 +879,79 @@ it sits with a geometric sans instead of reading as a terminal.
 deliberate exception to it, kept because the typeface is carrying *meaning* here
 (this value came from a machine and is exact) rather than mood. Worth re-opening
 if the signal ever stops earning the cost. Noted, not endorsed by him.
+
+**Amended 2026-07-27.** The role survives again; the typeface is now a system
+stack. DM Mono was the last face `theme-portfolio` reached a font CDN for, and
+once Coconat and Ronzino were self-hosted it was one `<link>` for one role. The
+role's meaning arguably improves: "whatever this machine calls monospace" is a
+more literal reading of *machine-readable* than a chosen face was.
+
+### Serif display, sans text
+
+`2026-07-27` · `type` · `human` · `reversal`
+
+`--th-display` becomes **Coconat**. `--th-body` and `--th-ui` become
+**Ronzino**. Both are Collletttivo, both SIL OFL.
+
+This reverses *Sans heads, serif text*. The split survives — one face for the
+head, another for the text — but the sides swap.
+
+The old entry argued that a geometric sans reads *technical* the moment it
+carries a paragraph. That was true, and it was true specifically of Jost. It is
+not a fact about sans faces; it is a fact about geometric ones. Ronzino is a
+grotesque, which is a text face by construction: large x-height, even fitting,
+nothing circular about it. Spectral was solving a problem the display face
+created, and the display face has changed.
+
+Coconat earns the display role by having a voice. Jost at 44px was legible and
+anonymous — a Futura revival reads as *period*, and the period is exactly what
+the theme stopped wanting. A high-contrast serif with cut stems is a face
+someone drew, which is the right thing at the one size where the identity is
+allowed to speak.
+
+Sans text under a serif head is the modular arrangement rather than the
+magazine one: the head is the object, the text is the label.
+
+**Ruled out:** keeping Jost for display and swapping only the body, which would
+have left the clearest signal of the treatment being reversed still on the page.
+Also ruled out: the obliques of either family — this theme sets no italic, so
+shipping them would be four files nothing renders.
+
+**Cost:** `--th-ui` now points at `--th-body` rather than at `--th-display`,
+because the body face *is* the sans here. The default the other way round is
+still correct for any theme whose display face is a sans, and a theme that
+inherits it while setting a serif display will silently put a serif on every
+button. That default is a trap for exactly one shape of theme, and this is it.
+
+### Theme faces are self-hosted, page faces need not be
+
+`2026-07-27` · `type` · `human` · `notable`
+
+Every face a theme *names* ships in `design-system/dist/fonts` with its licence
+beside it. `theme-portfolio` loads Coconat and Ronzino from there via
+`@font-face`, and `--th-mono` drops to a system stack.
+
+The reason is distribution, not performance. LDS installs over npm from GitHub.
+A theme that names a face it does not carry renders one way for whoever added
+the matching `<link>` and another way for everyone else — the theme is then a
+description of a design rather than the design, which is the thing this system
+exists not to be.
+
+The line is drawn at *roles*, not at pages. `index` and `about` still load
+Caveat from a font CDN for their hand-written notes. That is a page rendering a
+face it uses, which *A page loads only the faces it renders* already permits;
+Caveat is not a `--th-*` role and no consumer inherits it.
+
+**Ruled out:** keeping DM Mono on the mono role. It was the last thing holding a
+font-CDN `<link>` open for a theme role, and one external face for one role is a
+bad trade once the other three are self-hosted. Also ruled out: vendoring Caveat
+too, which would ship a fourth family to every consumer of LDS so that two pages
+in this repo can set a marginal note.
+
+**Cost:** ~247 kB of WOFF2 now lives in `dist`, up from zero. That is real for
+an npm package whose whole pitch is that it is small. It buys a theme that
+renders identically wherever it is installed, and the alternative — naming faces
+and shipping none — is the failure mode the entry exists to prevent.
 
 ---
 
@@ -1030,6 +1108,11 @@ with `--radius:0px` and `--card-shadow:none`, so that page still renders the old
 treatment. Left alone deliberately — it may be demonstrating the sharp look on
 purpose.
 
+**Reversed 2026-07-27** by *`theme-portfolio` is oat, not midcentury*. What did
+not hold was not the craft — it was that cream-plus-terracotta stopped being a
+period reference and became the house style of AI-generated design. The radius
+and shadow decisions made here survived the reversal intact.
+
 ### Body text is 16px, because 13px was under the floor
 
 `2026-07-26` · `themes` · `human` · `reversal`
@@ -1049,6 +1132,12 @@ the subhead level and a 2.3× jump to the title.
 in the theme grew from 13px to 16px. That is a real layout change for consumers,
 not just a type change.
 
+**Amended 2026-07-27.** `--text-body` moves again, to `--size-5` (19px), and
+leading from 140% to 160%. The floor argument is unchanged and still the reason
+13px was wrong; 16px simply sat *at* Butterick's minimum rather than inside it,
+and Ronzino's x-height can carry the extra size. Same cost, one step larger:
+button labels are now 19px.
+
 ### Warm neutrals are the grey ramp rotated, not new greys
 
 `2026-07-26` · `themes` · `measured` · `notable`
@@ -1067,6 +1156,176 @@ disturbing contrast.
 
 **Ruled out:** picking cream neutrals by eye, which would have shifted contrast
 somewhere and required re-verifying every emphasis pair.
+
+**Amended 2026-07-27.** The method is untouched and is why the oat ramp was
+cheap to build. What changed is that the hue is no longer *one* number: it now
+runs 105 at the paper end to 150 at the ink end. See *The neutral ramp rotates
+along its length*. Measured drift is now max 0.32 Lc.
+
+### The neutral ramp rotates along its length, not once
+
+`2026-07-27` · `themes` · `measured` · `notable`
+
+`theme-portfolio` sets the neutral hue per step — 105 at `grey-50`, 150 at
+`grey-950`, interpolated — rather than rotating the whole ramp to a single
+number as *Warm neutrals* did.
+
+It is forced by the brand having two neutrals that are not the same colour. Oat
+is a yellow-green paper at hue 105. The ink is a green-black at hue 150. Fix one
+hue for the ramp and you get one of them: at 105 the ink reads as a dark olive
+under the paper, and at 150 the paper loses the oat entirely and reads mint.
+Neither is the page.
+
+The rotation stays inside a single colour family the whole way, which is what
+separates it from the warm/cool neutral mix that was rejected earlier — that was
+two families sharing a ramp, and it read as a mistake at the crossover.
+
+Method is unchanged from *Warm neutrals*: core's lightness kept exactly, only
+hue and chroma move. Measured drift against core: **max 0.32 Lc across all
+eleven steps.**
+
+**Ruled out:** a single hue for the ramp, in either direction. Also ruled out:
+carrying the ink as a separate token outside the ramp — that works, and it is
+what the configurator did while the brand was being solved, but it puts a
+neutral where One Token cannot reach it, so no emphasis level can resolve to it.
+
+**Cost:** the chroma arc is no longer symmetric. It dips through the mids and
+rises again at `grey-900`, because the ink is the most chromatic neutral in the
+theme rather than the least. Anyone re-deriving this ramp from the *Warm
+neutrals* description alone will get a near-neutral ink and wonder where the
+green went.
+
+### `theme-portfolio` is oat, not midcentury
+
+`2026-07-27` · `themes` · `human` · `reversal`
+
+The theme is modular: an oat ground rotating to a green-black ink, one blue
+brand ramp, Coconat over Ronzino, one chartreuse call-to-action. The references
+are Vitsoe 606, USM Haller and Kunsthalle Basel rather than a 1960s living room.
+
+This reverses *`theme-portfolio` is midcentury, not sharp-editorial*, and it is
+worth being precise about what failed, because most of that entry was right.
+The craft held. The radius, the shadow structure and the card/page argument all
+survive this change untouched. What did not hold is that **cream plus terracotta
+stopped being a period reference and became the default look of AI-generated
+design.** A treatment that reads as a genre is not carrying the system's
+argument; it is carrying somebody else's.
+
+The correction is register, not hue. Oat is still a warm ground — it is a
+yellow-green rather than a pink-cream, and it is far enough from cream that the
+page does not read as the same gesture.
+
+**Ruled out:** shipping this as a fifth theme and leaving `theme-portfolio`
+alone. That was ruled out for the same reason last time: a new theme leaves the
+portfolio and every docs page looking exactly as before, which is the actual
+complaint. Also ruled out: keeping terracotta as a secondary accent — see
+*Terracotta is retired, not demoted*.
+
+**Cost:** the same one as last time, and it is now load-bearing.
+`docs/lew-design-system/pitch.html` overrides `.theme-portfolio` inline, so it
+renders neither treatment faithfully. Two reversals deep, that page is now
+demonstrating a look no other page in the repo has.
+
+### Terracotta is retired, and the accent is green
+
+`2026-07-27` · `themes` · `human` · `notable`
+
+The brand ramp becomes **green at OKLCH hue 150** — the ink's own hue — solved
+to the same steep Lc curve the terracotta ramp used. There is no terracotta
+token left anywhere in the theme.
+
+Terracotta was reassigned out of existence rather than replaced. The ground took
+the warmth it was providing. The neutral ramp took the borders. What remained
+was an accent with no job that a colour carrying a *meaning* could not do
+better.
+
+Green rather than any other hue because it is the ink with the chroma turned
+up. An accented word is then the same voice speaking louder, not a different
+voice interrupting — which is the whole difference between a system with an
+accent and a page with a highlight colour on it.
+
+`--c-50` is the one step not solved to its target, and the reason is that the
+target's reference is wrong on this theme. "Lc 0 against white" assumes a white
+page. This page is oat, and a `c-50` solved against white measures **Lc 1.7**
+against it — an `emph-subtle` surface invisible on the ground it sits on. Solved
+against the paper instead, at Lc 8.2.
+
+**Ruled out:** blue for the brand ramp, which was built and measured first and
+was wrong for a reason worth recording: it made every accented word look
+clickable. See *A link is not an accent*. Also ruled out: keeping terracotta on
+a secondary role — a highlight, a hover, a status. Every one of those is a job
+something else already does, and a colour kept because it would be a shame to
+lose it is how a palette turns into a collection.
+
+**Cost:** `--red` was the portfolio's alias onto the brand ramp, in five pages
+and 99 rules. It is now `--accent`, because an alias named for a hue the ramp no
+longer contains is worse than no alias. Any bookmarked snippet using
+`var(--red)` is dead.
+
+### A link is not an accent
+
+`2026-07-27` · `themes` · `measured` · `notable`
+
+`theme-portfolio` adds `--link` (and `--link-dark`, swapped in under
+`mode-dark`). Links take it. Nothing else does.
+
+One Token's seven roles have no link role, and the near-miss is `--text-accent`.
+Painting links with the accent is wrong in both directions at once: every
+accented word starts looking clickable, and every link starts looking like
+emphasis. A link is not a position on the emphasis ladder — it is text with
+behaviour.
+
+Blue, hue 250, and it is the only colour in the theme that is not oat, ink,
+green or chartreuse. Solved against the two grounds a link actually lands on
+rather than against white: **Lc 88.6** on the paper and **Lc 75.9** on an
+oat-200 panel. That second figure is what pushed it darker than the accent's own
+step — a link solved only against the page fails the moment it sits in a card.
+
+**Ruled out:** reusing `--text-accent`, and adding a link role to One Token. The
+second is the tempting one, and it fails because the seven roles are *object*
+colours — they describe a surface, its text, its border. A link is a behaviour,
+and adding it would make the ladder a mix of two kinds of thing.
+
+**Cost:** a link and the accent now measure at similar lightness and differ
+mostly in hue, which is exactly the distinction some readers cannot make and no
+greyscale print preserves. So **a link carries the underline as well as the
+colour**, always. The underline is not decoration here; it is the part of the
+signal that survives.
+
+### `.emph-cta` is one button, not a sixth emphasis level
+
+`2026-07-27` · `themes` · `human` · `notable`
+
+The chartreuse call-to-action ships as two theme tokens (`--cta`, `--cta-text`)
+and one class shaped like an emphasis level, deliberately outside the ladder.
+
+It is shaped like one so it composes with components that paint from emphasis.
+It is not one because the ladder is *ordinal* — plain, subtle, soft, strong,
+stark is a scale of how loud, and every level retints. A call-to-action is not a
+position on that scale; it is a cardinality rule. There is one on a page, and a
+second one means neither is a call to action.
+
+So it does not retint, and it does not flip with mode. The chartreuse holds in
+both, because a highlighter's whole argument is that it is the brightest thing
+present, and on a dark ground that is more true rather than less.
+
+Measured: ink on chartreuse is Lc 87.8 against the Lc 75 body floor; chartreuse
+against oat paper is Lc 9.5 against the Lc 8 surface floor, so it separates from
+the page without needing a border.
+
+**Ruled out:** an eleven-step chartreuse ramp. Build one and it is a second brand
+hue, with two colours competing to mean *act on this*. Also ruled out: adding it
+to One Token as a sixth emphasis, which would have made every component that
+enumerates emphasis levels grow a case that means "and also the loud one".
+
+**Cost:** two, and the second is the one that bites. `.emph-cta` sets the seven
+roles by hand and will not track future changes to how emphasis resolves. And
+because *Components paint from an explicit emphasis list* — core enumerates the
+five levels by name rather than matching `[class*="emph-"]` — every component
+that should accept a CTA needs opting in from the theme. `.lds-btn` is done;
+anything else is a rule someone has to remember to write, and the failure is
+silent: the class applies, the tokens resolve, and the component simply does not
+paint.
 
 ### Card and page separate by shadow, not by contrast
 
@@ -1143,6 +1402,87 @@ leaving it and recording the gap, which keeps the badge overstating things.
 `BackCompat`. This change deliberately did not add one, because flipping to
 standards mode carries its own layout risk and deserves its own change. An
 `<html>` tag alone does not affect the mode.
+
+### The home page carries no token layer at all
+
+`2026-07-27` · `themes` · `human` · `reversal`
+
+`index.html` is rebuilt on LDS components. Its `<style>` block declares layout
+and nothing else: no `--ink`, no `--rule`, no colour, no font family, no type
+size that is not already a semantic role.
+
+This reverses *The portfolio consumes the theme through its own token layer*
+for this page only, and the earlier entry was right for its moment — a page that
+predates the system needs a translation layer, and eleven aliases moved ~87% of
+the styling onto the theme for almost no work. But a translation layer is a
+migration tool, and keeping one after the migration means every value exists
+under two names. Cards, lists, buttons, tags and nav parts now come from
+`lds-*`, so there is nothing left to translate.
+
+Two rules the page follows that are worth stating, because they are what keep it
+honest rather than merely tidy:
+
+- **Font size is not layout.** Where a component was too loud in context —
+  `.lds-card__title` at `--text-title`, four-up — the page drops it one
+  *semantic role* to `--text-subhead` and takes the leading and tracking with
+  it. It never reaches for a pixel value.
+- **Use the parts, not always the container.** The sticky bar takes
+  `.lds-nav__logo` and `.lds-nav__links` but not `.lds-nav`, which is a floating
+  pill with a border, a large radius and a shadow. A full-bleed sticky bar is a
+  different object, and forcing the component to become one would have meant
+  overriding four of its five declarations.
+
+**Ruled out:** keeping the old page and re-pointing its aliases, which is what
+the previous two theme changes did. It works, and it is why the page survived
+three brand directions — but it also meant the site's front door was the one
+page least able to demonstrate the system it advertises.
+
+**Cost:** `about.html`, `tools.html`, `system-ops.html` and `brand-identity.html`
+still run their own alias layers. The site is now half-migrated, and the four
+remaining pages are the harder half.
+
+### `index.html` gets a doctype
+
+`2026-07-27` · `foundations` · `human` · `reversal`
+
+`index.html` now opens with `<!doctype html>` and renders in standards mode.
+
+Standing advice in `CLAUDE.md` was not to add one incidentally: these pages
+rendered in quirks mode, and flipping a live layout into standards mode changes
+box sizing, percentage heights and table cell inheritance in ways that surface
+as small breakages everywhere at once.
+
+That risk was entirely about the *existing* layout. The page was rebuilt, so
+there is no legacy layout to break — which makes this the only moment the change
+is free, and skipping it would have meant carrying quirks mode indefinitely.
+
+**Ruled out:** rebuilding the page and leaving it in quirks mode for consistency
+with the other four. Consistency with a mode nothing should be in is not a
+reason.
+
+**Cost:** `about.html`, `tools.html`, `system-ops.html` and `brand-identity.html`
+are still quirks-mode, so the site now runs both. The advice in `CLAUDE.md`
+still holds for those four, and for the same reason it always did.
+
+### This brand sets no italic
+
+`2026-07-27` · `type` · `human` · `notable`
+
+No rule in the system sets `font-style: italic`, and neither shipped family
+carries an oblique.
+
+The `.it` class survives in `brand-identity`, `tools` and `system-ops` because
+the markup uses it, but it now paints `--accent` instead of slanting. Emphasis
+inside a heading is carried by colour, or by the chartreuse mark, or by weight.
+
+The measurable half of the argument: with no oblique in the font files, every
+`font-style: italic` in the repo was producing a **synthesised** slant — the
+browser shearing an upright at roughly 12°, which breaks the stroke modulation
+of a high-contrast serif precisely where it is most visible. The rule was
+producing a worse result than no rule.
+
+**Ruled out:** shipping the Ronzino and Coconat obliques so the italics would be
+real. Four more files, ~160 kB, for a style the brand does not use.
 
 ### Documentation pages report the system, they do not restate it
 

@@ -1,150 +1,244 @@
 /* ==========================================================================
-   LDS theme: portfolio — midcentury modern. Warm, soft, geometric.
+   LDS theme: portfolio — oat.
 
-   Replaces the earlier sharp-editorial treatment (0px corners, no shadow,
-   13px body, Space Mono). That version was internally consistent but read as
-   sterile and flat: nothing separated a card from the page, and the type scale
-   started below the legible floor.
+   Replaces the midcentury treatment (terracotta ramp, Jost, Spectral, cream
+   neutrals). That version worked, but its two loudest signals — a warm cream
+   ground and a terracotta accent — are now the default look of AI-generated
+   design, and the theme was reading as a genre rather than as a system.
 
-   The five knobs below are the whole theme. Core is untouched.
+   The direction is modular rather than midcentury: Vitsoe 606, USM Haller,
+   Kunsthalle Basel. Structure visible, ornament absent, one accent.
+
+   Six knobs. Core is untouched, and this file owns every hex in the theme.
    ========================================================================== */
+
+/* ---- knob 0: the faces, self-hosted ----
+   Ronzino and Coconat, both Collletttivo, both SIL OFL. Self-hosted because
+   LDS installs over npm from GitHub: a theme that names a face it does not
+   carry renders differently depending on whether the consumer happened to add
+   the same <link>. See dist/fonts/README.md and dist/fonts/OFL.txt.
+
+   No obliques. This theme sets no italic anywhere, so they would be four files
+   nothing renders. font-display:swap — the fallback stack is metrically close
+   enough that the swap is not a jump.                                       */
+@font-face{font-family:'Ronzino';font-style:normal;font-weight:400;font-display:swap;
+  src:url('../fonts/Ronzino-Regular.woff2') format('woff2');}
+@font-face{font-family:'Ronzino';font-style:normal;font-weight:500;font-display:swap;
+  src:url('../fonts/Ronzino-Medium.woff2') format('woff2');}
+@font-face{font-family:'Ronzino';font-style:normal;font-weight:700;font-display:swap;
+  src:url('../fonts/Ronzino-Bold.woff2') format('woff2');}
+@font-face{font-family:'Coconat';font-style:normal;font-weight:400;font-display:swap;
+  src:url('../fonts/Coconat-Regular.woff2') format('woff2');}
+@font-face{font-family:'Coconat';font-style:normal;font-weight:600;font-display:swap;
+  src:url('../fonts/Coconat-Demi.woff2') format('woff2');}
+@font-face{font-family:'Coconat';font-style:normal;font-weight:700;font-display:swap;
+  src:url('../fonts/Coconat-Bold.woff2') format('woff2');}
+
 .theme-portfolio{
 
-  /* ---- knob 1: brand hue — terracotta ----
-     Continuous with the vermilion this theme already shipped (that sat near
-     OKLCH hue 33; this is hue 42) but warmer and less shouty — the burnt
-     orange of the period rather than a fire-engine red.
+  /* ---- knob 1: brand hue — green ----
+     Terracotta is gone. Not because it stopped working, but because every job
+     it held got reassigned: the page took the warmth, the neutrals took the
+     borders, and what was left was an accent with no job.
+
+     Green, at OKLCH hue 150 — the ink's own hue. The accent is not a foreign
+     colour dropped onto the page; it is the ink with the chroma turned up, so
+     an accented word reads as the same voice speaking louder rather than as a
+     different voice interrupting.
 
      Solved, not picked. Each step's lightness is binary-searched in OKLCH at
-     constant hue until its measured APCA lands on a fixed target:
+     hue 150 until its measured APCA lands on a fixed target:
 
          50   100  200  300  400  500  600  700  800  900  950
           0    18   36   52   64   74   84   92   99   104  106   Lc vs white
 
-     Note this is NOT the apca-palette.css curve (0·9·17·27·40·57·72·82·91·
-     100·103). Theme brand ramps are deliberately steeper through the low
-     steps, and they have to be: on the flatter curve, c-200 measures Lc 0.0
-     against c-50, so every tinted surface loses its border. Here that pair is
-     Lc 26.6. The steepness IS the hierarchy.                              */
-  --c-50:#FEEBE3;  --c-100:#FDD3C3; --c-200:#FBA787; --c-300:#E6835C;
-  --c-400:#CE683F; --c-500:#B45227; --c-600:#973A0D; --c-700:#782900;
-  --c-800:#571D02; --c-900:#330900; --c-950:#090000;
+     Same steep low end as the terracotta ramp it replaces, and for the same
+     reason: on the flatter apca-palette.css curve, c-200 measures Lc 0.0
+     against c-50 and every tinted surface loses its border. Here that pair is
+     Lc 21.6. The steepness IS the hierarchy.
 
-  /* ---- warm neutrals ----
-     Not new greys. Core's grey ramp converted to OKLCH, its lightness kept
-     exactly, and the hue rotated to 58 with a low chroma arc — full through
-     the mids where warmth reads, near-zero at the ends so paper stays paper
-     and ink stays ink. Same trick theme-palette used for its cool ramp.
+     c-50 is the one step not solved to its target, and the reason is that the
+     target's reference is wrong here. "Lc 0 against white" assumes a white
+     page. This page is oat, and a c-50 solved to white measures Lc 1.7 against
+     it — an emph-subtle surface invisible on the ground it sits on. Solved
+     against the paper instead, at Lc 8.2.                                    */
+  --c-50:#D5ECD8;  --c-100:#C2E5C8; --c-200:#8FC99A; --c-300:#61AE73;
+  --c-400:#3C9656; --c-500:#1A803E; --c-600:#00662B; --c-700:#004F1D;
+  --c-800:#003A12; --c-900:#002008; --c-950:#000501;
 
-     Measured drift against core: max 0.27 Lc across all eleven steps. The
-     neutral hierarchy is unchanged; only its temperature is.               */
-  --grey-50:#FBF7F4;  --grey-100:#F4EFEB; --grey-200:#E8E1DB; --grey-300:#D2C8C1;
-  --grey-400:#B5ABA4; --grey-500:#908780; --grey-600:#726963; --grey-700:#534D48;
-  --grey-800:#37322E; --grey-900:#1F1B19; --grey-950:#100E0C;
+  /* ---- the link colour, which is not the accent ----
+     Blue, hue 250, and it is the only colour in the theme that is not oat,
+     ink, green or chartreuse. It exists because a link is not an emphasis
+     level — it is text with behaviour, and One Token has no role for that.
+     Painting links with --text-accent would mean every accented word looks
+     clickable and every link looks like emphasis.
 
-  /* ---- knob 2: typography — geometric sans heads, serif text ----
-     Three families, one job each.
+     Solved against the two grounds a link actually lands on, not against
+     white: Lc 88.6 on the paper and Lc 75.9 on an oat-200 panel, which is what
+     pushed it darker than the accent's own step.
 
-     DISPLAY is Jost, a Futura revival: circular bowls, single-storey 'a'. It
-     is what makes headings read midcentury rather than merely rounded.
+     A link takes this colour AND an underline. Colour alone fails in
+     greyscale print and fails again for anyone who cannot separate blue from
+     green — which, given the accent is green, is the whole distinction.     */
+  --link:#00437C;
+  --link-dark:#AADDFF;
 
-     BODY is Spectral, and this is the split that matters. A geometric sans is
-     a poster face — it sets a headline well and reads technical the moment you
-     ask it to carry a paragraph. Spectral is drawn for screen text: low stroke
-     contrast, sturdy at 16px, and quiet enough to disappear behind the prose.
-     It is the closest free equivalent in ROLE to the Equity that Butterick
-     sets his own body text in.
+  /* ---- the neutral ramp: oat, rotating to ink ----
+     Still not new greys. Core's grey ramp converted to OKLCH, its lightness
+     kept exactly, and the hue rotated — but rotated ALONG the ramp rather than
+     set once. Hue runs 105 at the paper end to 150 at the ink end, on a chroma
+     arc that dips through the mids and rises again at the bottom.
 
-     Sans heads over serif text is not a compromise between the two — it is a
-     period pattern in its own right, the standard midcentury magazine
-     arrangement.
+     That is the whole reason there are two numbers: oat is a yellow-green
+     paper and the ink is a green-black, and they are not the same hue. Fixing
+     one hue for the ramp gives you either a neutral ink under oat paper or a
+     yellow-green ink, and neither is what the page wants. The rotation stays
+     inside one colour family, so this is not the warm/cool neutral mix that
+     was rejected earlier — it is one family walking.
 
-     Body stays 16px. Butterick puts web body text at 15-25px; the old theme
-     started at 13px, under the floor. Leading stays at 140%, inside his
-     120-145%.
+     Measured drift against core: max 0.32 Lc across all eleven steps. The
+     neutral hierarchy is unchanged; only its temperature is.
 
-     MONO is DM Mono: rounded terminals, low contrast, so it sits with the
-     other two instead of fighting them. Butterick would drop mono entirely —
-     the role is a deliberate exception, kept because the typeface carries
-     meaning here (dates, tokens, hashes) rather than mood.                 */
-  --th-display:'Jost','Futura','Century Gothic',system-ui,sans-serif;
-  --th-body:'Spectral','Iowan Old Style','Georgia',serif;
-  /* controls take the display sans — a serif body must not reach a button. */
-  --th-ui:var(--th-display);
-  --th-mono:'DM Mono','SFMono-Regular',ui-monospace,monospace;
+         hue  105  106  108  112  115  120  125  130  137  143  150         */
+  --grey-50:#FAF9EA;  --grey-100:#F2F1E1; --grey-200:#E3E4D2; --grey-300:#CACCBB;
+  --grey-400:#ACAFA1; --grey-500:#888B80; --grey-600:#696D64; --grey-700:#4B5047;
+  --grey-800:#2E362B; --grey-900:#151F14; --grey-950:#061108;
+
+  /* ---- knob 2: typography — serif display, sans text ----
+     This reverses *Sans heads, serif text*. The split survives; the sides swap.
+
+     DISPLAY is Coconat: a high-contrast serif with flared, almost cut stems.
+     It is the one place the identity is allowed a voice, and a serif carries
+     one at 44px in a way a geometric sans does not — Jost at display size was
+     legible and anonymous.
+
+     BODY is Ronzino: a grotesque with a large x-height and tight, even
+     fitting. The old argument was that a geometric sans reads technical in a
+     paragraph, and that was true of Jost. It is not true of a grotesque, which
+     is a text face by construction. Spectral was solving a problem created by
+     the display face, and the display face has changed.
+
+     Sans text under a serif head is the modular arrangement rather than the
+     magazine one: the head is the object, the text is the label.
+
+     Body moves 16px -> 19px (--size-5). Both sit inside Butterick's 15-25px,
+     but 16px was the floor of it, and Ronzino runs a large x-height and can
+     carry the extra size without looking set for a child. Leading moves to
+     --leading-loose (1.6): a grotesque at 19px on 140% is cramped, which was
+     the actual complaint.
+
+     MONO is a system stack. DM Mono was the last external face the THEME
+     named, and keeping a font-CDN <link> alive for one role is a bad trade
+     once every other theme face is self-hosted. (Pages may still load their
+     own faces — index/about render Caveat for the hand-written notes, which is
+     a page decision, not a theme role.) The role is unchanged — mono still
+     means machine-readable;
+     only the typeface is now whatever the reader's machine calls monospace,
+     which for that meaning is arguably more honest.                         */
+  --th-display:'Coconat','Iowan Old Style',Georgia,serif;
+  --th-body:'Ronzino','Helvetica Neue',system-ui,sans-serif;
+  /* Controls take the body sans here — it IS the grotesque, so the control
+     role does not need to reach past it for a sans. Declared anyway, because
+     the default points at --th-display and that is now a serif. */
+  --th-ui:var(--th-body);
+  --th-mono:ui-monospace,'SF Mono','SFMono-Regular','Cascadia Mono',
+            'Roboto Mono','Liberation Mono',Menlo,Consolas,monospace;
 
   --text-caption: var(--size-1);  /* 12 */
-  --text-body:    var(--size-4);  /* 16 — was size-2 / 13px */
+  --text-body:    var(--size-5);  /* 19 — was size-4 / 16px */
   --text-subhead: var(--size-6);  /* 24 */
   --text-title:   var(--size-8);  /* 44 */
 
-  /* Tracking follows the family, not the size. Spectral is a text serif and is
-     already correctly fitted — added tracking only loosens it, so body sits at
-     normal. Jost is geometric and sets tight at display sizes. Captions are
-     mono, which wants air to stay scannable. */
+  /* Tracking follows the family, not the size. Ronzino is fitted tight, and at
+     19px on a warm ground it needs a little air to stop the counters closing
+     up — but the smallest positive tracking primitive is 0.02em, which is
+     three times what this face wants at body size and reads as letterspaced
+     prose. So body carries a literal. The primitives are right for the other
+     three roles and are used there. */
   --leading-caption: var(--leading-normal); --tracking-caption: var(--tracking-wide);
-  --leading-body:    var(--leading-normal); --tracking-body:    var(--tracking-normal);
+  --leading-body:    var(--leading-loose);  --tracking-body:    0.006em;
   --leading-subhead: var(--leading-tight);  --tracking-subhead: var(--tracking-tight);
-  --leading-title:   var(--leading-none);   --tracking-title:   var(--tracking-tighter);
+  --leading-title:   var(--leading-none);   --tracking-title:   var(--tracking-tight);
 
-  /* ---- knob 3: radius — the rounded-futurist corner ----
-     Was 0px across the board. These are large on purpose: the arc has to be
-     long enough to read as a drawn curve rather than a chamfer, which is what
-     separates a 1960s television cabinet from a rounded rectangle.          */
+  /* ---- knob 3: radius ----
+     Unchanged from the midcentury theme, deliberately. The direction moved but
+     the corner did not: a 606 upright and a USM panel are both softened at the
+     edge, and the squircle shape core added is what keeps these from reading
+     as a chamfer. Reopening the radius would be a separate change with its own
+     layout risk.                                                            */
   --radius-sm:10px; --radius-base:18px; --radius-lg:28px; --radius-xl:36px;
   --radius:var(--radius-base);
   --pill:999px;
 
   /* ---- knob 4: shadow / surface ----
-     Was none, which is most of why it felt flat. The card sits at #FFFCF8
-     against a #FBF7F4 page — measured Lc 0.0 between them, i.e. deliberately
-     no contrast separation at all. The shadow does that job instead, which is
-     the softer read.
+     Same structure, retinted. The card sits at --grey-50 against a --grey-50
+     page — measured Lc 0.0 between them, i.e. deliberately no contrast
+     separation at all, exactly as before. The shadow does that job.
 
-     Tinted with the brand's own dark step rather than neutral black: a grey
-     shadow over warm paper turns it muddy.                                 */
+     The tint moves from the old brand's dark step to the ink itself
+     (rgb 21 31 20). A blue shadow over oat paper turns it grey; the ink is the
+     only dark in the theme that belongs to the ground.                      */
   --shadow-sm:
-    0 1px 2px rgba(87,29,2,.05),
-    0 4px 10px -4px rgba(87,29,2,.08);
+    0 1px 2px rgba(21,31,20,.05),
+    0 4px 10px -4px rgba(21,31,20,.08);
   --shadow-base:
-    0 1px 2px rgba(87,29,2,.05),
-    0 8px 20px -6px rgba(87,29,2,.10),
-    0 24px 48px -16px rgba(87,29,2,.12);
+    0 1px 2px rgba(21,31,20,.05),
+    0 8px 20px -6px rgba(21,31,20,.10),
+    0 24px 48px -16px rgba(21,31,20,.12);
   /* A modal has to clear a page that already has soft shadows everywhere, so
      it goes deeper rather than just bigger. */
   --shadow-lg:
-    0 2px 4px rgba(87,29,2,.06),
-    0 16px 32px -8px rgba(87,29,2,.14),
-    0 40px 72px -24px rgba(87,29,2,.18);
+    0 2px 4px rgba(21,31,20,.06),
+    0 16px 32px -8px rgba(21,31,20,.14),
+    0 40px 72px -24px rgba(21,31,20,.18);
   --card-shadow:var(--shadow-base);
   --btn-shadow:
-    0 1px 2px rgba(87,29,2,.10),
-    0 3px 8px -3px rgba(87,29,2,.14);
+    0 1px 2px rgba(21,31,20,.10),
+    0 3px 8px -3px rgba(21,31,20,.14);
 
   /* ---- knob 5: density ---- */
   --density:1;
 
-  /* icon alignment — one step heavier, so icons hold their weight next to
-     16px Jost rather than disappearing. */
+  /* ---- knob 6: the call to action ----
+     One chartreuse, not a ramp. It is a highlighter, and a highlighter has one
+     value — build eleven steps of it and you have a second brand hue, with two
+     colours competing to mean "act on this".
+
+     Measured: ink on chartreuse is Lc 87.8, past the Lc 75 body floor.
+     Chartreuse against oat paper is Lc 9.5, past the Lc 8 surface floor — it
+     separates from the page on its own, without a border.
+
+     Consumed through .emph-cta below, not through the emphasis ladder. It is
+     not a sixth emphasis level; it is one button.                           */
+  --cta:#E0E9B4;
+  --cta-text:var(--grey-900);
+
+  /* icon alignment — unchanged. 20px still holds its weight beside 19px
+     Ronzino; the face got no lighter. */
   --icon-size:20px; --icon-weight:1.75;
 }
-/* knob 6: default mode is set via .mode-light / .mode-dark on the root, not here */
+/* knob 7: default mode is set via .mode-light / .mode-dark on the root, not here */
 
 /* ---- emph-plain, retuned for this theme ----
-   Three overrides, each one measured against the card surface:
+   Four overrides, each one measured against the oat ground:
 
-     --background   core pins #FFFFFF; cream instead, or the warm neutrals
-                    have nothing to be warm against.
-     --text-subdued grey-500 measures Lc 58.4 on the page — under the Lc 60
-                    content floor. grey-600 lands at 75.1.
-     --border       grey-200 measures Lc 13.0 on the card — under the Lc 15
-                    non-text floor, i.e. not reliably visible. grey-300 is 27.0.
+     --background   core pins #FFFFFF; white is unusable here. On oat paper a
+                    white card does not read as brighter, it reads as a hole —
+                    the paper's chroma stops at the card edge. The surface IS
+                    grey-50, so unlike the old theme this needs no hex.
+     --text         grey-900 on paper measures Lc 99.8.
+     --text-subdued grey-500 measures Lc 47.6 on the page — well under the
+                    Lc 60 content floor. grey-600 lands at 72.2.
+     --border       grey-200 measures Lc 10.2 on the page — under the Lc 15
+                    non-text floor. grey-300 is 24.1.
 
-   The last two are why the old theme read as having no hierarchy: its
-   secondary text and its borders were both below the floor they needed. */
+   grey-200 stays on --border-subdued at Lc 10.2, below the floor, and that is
+   the one knowing exception: it is a decorative separator inside an already
+   bounded card, never the sole boundary of a control. */
 .theme-portfolio.emph-plain,
 .theme-portfolio .emph-plain{
-  --background:#FFFCF8;
+  --background:var(--grey-50);
+  --text:var(--grey-900);
   --text-subdued:var(--grey-600);
   --border:var(--grey-300);
   --border-subdued:var(--grey-200);
@@ -152,10 +246,57 @@
 .theme-portfolio.mode-dark.emph-plain,
 .theme-portfolio.mode-dark .emph-plain,
 .theme-portfolio .mode-dark .emph-plain{
-  /* Dark keeps core's resolution off the warm ramp; only the pinned surface
-     needs restating, one step off pure black so the shadow still reads. */
+  /* Dark is not the light theme inverted. This ramp is steeper at its dark end
+     than core assumes, so three roles land under their floors on grey-950:
+
+       --text-subdued  grey-400 is Lc 57.7, under 60. grey-300 is 74.4.
+       --border        grey-800 is Lc 4.1, under 15. grey-600 is 25.1.
+       --text-accent   c-300 is Lc 49.8, under 75. c-100 is 85.3.
+
+     The accent is the one that matters: a dark blue link on a dark ground is
+     invisible, and the fix is to mirror the link to the light end of its own
+     ramp rather than to nudge it one step. */
   --background:var(--grey-950);
-  --text-subdued:var(--grey-400);
-  --border:var(--grey-700);
-  --border-subdued:var(--grey-800);
+  --text:var(--grey-50);
+  --text-accent:var(--c-100);
+  --link:var(--link-dark);
+  --text-subdued:var(--grey-300);
+  --icon:var(--grey-400);
+  --border:var(--grey-600);
+  --border-subdued:var(--grey-700);
 }
+
+/* ---- .emph-cta ----
+   Not an emphasis level. It is shaped like one so it composes with the ladder's
+   components, but there is exactly one of these on a page and it does not
+   retint — a CTA that appears twice is not a CTA.
+
+   Ink on chartreuse holds in both modes, so the chartreuse does not flip: the
+   whole point of a highlighter is that it is the brightest thing present, and
+   on a dark ground that is more true, not less (Lc 89.9 against grey-950). */
+.theme-portfolio .emph-cta,
+.theme-portfolio.emph-cta{
+  --background:var(--cta);
+  --text:var(--cta-text);
+  --text-accent:var(--cta-text);
+  --text-subdued:var(--grey-700);
+  --icon:var(--cta-text);
+  --border:var(--cta);
+  --border-subdued:var(--cta);
+  --bg-hover:#D6E19E;
+  --bg-pressed:#C8D586;
+}
+
+/* Components paint from an EXPLICIT emphasis list — core enumerates
+   .emph-plain/subtle/soft/strong/stark by name rather than matching a pattern.
+   That is a deliberate core decision, and the price of it is that a theme
+   adding an emphasis-shaped class has to opt each component in. So far only
+   the button needs it; anything else that grows a CTA gets a rule here. */
+.theme-portfolio .lds-btn.emph-cta{
+  background:var(--background);color:var(--text);
+  border-color:transparent;box-shadow:var(--btn-shadow,none);
+}
+.theme-portfolio .lds-btn.emph-cta:hover{
+  background:var(--bg-hover);border-color:transparent;
+}
+.theme-portfolio .lds-btn.emph-cta:active{ background:var(--bg-pressed); }

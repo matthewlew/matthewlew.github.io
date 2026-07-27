@@ -5,14 +5,17 @@
 <title>Matthew Lew — Design Systems Designer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Jost:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<!-- Caveat only. Every theme face (Coconat, Ronzino) is self-hosted in
+     design-system/dist/fonts and loaded by portfolio.css; Caveat is this
+     page's own face for the hand-written notes, not an LDS role. -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <!-- Lew Design System — live, not vendored. Powers the footer badge only;
      the rest of this page keeps its own hand-tuned styles for now. -->
 <link rel="stylesheet" href="design-system/dist/lds.css">
 <link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
 <style>
   /* This page's tokens are now aliases onto LDS, not values of their own.
-     Every rule below still says var(--ink) or var(--red); re-pointing the
+     Every rule below still says var(--ink) or var(--accent); re-pointing the
      eleven names here moves ~87% of the page's styling onto theme-portfolio
      without touching a single component rule. That is the entire argument for
      having a token layer.
@@ -24,12 +27,12 @@
   :root {
     --bg:      var(--background);   /* cream card, not #FFFFFF */
     --bg-soft: var(--grey-100);
-    --paper:   var(--c-50);         /* warm tinted panel */
+    --paper:   var(--grey-200);   /* oat panel, was a brand tint */
     --ink:     var(--grey-900);
     --ink-2:   var(--grey-600);
     --ink-3:   var(--grey-400);
     --rule:    var(--grey-300);
-    --red:     var(--c-600);        /* terracotta, was hardcoded vermilion */
+    --accent: var(--c-600);       /* interactive blue, was terracotta */
     --font-display: var(--th-display);
     --font-body:    var(--th-body);
     --font-mono:    var(--th-mono);
@@ -53,7 +56,7 @@
 
   a { color: inherit; text-decoration: none; }
 
-  ::selection { background: var(--red); color: #fff; }
+  ::selection { background: var(--accent); color: #fff; }
 
   /* ---------- NAV ---------- */
   .nav {
@@ -75,7 +78,7 @@
     letter-spacing: -0.02em;
     line-height: 1;
   }
-  .nav-name .accent { color: var(--red); }
+  .nav-name .accent { color: var(--accent); }
   .nav-links {
     display: flex;
     list-style: none;
@@ -96,7 +99,7 @@
     transition: color 0.15s, background 0.15s;
   }
   .nav-links a:hover { color: var(--ink); background: var(--bg-soft); }
-  .nav-links a.active { color: var(--red); }
+  .nav-links a.active { color: var(--accent); }
   .nav-toggle {
     display: none;
     font-family: var(--font-mono);
@@ -158,7 +161,7 @@
     align-items: center;
     margin-bottom: clamp(24px, 5vw, 56px);
   }
-  .hero-eyebrow .dot { color: var(--red); }
+  .hero-eyebrow .dot { color: var(--accent); }
   .hero-eyebrow .status {
     display: inline-flex;
     align-items: center;
@@ -167,7 +170,7 @@
   .hero-eyebrow .status::before {
     content: "";
     width: 7px; height: 7px;
-    background: var(--red);
+    background: var(--accent);
     border-radius: 50%;
     animation: pulse 1.8s ease-in-out infinite;
   }
@@ -180,7 +183,7 @@
     letter-spacing: -0.035em;
     font-size: clamp(44px, 8vw, 108px);
   }
-  .hero-title .accent { color: var(--red); }
+  .hero-title .accent { color: var(--accent); }
   .hero-title .it { font-style: normal; }
 
   .hero-sub {
@@ -195,7 +198,7 @@
     color: var(--ink-2);
   }
   .hero-lede strong { color: var(--ink); font-weight: 500; }
-  .hero-lede .em { color: var(--red); font-family: var(--font-display); }
+  .hero-lede .em { color: var(--accent); font-family: var(--font-display); }
 
   /* JSON object card */
   .json-card {
@@ -209,7 +212,7 @@
     align-self: stretch;
   }
   .json-card .k { color: #8FB7A6; }
-  .json-card .b { color: var(--red); }
+  .json-card .b { color: var(--accent); }
   .json-card .s { color: #E7C878; }
   .json-card .p { color: #6E6E6C; }
   .json-card .comment { color: #6E6E6C; }
@@ -250,19 +253,19 @@
   .work-co::after {
     content: "→";
     font-size: 0.6em;
-    color: var(--red);
+    color: var(--accent);
     opacity: 0;
     transform: translateX(-8px);
     transition: opacity 0.3s, transform 0.35s cubic-bezier(.16,1,.3,1);
   }
-  .work-row:hover .work-co { transform: translateX(8px); color: var(--red); }
+  .work-row:hover .work-co { transform: translateX(8px); color: var(--accent); }
   .work-row:hover .work-co::after { opacity: 1; transform: translateX(0); }
   .work-role {
     font-family: var(--font-mono);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--red);
+    color: var(--accent);
     margin-bottom: 10px;
   }
   .work-desc { font-size: 15.5px; line-height: 1.45; color: var(--ink-2); max-width: 62ch; }
@@ -308,8 +311,8 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--red);
-    border: 1px solid var(--red);
+    color: var(--accent);
+    border: 1px solid var(--accent);
     padding: 3px 8px;
     margin-bottom: 20px;
     align-self: flex-start;
@@ -367,7 +370,7 @@
     letter-spacing: -0.025em;
     max-width: 20ch;
   }
-  .quote-band blockquote .accent { color: var(--red); }
+  .quote-band blockquote .accent { color: var(--accent); }
   .quote-band cite {
     display: block;
     font-family: var(--font-mono);
@@ -394,7 +397,7 @@
   .flow-idx {
     font-family: var(--font-mono);
     font-size: 11px;
-    color: var(--red);
+    color: var(--accent);
     margin-bottom: 40px;
   }
   .flow-name {
@@ -474,7 +477,7 @@
   }
   .circled svg.oval path {
     fill: none;
-    stroke: var(--red);
+    stroke: var(--accent);
     stroke-width: 3.5;
     stroke-linecap: round;
     stroke-dasharray: 1000;
@@ -484,16 +487,16 @@
   @keyframes draw { to { stroke-dashoffset: 0; } }
 
   /* The one place on this page that cannot read a token. A data: URI is an
-     opaque string to CSS, so var(--red) does not resolve inside it and the hex
+     opaque string to CSS, so var(--accent) does not resolve inside it and the hex
      has to be maintained by hand — it sat on the old vermilion for a while
      after everything around it had moved to terracotta. Masking would tokenise
      it, but mask applies to the element's text too, so it would knock out the
-     words. Inline SVG can use var(--red); a background URI cannot.
+     words. Inline SVG can use var(--accent); a background URI cannot.
 
      padding-bottom is 3px, not 9px: padding on an inline box does not grow the
      line box, so 9px put the stroke 12px into the following line of the lede. */
   .squiggle {
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='8' viewBox='0 0 90 8'%3E%3Cpath d='M2 5.5 C 10 2.5, 18 7.5, 26 4.5 S 42 2.5, 50 5.5 S 66 7, 74 4 S 86 3, 88 5' fill='none' stroke='%23973A0D' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 90px 8px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='8' viewBox='0 0 90 8'%3E%3Cpath d='M2 5.5 C 10 2.5, 18 7.5, 26 4.5 S 42 2.5, 50 5.5 S 66 7, 74 4 S 86 3, 88 5' fill='none' stroke='%23025A9D' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 90px 8px;
     padding-bottom: 3px;
   }
 
@@ -501,7 +504,7 @@
     font-family: 'Caveat', cursive;
     font-weight: 600;
     font-size: clamp(20px, 2.4vw, 30px);
-    color: var(--red);
+    color: var(--accent);
     line-height: 1.1;
     transform: rotate(-4deg);
     display: inline-block;
@@ -523,7 +526,7 @@
   }
   .hero-note-wrap svg.arrow path {
     fill: none;
-    stroke: var(--red);
+    stroke: var(--accent);
     stroke-width: 2.6;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -538,7 +541,7 @@
   }
   .doodle path, .doodle rect-none {
     fill: none;
-    stroke: var(--red);
+    stroke: var(--accent);
     stroke-width: 3;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -566,7 +569,7 @@
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--red);
+    color: var(--accent);
   }
   .res-name {
     font-family: var(--font-display);
@@ -582,19 +585,19 @@
   .res-name::after {
     content: "↗";
     font-size: 0.55em;
-    color: var(--red);
+    color: var(--accent);
     opacity: 0;
     transform: translate(-6px, 4px);
     transition: opacity 0.3s, transform 0.35s cubic-bezier(.16,1,.3,1);
   }
-  .res:hover .res-name { transform: translateX(6px); color: var(--red); }
+  .res:hover .res-name { transform: translateX(6px); color: var(--accent); }
   .res:hover .res-name::after { opacity: 1; transform: translate(0,0); }
   .res-desc { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); max-width: 52ch; }
   .res-hand {
     font-family: 'Caveat', cursive;
     font-weight: 600;
     font-size: 19px;
-    color: var(--red);
+    color: var(--accent);
     transform: rotate(-3deg);
     align-self: flex-start;
   }
@@ -623,7 +626,7 @@
     letter-spacing: -0.03em;
     padding: 12px 0 40px;
   }
-  .contact-cta .accent { color: var(--red); }
+  .contact-cta .accent { color: var(--accent); }
   .contact-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -648,7 +651,7 @@
     letter-spacing: -0.01em;
     transition: color 0.15s;
   }
-  .contact-col a:hover { color: var(--red); }
+  .contact-col a:hover { color: var(--accent); }
 
   footer {
     display: flex;
@@ -665,7 +668,7 @@
     letter-spacing: 0.08em;
     border-top: 1px solid #2A2A28;
   }
-  footer a:hover { color: var(--red); }
+  footer a:hover { color: var(--accent); }
 
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 900px) {
