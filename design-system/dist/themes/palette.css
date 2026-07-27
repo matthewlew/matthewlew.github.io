@@ -40,6 +40,7 @@
      restyled the entire app one step larger on adoption. */
   --th-display:system-ui,'Segoe UI',Roboto,sans-serif;
   --th-body:system-ui,'Segoe UI',Roboto,sans-serif;
+  --th-ui:var(--th-display);
   --th-mono:ui-monospace,Consolas,monospace;
 
   --text-caption: var(--size-0);  /* 11px */

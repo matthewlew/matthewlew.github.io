@@ -51,9 +51,37 @@ class, and optionally a hue class:
 
 ```html
 <button class="lds-btn emph-strong">Publish</button>
-<span class="lds-tag hue-success">Live</span>
+<span class="lds-tag lds-tag--success">Live</span>
 <div class="lds-card emph-subtle">…</div>
 ```
+
+### A hue is a colour, a status is a meaning
+
+`hue-*` names a **colour** — `hue-red`, `hue-blue`, `hue-green`. It never names a
+meaning, so there is no `hue-error`.
+
+Meaning lives on the **component**, as a modifier: `lds-tag--error`,
+`lds-banner--success`, `lds-inline--warning`. The five statuses are `error`,
+`warning`, `caution`, `success` and `info`, and each is bound to a colour in
+exactly one place — the status map in `lds.css`. Repointing a status is a
+one-line edit there, and no consumer markup changes.
+
+The shape matches `lds-btn--primary`: primary is a role that resolves to the
+brand hue, not a hue named "primary".
+
+### Four font roles
+
+`--th-display` · `--th-body` · `--th-ui` · `--th-mono`
+
+`--th-ui` is the **control** role — buttons, tags, chips, field labels. It is
+separate from `--th-body` because a body font may legitimately be a serif, and a
+serif is wrong on a button: a control is chrome, not prose. It defaults to
+`--th-display`, so a theme gets sans controls without opting in.
+
+Declare it **in the theme**, next to the other font roles — not once at `:root`.
+A `:root` default resolves against core's values at the root element and
+inherits down as a concrete font name, which then wins over a theme mounted
+lower in the tree.
 
 ## Themes
 

@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 48 decisions: **27 human · 19 measured · 2 ai**.
+The split as it stands, across the 50 decisions: **29 human · 19 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -272,7 +272,7 @@ step's Lc against white is pinned to a fixed target:
 
 Lightness is binary-searched in OKLCH until the measured APCA hits the target,
 so every hue lands on the same curve rather than on the same *nominal* value.
-That is what makes `hue-error` and `hue-success` interchangeable at a given
+That is what makes `hue-red` and `hue-green` interchangeable at a given
 step: the contrast is equal because it was solved to be, not because the hexes
 look similar.
 
@@ -318,6 +318,61 @@ errors in its brand colour without the error stopping being legible as an error.
 the rest of the system does. Consistency with the architecture would have cost
 the semantics.
 
+### A hue is a colour, a status is a meaning
+
+`2026-07-27` · `color` · `human` · `reversal`
+
+There is no `hue-error`. `hue-*` names a **colour** — `hue-red`, `hue-blue`,
+`hue-green` — and nothing else. Meaning lives on the component as a modifier:
+`lds-tag--error`, `lds-banner--success`, `lds-inline--warning`.
+
+The six semantic hue classes — `hue-error` `hue-warning` `hue-caution`
+`hue-success` `hue-info` `hue-helpful` — are **deleted**. They put meaning on the
+colour layer, which is the wrong layer: a hue is a coordinate in the palette, and
+naming one "error" asserts that red *is* the meaning rather than the current
+rendering of it. The shape to copy was already in the system — `lds-btn--primary`
+is a role that resolves to the brand hue, not a hue named "primary".
+
+Each of the six was byte-identical to a colour class, verified before deletion,
+so nothing rendered differently on the swap. Two of them were worse than
+redundant:
+
+- `hue-info` mapped to **grey**, while `lds-banner--info` mapped to **blue**. The
+  same word meant two colours depending on which layer you asked. Blue wins;
+  grey is not a signal colour, and neutral information is already the default
+  surface.
+- `hue-helpful` was a second name for the same blue as `info`. Gone.
+
+The five statuses — `error` `warning` `caution` `success` `info` — are now bound
+to colours in exactly **one** place, the status map in `lds.css`. Repointing
+caution from yellow to orange is a one-line edit that reaches every component at
+once, and no consumer markup changes. This also removes the duplication where the
+banner carried its own copy of all five ramp remaps.
+
+Only the banner still needs a paint rule per status, because its default surface
+is grey rather than the `--c-*` ramp, so a status has to move it onto the ramp.
+Tag and inline already paint from `--c-*` in their base rules, so remapping
+`--c-*` is enough. Adding paint rules for them anyway would be a trap: bound at
+`:where()` they carry specificity 0 and lose to their own base rule.
+
+This does **not** reverse *Status colour is fixed, not themed* — it strengthens
+it. Statuses still resolve from the fixed `apca-palette` hues, never the theme's
+brand ramp.
+
+**Ruled out:** keeping the semantic aliases as a convenience layer. Two ways to
+say the same thing is how `hue-info` and `banner--info` drifted to different
+colours in the first place — an alias is where the next contradiction hides.
+Also ruled out: going the other way and baking status into the hue layer for
+every component, which would have made the palette un-nameable in colour terms
+and left no way to ask for plain red.
+
+**Cost:** breaking for any markup using the old classes, with no alias to soften
+it. All 31 call sites in this repo were migrated in the same commit; anything
+pinned to an older tag keeps working, and anything upgrading has to rename. The
+five status lists in `lds.css` also have to be extended by hand when a
+status-bearing component is added — deliberate friction, so the set of components
+allowed to speak in status names stays small and visible in one place.
+
 ---
 
 ## 3. Emphasis ladder
@@ -335,8 +390,8 @@ each with its own hardcoded greys and its own copy of the layout.
 Do and don't are **not** variants. They ride the existing mechanism:
 
 ```html
-<ul class="lds-list emph-plain hue-success"> … </ul>
-<ul class="lds-list emph-plain hue-error">   … </ul>
+<ul class="lds-list emph-plain hue-green"> … </ul>
+<ul class="lds-list emph-plain hue-red">   … </ul>
 ```
 
 `.lds-list--do` deliberately does not exist. Bespoke colour variants are exactly
@@ -377,7 +432,7 @@ Custom property substitution happens where the property is **declared**.
 that class it computes to a concrete colour and inherits down as that colour.
 Re-pointing `--c-600` further down the tree cannot reach back and change it.
 
-Measured while building `lds-list`: `<ul class="lds-list hue-error">` inside an
+Measured while building `lds-list`: `<ul class="lds-list hue-red">` inside an
 `.emph-plain` body produced a "don't" column identical to the "do" column —
 both terracotta. Adding `emph-plain` to the `ul` fixed it: green `rgb(39,132,69)`
 against red `rgb(190,81,68)`.
@@ -666,6 +721,48 @@ machine-readable*, and the role is still earning its keep.
 smaller x-height than Jost at the same nominal size, so 16px body reads slightly
 smaller than it did — still inside Butterick's 15–25px, but it is the floor of
 the range now rather than comfortably above it.
+
+**Amended 2026-07-27:** this decision quietly set every *control* in the serif
+too — buttons, tags, chips and field labels all read `--th-body`. That was not
+intended and is fixed by *`--th-ui` is the control role* below. The decision
+itself stands: sans heads, serif text.
+
+### `--th-ui` is the control role
+
+`2026-07-27` · `type` · `human` · `notable`
+
+A fourth font role: `--th-display` · `--th-body` · `--th-ui` · `--th-mono`.
+`--th-ui` is for **controls** — buttons, tags, chips, field labels and inputs.
+It defaults to `--th-display`, so a theme gets sans controls without opting in.
+
+The role exists because *Sans heads, serif text* made `--th-body` a serif, and
+every control was reading `--th-body`. A button label in Spectral is not an
+editorial choice, it is a mistake: a control is chrome, not prose. Three roles
+could not express this, because "the text font" and "the control font" had been
+the same variable for as long as they happened to agree.
+
+Prose keeps the serif — `lds-banner` and `lds-card__body` are sentences, and they
+still read `--th-body`.
+
+**Declare `--th-ui` in the theme**, alongside the other font roles. Not once at
+`:root`.
+
+**Ruled out:** keeping the serif on controls for consistency of voice. The
+editorial character is carried by the prose and the headings, which is where it
+reads as deliberate; on a button it reads as an oversight. Also ruled out:
+hardcoding `--th-display` directly in each control rule, which would have made
+the two impossible to separate — a theme can now decouple controls from headings
+by setting `--th-ui` alone.
+
+**Cost:** the first attempt defined `--th-ui: var(--th-display)` once at `:root`
+and it silently did nothing on the showcase page. `:root` matches `html`, the
+`var()` resolved there against **core's** `--th-display`, computed to a concrete
+`system-ui`, and inherited *past* `theme-portfolio` — which is mounted on `body`
+on that page — so every control stayed system-ui while the headings were Jost.
+This is the substitution rule from *A hue only retints where emphasis resolves*
+reappearing in the type layer: a core default that references a theme variable is
+early-bound and cannot be overridden downstream. Any future role of this shape
+has to be declared per-theme for the same reason.
 
 ### Semantic roles for UI, primitives inside components
 

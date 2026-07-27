@@ -69,6 +69,8 @@
      meaning here (dates, tokens, hashes) rather than mood.                 */
   --th-display:'Jost','Futura','Century Gothic',system-ui,sans-serif;
   --th-body:'Spectral','Iowan Old Style','Georgia',serif;
+  /* controls take the display sans — a serif body must not reach a button. */
+  --th-ui:var(--th-display);
   --th-mono:'DM Mono','SFMono-Regular',ui-monospace,monospace;
 
   --text-caption: var(--size-1);  /* 12 */

@@ -6,6 +6,7 @@
 
   --th-display:'Inter',system-ui,sans-serif;
   --th-body:'Inter',system-ui,sans-serif;
+  --th-ui:var(--th-display);
   --th-mono:ui-monospace,monospace;
 
   --text-caption: var(--size-0);
