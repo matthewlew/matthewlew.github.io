@@ -54,9 +54,10 @@ well-formed, not well-reasoned.
 These are all recorded in `decisions.md` with their full reasoning; this is the
 short list of things that fail *quietly*.
 
-- **Put the theme class on the root element.** Custom properties inherit
-  downward only, so `theme-portfolio` on an inner wrapper leaves `body`
-  resolving core defaults while the components inside look correctly themed.
+- **Put the theme and emphasis classes on the root element.** Custom properties
+  inherit downward only, so `theme-product` or `emph-plain` on an inner wrapper
+  leaves `body` resolving core defaults while the components inside look
+  correctly themed.
 - **Showcase and docs pages paint from tokens.** Never hardcode a font family or
   hex on a page that demonstrates the system — it will silently contradict the
   thing it is demonstrating.
@@ -64,10 +65,14 @@ short list of things that fail *quietly*.
   raw `--size-*` scale, and take the whole composite: the semantic role carries
   leading and tracking too, so a page that takes only the font-size still
   drifts.
-- **Core never hardcodes a hex.** Themes supply the `--c-*` ramp.
-- **Theme brand ramps are steeper than the `apca-palette.css` curve**, and have
-  to be — on the flat curve `c-200` measures Lc 0.0 against `c-50` and every
-  tinted surface loses its border.
+- **Core carries the portfolio brand**, and therefore hardcodes hexes: the oat
+  grey ramp, the green `--c-*` ramp, `--link`, `--cta`. This reversed the older
+  "core never hardcodes a hex" rule. A *theme* is now only what a surface
+  declares in order to diverge from that brand — which is why the portfolio has
+  no theme file at all.
+- **Brand ramps are steeper than the `apca-palette.css` curve**, and have to be
+  — on the flat curve `c-200` measures Lc 0.0 against `c-50` and every tinted
+  surface loses its border.
 - **Contrast is APCA**, not WCAG 2.x. Verify against the floors rather than
   eyeballing; several "it looks fine" values measure under them.
 - `index.html` and `about.html` render in **quirks mode** (no doctype). Adding

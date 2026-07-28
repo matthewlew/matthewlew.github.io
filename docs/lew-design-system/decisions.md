@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 70 decisions: **44 human · 24 measured · 2 ai**.
+The split as it stands, across the 71 decisions: **45 human · 24 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -1832,6 +1832,39 @@ which would silently shadow core for every page carrying the class.
 **Cost:** an empty file that looks like an oversight. The comment inside it is
 the only thing stopping someone re-adding values, and that comment is
 load-bearing.
+
+### The portfolio has no theme file
+
+`2026-07-28` · `themes` · `human` · `structural`
+
+Completes *`theme-portfolio` becomes a shim*: the class is gone from the markup
+and `themes/portfolio.css` is deleted. The portfolio is now the only surface in
+the system with no theme file, because core carries its brand — a theme is what
+a surface declares in order to *diverge*, and this one has nothing to diverge
+from.
+
+The shim's own comment said six pages. That counted the pages carrying the
+class; **eight** linked the stylesheet. `design-system/index.html` and
+`index_a11y.html` linked it without ever setting the class, so removing the
+class from six pages and deleting the file would have left two 404s. Grepping
+for the class and grepping for the `<link>` return different sets, and only the
+second one governs deletion.
+
+The showcase switcher now emits **no** theme class for Portfolio rather than an
+inert `theme-portfolio`. Selecting it means "core, unthemed", which is the
+architecture stated rather than papered over.
+
+**Ruled out:** keeping the empty shim indefinitely, which costs a network
+request to assert that nothing is asserted. Also ruled out: renaming the shim to
+`theme-core.css`, which reintroduces the shadowing hazard under a friendlier
+name — core is not a theme and must not be selectable as one. Also ruled out:
+deleting `docs/lew-design-system/pitch.html`'s inline `.theme-portfolio`, which
+is a frozen pre-oat artifact with its own values and never linked this file.
+
+**Cost:** `class="theme-portfolio"` in any consumer's markup is now silently
+inert rather than loudly missing. Nothing breaks — the properties resolve from
+core, which is what the class selected anyway — but there is no longer a file
+whose absence would signal the rename.
 
 ## 8. Distribution
 

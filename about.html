@@ -1,26 +1,25 @@
-<html lang="en" class="theme-portfolio emph-plain">
+<html lang="en" class="emph-plain">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Matthew Lew — Design Systems Designer. Machine-readable design systems, token architectures, and AI-augmented workflows. Formerly Starbucks & DoorDash.">
 <title>Matthew Lew — Design Systems Designer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Caveat only. Every theme face (Coconat, Ronzino) is self-hosted in
-     design-system/dist/fonts and loaded by portfolio.css; Caveat is this
+<!-- Caveat only. Every system face (Coconat, Ronzino) is self-hosted in
+     design-system/dist/fonts and loaded by lds.css; Caveat is this
      page's own face for the hand-written notes, not an LDS role. -->
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <!-- Lew Design System — live, not vendored. Powers the footer badge only;
      the rest of this page keeps its own hand-tuned styles for now. -->
 <link rel="stylesheet" href="design-system/dist/lds.css">
-<link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
 <style>
   /* This page's tokens are now aliases onto LDS, not values of their own.
      Every rule below still says var(--ink) or var(--accent); re-pointing the
-     eleven names here moves ~87% of the page's styling onto theme-portfolio
+     eleven names here moves ~87% of the page's styling onto LDS core
      without touching a single component rule. That is the entire argument for
      having a token layer.
 
-     The theme + emphasis classes sit on <html> so that :root can resolve
+     The emphasis class sits on <html> so that :root can resolve
      var(--background) — same element, so the emphasis roles are in scope here.
      Deliberately NO doctype added: these pages render in quirks mode today,
      and flipping that is a separate change with its own risks. */
@@ -977,7 +976,7 @@
 
 <footer>
   <span>© 2026 Matthew Lew — Design Systems Designer</span>
-  <span class="theme-portfolio mode-dark emph-plain" style="display:inline-flex;align-items:center;gap:6px;">
+  <span class="mode-dark emph-plain" style="display:inline-flex;align-items:center;gap:6px;">
     <a href="design-system/index.html" class="lds-badge" style="text-decoration:none;">
       <svg class="lds-icon" style="width:11px;height:11px;"><use href="design-system/dist/icons.svg#checkboxFilled"/></svg>
       Built on Lew Design System

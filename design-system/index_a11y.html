@@ -11,7 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="dist/lds.css">
-  <link rel="stylesheet" href="dist/themes/portfolio.css">
   <link rel="stylesheet" href="dist/themes/palette.css">
   <link rel="stylesheet" href="dist/themes/product.css">
   
@@ -585,8 +584,11 @@
   const state = { theme: 'portfolio', mode: 'light' };
   
   function applyTheme() {
-    // Apply theme classes to the document body so the entire page is themed natively
-    document.body.className = `theme-${state.theme} mode-${state.mode} emph-plain`;
+    // Apply theme classes to the document body so the entire page is themed natively.
+    // Portfolio emits NO theme class: core carries that brand, so a theme file for it
+    // would only shadow core with its own values. Selecting it means "core, unthemed".
+    const theme = state.theme === 'portfolio' ? '' : `theme-${state.theme} `;
+    document.body.className = `${theme}mode-${state.mode} emph-plain`;
   }
 
   function wireSeg(segId, key) {

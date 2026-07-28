@@ -114,9 +114,16 @@ via `file://`, so serve the site when checking them.
 
 | Theme | For | Character |
 |---|---|---|
-| `themes/portfolio.css` | matthewlew.github.io | Editorial, light-default |
+| *(none)* | matthewlew.github.io | Editorial, light-default — **this is core** |
 | `themes/product.css` | product surfaces | Neutral, functional |
 | `themes/palette.css` | [palette](https://github.com/matthewlew/palette) | Chromeless, dark-native, media-forward |
+
+The portfolio has no theme file. Core *is* the portfolio brand — the oat
+neutrals, the green ramp, the Coconat/Ronzino/Martian Mono faces, the radius
+set and the shadows all ship in `lds.css`. A theme is what a surface declares
+in order to *diverge* from that, so the surface the brand was drawn from
+declares nothing. `themes/portfolio.css` existed until it was emptied, then
+deleted; do not recreate it.
 
 `theme-palette` deliberately ships **no brand hue**. palette is a gradient
 tool — the artwork is the colour, so the theme's `--c-*` ramp is a cool

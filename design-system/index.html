@@ -12,7 +12,6 @@
   
   <link rel="stylesheet" href="dist/apca-palette.css">
   <link rel="stylesheet" href="dist/lds.css">
-  <link rel="stylesheet" href="dist/themes/portfolio.css">
   <link rel="stylesheet" href="dist/themes/palette.css">
   <link rel="stylesheet" href="dist/themes/product.css">
   
@@ -565,8 +564,11 @@
   const state = { theme: 'portfolio', mode: 'light' };
   
   function applyTheme() {
-    // Apply theme classes to the document body so the entire page is themed natively
-    document.body.className = `theme-${state.theme} mode-${state.mode} emph-plain`;
+    // Apply theme classes to the document body so the entire page is themed natively.
+    // Portfolio emits NO theme class: core carries that brand, so a theme file for it
+    // would only shadow core with its own values. Selecting it means "core, unthemed".
+    const theme = state.theme === 'portfolio' ? '' : `theme-${state.theme} `;
+    document.body.className = `${theme}mode-${state.mode} emph-plain`;
   }
 
   function wireSeg(segId, key) {

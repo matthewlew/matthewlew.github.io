@@ -1,6 +1,6 @@
 (function() {
   /* The hub widget is a dark island on every page, so it declares
-     .theme-portfolio.mode-dark.emph-plain on itself and paints from One Token.
+     .mode-dark.emph-plain on itself and paints from One Token.
      It previously hardcoded DM Sans, Bricolage Grotesque, Space Mono, #111 and
      a vermilion #C8391B — none of which the system still contains. */
   const style = document.createElement('style');
@@ -101,7 +101,7 @@
   document.head.appendChild(style);
 
   const widget = document.createElement('div');
-  widget.className = 'lew-hub-widget theme-portfolio mode-dark emph-plain';
+  widget.className = 'lew-hub-widget mode-dark emph-plain';
 
   const menu = document.createElement('div');
   menu.className = 'lew-hub-menu';
