@@ -41,13 +41,13 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  /* Luminance-neutral grain. Mid-grey noise under `overlay` is a no-op on
-     average lightness, so every measured contrast pair in the theme stays
-     true underneath it. */
+  /* The grain is core's now. The page still owns the element it paints on —
+     which surface takes the treatment is a page call — but the image and the
+     opacity come from tokens, so the noise is not re-pasted per page. */
   body::before{
     content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
-    opacity:.4; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:var(--grain-opacity); mix-blend-mode:overlay;
+    background-image:var(--grain);
   }
 
   /* ---- links: --link, never --text-accent ----
@@ -107,12 +107,11 @@
   .eyebrow{ font-family:var(--th-mono); font-size:var(--text-caption);
             font-weight:700; letter-spacing:var(--tracking-widest);
             text-transform:uppercase; color:var(--text-subdued); }
-  /* --leading-title is 1.0, which is right for a bare heading and wrong for one
-     carrying a highlight: consecutive .mark boxes touch. The hero takes
-     --leading-tight instead, which is the next primitive up, not a magic number. */
-  .display{ font-family:var(--th-display); font-weight:var(--weight-regular);
-            font-size:clamp(48px, 8vw, 104px); line-height:var(--leading-tight);
-            letter-spacing:var(--tracking-title); text-wrap:balance; }
+  /* The hero is a role now: --text-hero carries the clamp, the leading and the
+     tracking, so the only thing left here is the wrap. */
+  .display{ font-family:var(--th-display); font-weight:var(--weight-hero);
+            font-size:var(--text-hero); line-height:var(--leading-hero);
+            letter-spacing:var(--tracking-hero); text-wrap:balance; }
   .sec-title{ font-family:var(--th-display); font-weight:var(--weight-medium);
               font-size:var(--text-title); line-height:var(--leading-title);
               letter-spacing:var(--tracking-title); text-wrap:balance; }
@@ -124,11 +123,6 @@
   .stack{ display:flex; flex-direction:column; gap:calc(4 * var(--u)); }
   .stack-s{ display:flex; flex-direction:column; gap:calc(2 * var(--u)); }
   .row{ display:flex; flex-wrap:wrap; gap:calc(2 * var(--u)); align-items:center; }
-
-  /* Emphasis painted with the CTA rather than with a colour of its own. */
-  .mark{ background:var(--cta); color:var(--cta-text);
-         box-decoration-break:clone; -webkit-box-decoration-break:clone;
-         padding:.02em .18em; margin:0 -.06em; }
 
   /* Metrics. Tabular, because these are figures in a column. */
   .metric{ display:flex; flex-direction:column; gap:calc(.5 * var(--u));
@@ -191,7 +185,7 @@
   <section id="top" aria-labelledby="hero-title">
     <div class="grid">
       <p class="eyebrow full">Available &middot; Design Systems Architect &middot; New York, NY &middot; 8+ years</p>
-      <h1 class="display nine" id="hero-title">Design systems, legible to people <span class="mark">and to machines</span>.</h1>
+      <h1 class="display nine" id="hero-title">Design systems, legible to people <span class="lds-mark">and to machines</span>.</h1>
       <div class="h1 stack">
         <p>I help product teams build faster without creating design or engineering
           debt. Not by drawing buttons &mdash; by setting the layout rules, tokens and

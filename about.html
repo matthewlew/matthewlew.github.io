@@ -176,12 +176,16 @@
   }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
 
+  /* The hero is a role now. This rule was the page's own clamp, its own
+     leading and its own tracking — three values re-derived from nothing, and
+     the reason --text-hero exists. The weight stays local: 600 is this page's
+     call and the role's default is regular. */
   .hero-title {
     font-family: var(--font-display);
     font-weight: 600;
-    line-height: 0.98;
-    letter-spacing: -0.035em;
-    font-size: clamp(44px, 8vw, 108px);
+    line-height: var(--leading-hero);
+    letter-spacing: var(--tracking-hero);
+    font-size: var(--text-hero);
   }
   .hero-title .accent { color: var(--accent); }
   .hero-title .it { font-style: normal; }
