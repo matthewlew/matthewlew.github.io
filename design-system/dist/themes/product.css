@@ -4,6 +4,18 @@
   --c-50:#EAF1FF;--c-100:#CFE0FF;--c-200:#9DBEFF;--c-300:#6B9BFF;--c-400:#3E79FF;
   --c-500:#2563EB;--c-600:#1D4FC4;--c-700:#173D97;--c-800:#112C6E;--c-900:#0A1943;--c-950:#050D22;
 
+  /* A true neutral ramp, declared rather than inherited. These are the values
+     core carried before the portfolio brand moved into it; this theme used to
+     get them for free, which is why it never declared them.
+
+     It has to now. .emph-plain resolves all seven object-colour roles from
+     --grey-*, so with core's neutrals set to oat a dashboard rendered on cream
+     paper with warm borders. "Neutral, dense, dependable" is the whole brief
+     for this theme, and neutral is the word that stopped being true. */
+  --grey-50:#F8F8F8;  --grey-100:#F0F0F0; --grey-200:#E2E2E2; --grey-300:#CACACA;
+  --grey-400:#ADADAD; --grey-500:#898989; --grey-600:#6B6B6B; --grey-700:#4E4E4E;
+  --grey-800:#333333; --grey-900:#1C1C1C; --grey-950:#0E0E0E;
+
   --th-display:'Inter',system-ui,sans-serif;
   --th-body:'Inter',system-ui,sans-serif;
   --th-ui:var(--th-display);

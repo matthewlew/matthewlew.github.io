@@ -33,6 +33,27 @@
   --c-900:#1C1A20;  /* palette card surface (dark) */
   --c-950:#101014;  /* palette GALLERY_SURFACE — the canvas behind everything */
 
+  /* The SAME ramp again, as --grey-*, and that is the point rather than a
+     duplication: for palette the neutral ramp IS the brand ramp, because the
+     brand is the artwork and the chrome around it is measured neutral.
+
+     This has to be declared. Core's --grey-* is the portfolio's oat, and
+     .emph-plain resolves all seven object-colour roles from it, so a theme that
+     sets only --c-* inherits oat paper under its own neutrals. That is what
+     happened when the brand moved into core: this theme rendered warm, which is
+     the one thing a chromeless media theme must not do. */
+  --grey-50:#F8F8F9;
+  --grey-100:#F0F0F2;
+  --grey-200:#E5E4E7;
+  --grey-300:#C9C9D1;
+  --grey-400:#ACACB7;
+  --grey-500:#8D8894;
+  --grey-600:#6B6375;
+  --grey-700:#4D4D5A;
+  --grey-800:#2E303A;
+  --grey-900:#1C1A20;
+  --grey-950:#101014;
+
   /* ---- Type ----
      palette's workhorse is 13px with 11px captions (25 and 13 uses in the
      app's CSS — by far the two most common sizes). The previous version of

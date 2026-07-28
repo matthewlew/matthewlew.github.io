@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 71 decisions: **45 human · 24 measured · 2 ai**.
+The split as it stands, across the 72 decisions: **45 human · 25 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -434,6 +434,12 @@ the theme class got uncoloured components rather than an error.
 Core now ships the green ramp and the oat neutrals as defaults, plus the faces,
 the radius set and the shadows. Themes override exactly as before.
 
+**Amended 2026-07-28.** "Themes override exactly as before" was wrong, and
+measurably so — see *A theme declares its own neutral ramp*. It held for
+`--c-*`, which every theme declares. It did not hold for `--grey-*`, which no
+theme declared, because core's neutrals were neutral until this entry made them
+oat. Both other themes silently inherited the portfolio's paper.
+
 **Ruled out:** a neutral placeholder ramp, which is a fifth brand nobody chose
 and which measures wrong against every real theme's floors. Also ruled out:
 failing loudly on a missing theme, which needs a runtime in a system that has
@@ -442,6 +448,44 @@ consumers did before hitting it anyway.
 
 **Cost:** the default look is now opinionated. A consumer who forgets the theme
 class gets this brand rather than nothing — a better failure, but a louder one.
+The larger cost was the one above: a *correctly themed* consumer also got this
+brand's neutrals, which is a quieter failure than the one this entry fixed.
+
+### A theme declares its own neutral ramp
+
+`2026-07-28` · `themes` · `measured` · `structural`
+
+`--c-*` was never the whole of a brand. `.emph-plain` resolves all seven
+object-colour roles from `--grey-*` in both modes, so the neutral ramp is what a
+surface actually looks like — the brand ramp only tints it.
+
+Measured, rendering the showcase at `63350c2` and at `HEAD` and diffing the
+resolved roles per theme × mode: **all seven changed for `theme-product` and
+`theme-palette`, in both modes; none changed for the portfolio.** Neither theme
+declared `--grey-*`, because until *Core ships a working brand ramp* they never
+had to. So a dashboard rendered on cream paper with warm borders, and the
+chromeless media theme — whose ramp is measured to a cool hue precisely so it
+does not compete with artwork — rendered warm.
+
+Both now declare the ramp. `theme-product` takes back the true neutrals core
+carried before the brand landed. `theme-palette` uses its own measured ramp, the
+same values as its `--c-*`, which is not duplication: for palette the neutral
+ramp *is* the brand ramp, because the brand is the artwork.
+
+The general rule, which the old one only appeared to state: a theme must declare
+every ramp it does not want the portfolio's, and after this entry that is both
+of them.
+
+**Ruled out:** returning core's `--grey-*` to neutral and letting the portfolio
+declare oat, which reinstates the broken-unthemed-LDS failure that *Core ships a
+working brand ramp* exists to prevent, and which would need the portfolio theme
+file back a commit after it was deleted. Also ruled out: leaving it and calling
+oat the house neutral, which makes "neutral, dense, dependable" false for the
+one theme whose entire brief is that sentence.
+
+**Cost:** three ramps to keep in step instead of one, and a theme author must
+now know that `--c-*` alone leaves them on someone else's paper. The `--grey-*`
+block is the least interesting thing in either file and the most load-bearing.
 
 ### A link is a role, not an emphasis level
 
