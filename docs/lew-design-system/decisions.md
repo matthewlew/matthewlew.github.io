@@ -1202,6 +1202,12 @@ across roles; a Google Fonts link, which reopens *Theme faces are self-hosted*;
 Chivo Mono, too close to Ronzino to signal a different kind of object; and
 shipping the variable file for two axes the role does not use.
 
+Also ruled out on a second pass: **Spline Sans Mono**, the runner-up, which sets
+narrower and was revisited when the width cost in narrow columns was weighed
+again. The face stays. That cost is what `--mono-tracking` at 0.03em was already
+spent paying down, and `font-size-adjust` means the question is cheap to reopen
+later — a swap changes one `@font-face` and re-tunes nothing.
+
 **Cost:** `font-size-adjust` needs Chrome 127 / Safari 16.4. Below that the mono
 renders uncorrected, which is the previous behaviour — it degrades to before,
 not to broken. And ~92KB of woff2 across three instances.
