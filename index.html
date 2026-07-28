@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="theme-portfolio emph-plain">
+<html lang="en" class="emph-plain">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +7,8 @@
 <title>Matthew Lew — Design Systems Architect</title>
 
 <!-- No font CDN. Coconat and Ronzino are self-hosted and loaded by
-     design-system/dist/themes/portfolio.css. -->
+     design-system/dist/lds.css. -->
 <link rel="stylesheet" href="design-system/dist/lds.css">
-<link rel="stylesheet" href="design-system/dist/themes/portfolio.css">
 
 <style>
   /* ==========================================================================
@@ -104,9 +103,17 @@
   .sec-head{ display:flex; align-items:baseline; justify-content:space-between;
              gap:calc(3 * var(--u)); margin-bottom:calc(6 * var(--u)); }
 
-  .eyebrow{ font-family:var(--th-mono); font-size:var(--text-caption);
-            font-weight:700; letter-spacing:var(--tracking-widest);
-            text-transform:uppercase; color:var(--text-subdued); }
+  /* An eyebrow names a section, so it is a LABEL: sans on --th-ui because it is
+     chrome rather than prose, sentence case, no widest tracking. It was uppercase
+     mono, which put the phrase and the counter beside it in the same three
+     signals of machine-readability — see *A section eyebrow is not metadata*.
+     The counter kept the mono and moved to core's .lds-meta, which is that
+     composite already, x-height correction included. Only its ink is set here:
+     .lds-meta deliberately leaves colour to context. */
+  .eyebrow{ font-family:var(--th-ui); font-size:var(--text-label);
+            font-weight:var(--weight-label); line-height:var(--leading-label);
+            letter-spacing:var(--tracking-label); color:var(--text-subdued); }
+  .sec-head .lds-meta{ color:var(--text-subdued); }
   /* The hero is a role now: --text-hero carries the clamp, the leading and the
      tracking, so the only thing left here is the wrap. */
   .display{ font-family:var(--th-display); font-weight:var(--weight-hero);
@@ -131,8 +138,14 @@
              font-size:var(--text-subhead); line-height:1;
              font-variant-numeric:tabular-nums;
              letter-spacing:var(--tracking-subhead); }
-  .metric span{ font-family:var(--th-mono); font-size:var(--text-caption);
-                letter-spacing:var(--tracking-wide); text-transform:uppercase;
+  /* The figure is the measured value; the line under it is a phrase naming what
+     was measured. Same split as the eyebrow — it was uppercase mono too, which
+     is the machine-readable signal spent on "Colour tokens, Starbucks". Takes
+     the small label composite: this sits directly under its own figure, which is
+     the case --text-label-sm carries a weight and a hair of tracking for. */
+  .metric span{ font-family:var(--th-ui); font-size:var(--text-label-sm);
+                font-weight:var(--weight-label-sm); line-height:var(--leading-label);
+                letter-spacing:var(--tracking-label-sm);
                 color:var(--text-subdued); }
 
   .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
@@ -211,7 +224,7 @@
         <p class="eyebrow">Selected work</p>
         <h2 class="sec-title" id="work-title">Proof, not promises.</h2>
       </div>
-      <p class="eyebrow">01 / 04</p>
+      <p class="lds-meta">01 / 04</p>
     </div>
 
     <div class="cards">
@@ -272,7 +285,7 @@
         <p class="eyebrow">Approach</p>
         <h2 class="sec-title" id="approach-title">House rules.</h2>
       </div>
-      <p class="eyebrow">02 / 04</p>
+      <p class="lds-meta">02 / 04</p>
     </div>
 
     <div class="grid">
@@ -316,7 +329,7 @@
         <h2 class="sec-title" id="tools-title">At long last.</h2>
         <p>Four of them. Each does exactly one thing, on purpose.</p>
       </div>
-      <p class="eyebrow">03 / 04</p>
+      <p class="lds-meta">03 / 04</p>
     </div>
 
     <div class="cards">
@@ -363,7 +376,7 @@
         <p class="eyebrow">Contact</p>
         <h2 class="sec-title" id="contact-title">Here&rsquo;s my card.</h2>
       </div>
-      <p class="eyebrow">04 / 04</p>
+      <p class="lds-meta">04 / 04</p>
     </div>
 
     <div class="grid">
