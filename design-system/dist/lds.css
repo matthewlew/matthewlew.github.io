@@ -1,4 +1,33 @@
 /* ==========================================================================
+   Theme faces, self-hosted. Core carries them because core now ships a working
+   brand: a file that names a face it does not carry renders differently
+   depending on whether the consumer happened to add the same <link>.
+
+   Ronzino and Coconat — Collletttivo, SIL OFL. Martian Mono — Evil Martians,
+   SIL OFL, variable on wdth + wght; three static instances because the mono
+   role uses three weights and the role does not need the axes.
+   See dist/fonts/ for the licences.
+   ========================================================================== */
+@font-face{font-family:'Ronzino';font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/Ronzino-Regular.woff2') format('woff2');}
+@font-face{font-family:'Ronzino';font-style:normal;font-weight:500;font-display:swap;
+  src:url('fonts/Ronzino-Medium.woff2') format('woff2');}
+@font-face{font-family:'Ronzino';font-style:normal;font-weight:700;font-display:swap;
+  src:url('fonts/Ronzino-Bold.woff2') format('woff2');}
+@font-face{font-family:'Coconat';font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/Coconat-Regular.woff2') format('woff2');}
+@font-face{font-family:'Coconat';font-style:normal;font-weight:600;font-display:swap;
+  src:url('fonts/Coconat-Demi.woff2') format('woff2');}
+@font-face{font-family:'Coconat';font-style:normal;font-weight:700;font-display:swap;
+  src:url('fonts/Coconat-Bold.woff2') format('woff2');}
+@font-face{font-family:'Martian Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url('fonts/MartianMono-Regular.woff2') format('woff2');}
+@font-face{font-family:'Martian Mono';font-style:normal;font-weight:500;font-display:swap;
+  src:url('fonts/MartianMono-Medium.woff2') format('woff2');}
+@font-face{font-family:'Martian Mono';font-style:normal;font-weight:600;font-display:swap;
+  src:url('fonts/MartianMono-SemiBold.woff2') format('woff2');}
+
+/* ==========================================================================
    Lew Design System (LDS) — core
    Layer 1: primitives · Layer 2: semantics (One Token) · Layer 3: components
    Themes (Layer 4) define: --c-* brand scale, --th-*, --radius*, shadows,
@@ -7,9 +36,77 @@
 
 :root{
   /* ---- Layer 1: primitives ---- */
-  --grey-50:#F8F8F8;--grey-100:#F0F0F0;--grey-200:#E2E2E2;--grey-300:#CACACA;
-  --grey-400:#ADADAD;--grey-500:#898989;--grey-600:#6B6B6B;--grey-700:#4E4E4E;
-  --grey-800:#333333;--grey-900:#1C1C1C;--grey-950:#0E0E0E;
+  /* Neutrals: the previous grey lightnesses exactly, hue rotated ALONG the ramp
+     — 105 at the paper end to 150 at the ink end, on a chroma arc that dips
+     through the mids and rises at the bottom. Oat is a yellow-green paper and
+     the ink is a green-black, and they are not the same hue: one fixed hue
+     gives you a neutral ink under warm paper, or a yellow-green ink. Measured
+     drift against the old ramp: max 0.32 Lc across all eleven steps. The
+     hierarchy is unchanged; only its temperature is. */
+  --grey-50:#FAF9EA;  --grey-100:#F2F1E1; --grey-200:#E3E4D2; --grey-300:#CACCBB;
+  --grey-400:#ACAFA1; --grey-500:#888B80; --grey-600:#696D64; --grey-700:#4B5047;
+  --grey-800:#2E362B; --grey-900:#151F14; --grey-950:#061108;
+
+  /* ---- the default brand ramp ----
+     Core shipped no --c-* ramp, which meant .emph-subtle, .emph-soft,
+     .emph-strong and every status tint resolved to nothing until a theme
+     mounted. "Core never hardcodes a hex" was protecting the wrong boundary: it
+     kept core theme-agnostic by keeping it non-functional. Themes still replace
+     all of it — the difference is that replacing it is an override rather than a
+     prerequisite.
+
+     Green at OKLCH hue 150, the ink's own hue, each step's lightness solved
+     until its measured APCA hits a fixed target. The accent is the ink with the
+     chroma raised, so an accented word reads as the same voice louder rather
+     than as a different voice interrupting. */
+  --c-50:#D5ECD8;  --c-100:#C2E5C8; --c-200:#8FC99A; --c-300:#61AE73;
+  --c-400:#3C9656; --c-500:#1A803E; --c-600:#00662B; --c-700:#004F1D;
+  --c-800:#003A12; --c-900:#002008; --c-950:#000501;
+
+  /* ---- the link: a role, not an emphasis level ----
+     A link is text with behaviour, and One Token has seven object-colour roles
+     and none of them mean that — so themes were painting links with
+     --text-accent, which reads backwards both ways: every accented word looks
+     clickable and every link looks like emphasis.
+
+     It is a role and not a theme knob because the fallback has to be safe. A
+     consumer shipping a theme with no --link still renders links, and before
+     this they rendered browser blue on whatever ground the theme chose — the one
+     colour in the document nobody measured.
+
+     Two values, because a link lands on both grounds and one hue cannot clear
+     the body floor on both. --link-dark is not a dark-mode variant; it is the
+     same role solved against the other ground. Colour ALWAYS travels with an
+     underline: the distinction has to survive greyscale print and red-green
+     colour blindness, which — the accent being green — is the whole of it. */
+  --link:#00437C;
+  --link-dark:#AADDFF;
+
+  /* ---- the CTA: an object, not a sixth emphasis level ----
+     One value, not a ramp. It is a highlighter; build eleven steps of it and you
+     have a second brand hue, with two colours competing to mean "act on this".
+     It sits outside the ladder on purpose — subtle → soft → strong → stark is a
+     scale of loudness and every step retints with the brand hue, and the CTA
+     does neither. It is shaped like an emphasis class so it composes with the
+     same components, and that is the whole of the resemblance.
+
+     In core rather than in a theme because a theme could not finish the job:
+     components paint from an explicit emphasis list, so every theme wanting a
+     CTA had to hand-write the .lds-btn opt-in. Written once, here. */
+  --cta:#E0E9B4;
+  --cta-text:var(--grey-900);
+  --cta-hover:#D6E19E;
+  --cta-pressed:#C8D586;
+
+  /* ---- the grain ----
+     Luminance-neutral: mid-grey noise under `overlay` is a no-op on average
+     lightness, so every measured pair in the system stays true underneath it.
+     A token rather than a page rule because it was pasted by hand into
+     index.html and about.html, and a surface treatment that has to be re-pasted
+     per page is not part of the system. The consumer still owns the element it
+     paints on; core supplies the image and the opacity. */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-opacity:.4;
 
   --space-0:0;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
   --space-5:20px;--space-6:24px;--space-7:32px;--space-8:40px;
@@ -31,7 +128,13 @@
   --tracking-tighter: -0.04em; --tracking-tight: -0.02em; --tracking-normal: 0em; 
   --tracking-wide: 0.02em; --tracking-wider: 0.04em; --tracking-widest: 0.08em;
   
-  --leading-none: 1; --leading-tight: 1.15; --leading-normal: 1.4; --leading-loose: 1.6;
+  /* --leading-relaxed closes the widest gap in the ladder. 1 / 1.15 / 1.4 / 1.6
+     steps by 15%, 22%, 14% — and then nothing between 1.4 and 1.6, which is
+     where every body measure narrower than about 55ch actually wants to sit.
+     1.6 was solved for a 62ch paragraph; in a 34ch column the lines are short
+     enough that the same leading reads as gaps rather than as rhythm. */
+  --leading-none: 1; --leading-tight: 1.15; --leading-normal: 1.4;
+  --leading-relaxed: 1.475; --leading-loose: 1.6;
 
   /* Four font roles. --th-ui is the CONTROL role: anything interactive or
      chrome — buttons, tags, chips, field labels and inputs, nav links. It
@@ -44,16 +147,126 @@
      four rules still take it — card__body, card__meta, banner, modal__body.
 
      Declare --th-ui in the THEME, not once at :root. See decisions.md. */
-  --th-body: system-ui, sans-serif;
-  --th-display: system-ui, sans-serif;
-  --th-ui: var(--th-display);
-  --th-mono: monospace;
+  --th-display:'Coconat','Iowan Old Style',Georgia,serif;
+  --th-body:'Ronzino','Helvetica Neue',system-ui,sans-serif;
+  --th-ui:var(--th-body);
+  --th-mono:'Martian Mono',ui-monospace,'SF Mono','SFMono-Regular',
+            'Cascadia Mono','Roboto Mono','Liberation Mono',Menlo,Consolas,monospace;
+
+  /* ---- the mono role's face corrections ----
+     A mono set at --text-meta beside the body sans at --text-meta reads heavier,
+     and the reason is not the stroke: "same font-size" means same em box, and
+     two faces put different amounts of letter inside one. The mono's x-height
+     fills more of its em, so at 12px it is optically the larger of the two and
+     it wins an argument it was never meant to enter — metadata outshouting the
+     prose it annotates.
+
+     The fix is font-size-adjust, not a smaller literal. --mono-adjust holds ONE
+     number: the x-height-to-em ratio of --th-body. The browser then scales
+     whatever face --th-mono names until its x-height matches, so the correction
+     survives a face swap — change --th-mono and the balance holds with nobody
+     re-tuning a size. A hand-picked 0.9 multiplier would be correct for exactly
+     one typeface. The number belongs to --th-body and has to travel with it:
+     font-size-adjust cannot read another family's metrics.
+
+     --mono-tracking is a judgement, not a measurement. A monospace is
+     letterspaced by construction; --tracking-widest on top of a face that sets
+     ~18% wider than the sans produces a label that takes a whole column to say
+     one word. --mono-weight drops labels from bold to medium: with x-heights
+     matched, the bold was carrying a size mismatch that no longer exists.
+
+     Needs Chrome 127 / Safari 16.4. Below that the mono renders uncorrected,
+     which is the previous behaviour — it degrades to before, not to broken. */
+  --mono-adjust:   0.53;
+  --mono-tracking: 0.03em;
+  --mono-weight:   var(--weight-medium);
+
+  /* ---- the highlight's own box (see .lds-mark) ----
+     Height and offset in em, so the painted box is a function of the FONT SIZE
+     and never of the line-height. Percentages resolve against the inline
+     fragment's content area, which the face's metrics set at roughly 1.25em —
+     taller than a tight line box, which is precisely the bug this replaces.
+     Vertical padding is zero for the same reason: inline padding paints outside
+     the line box and cannot be contained. */
+  --mark-height: 0.92em;
+  --mark-offset: 0.14em;
   
   /* type composites (size, leading, tracking) */
-  --text-caption: var(--size-0); --leading-caption: var(--leading-normal); --tracking-caption: var(--tracking-normal);
-  --text-body: var(--size-2); --leading-body: var(--leading-normal); --tracking-body: var(--tracking-normal);
-  --text-subhead: var(--size-4); --leading-subhead: var(--leading-tight); --tracking-subhead: var(--tracking-tight);
-  --text-title: var(--size-6); --leading-title: var(--leading-none); --tracking-title: var(--tracking-tighter);
+  /* Two of these four are literals rather than scale steps, and that is
+     deliberate: the scale describes headings and captions, and body and subhead
+     are set where the faces actually work.
+
+     --text-body 18px. The grotesque carries 18 without looking set for a child,
+     and every control on the showcase was independently pushed to 18 by hand —
+     body and control agreeing is the argument. An --size-4-5 step was the
+     alternative and is worse: a step that serves one role is not a scale.
+
+     --text-subhead 28px. 24 was a section subhead and too quiet for a card
+     title, which is the role's only remaining consumer now that subdued ledes
+     take body size. 28 on --leading-tight resolves to 32px, so the pair needed
+     no second edit.
+
+     --text-caption 14px, and it means small PROSE only. It was carrying prose
+     and machine metadata at once; 12px is right for a counter and too small for
+     a sentence. Metadata moved to --text-meta, which keeps 12.
+
+     --tracking-subhead is 0. Negative tracking is a display correction — it
+     exists because letterfit that is right at 18px opens up at 44px. At 24-28px
+     the body sans is still inside its text range and -0.02em closes the
+     counters. Title keeps its negative value, where the correction earns. */
+  --text-caption: var(--size-3); --leading-caption: var(--leading-normal);   --tracking-caption: var(--tracking-normal);
+  --text-body:    18px;          --leading-body:    var(--leading-relaxed);  --tracking-body:    0.006em;
+  --text-subhead: 28px;          --leading-subhead: var(--leading-tight);    --tracking-subhead: var(--tracking-normal);
+  --text-title:   var(--size-8); --leading-title:   var(--leading-none);     --tracking-title:   var(--tracking-tight);
+
+  /* ---- HERO: the role two pages were hand-rolling ----
+     --text-title is a section title, and a page with one h1 needs something
+     louder than one — index.html and about.html each carried their own .display
+     rule with a literal clamp and a leading override. A role two pages
+     reimplement identically is a missing role.
+
+     Fluid, because a hero is the one place where the size is a function of the
+     viewport rather than of the scale: at 44px it is a heading, at 72px it is
+     the page. The scale steps stay fixed; only this role interpolates.
+
+     Leading is 1.1, a literal. An earlier attempt shipped a --leading-negative
+     primitive at 0.95; it survived a two-line hero and closed up on a
+     three-line one, and it had exactly one consumer. See decisions.md. */
+  --text-hero:     clamp(var(--size-8), 7vw, 72px);
+  --leading-hero:  1.1;
+  --tracking-hero: var(--tracking-tight);
+  --weight-hero:   var(--weight-regular);
+
+  /* ---- LABEL: a section eyebrow is not metadata ----
+     "Set metadata in mono" was taken by the eyebrows, which put a phrase naming
+     a section in uppercase mono beside a counter in uppercase mono, as though
+     prose and machine output were the same object. Mono keeps dates, tokens,
+     numbers, hex and counters. A label takes the sans — on --th-ui rather than
+     --th-body, for the reason --th-ui exists: an eyebrow is chrome, not prose.
+     Sentence case, like the headings.
+
+     Two scales, because the role names a SECTION (19px, beside a 44px title)
+     and a COMPONENT (14px card kicker, panel heading), and one size cannot do
+     both — 19px on a kicker competes with the card's own title.
+
+     The small one is its own composite, not a smaller copy. At 19px beside a
+     title, position and subdued ink separate a label from prose on their own; at
+     14px directly above a card title in the same family they do not, so it takes
+     a medium weight and a hair of tracking. 0.014em is a literal because the
+     smallest positive primitive (0.02em) reads as letterspacing at 14px. */
+  --text-label:        var(--size-5);
+  --leading-label:     var(--leading-tight);
+  --tracking-label:    var(--tracking-normal);
+  --weight-label:      var(--weight-regular);
+  --text-label-sm:     var(--size-3);
+  --weight-label-sm:   var(--weight-medium);
+  --tracking-label-sm: 0.014em;
+
+  /* ---- META: machine output. Counters, dates, tokens, hex, measurements. ---- */
+  --text-meta:     var(--size-1);
+  --leading-meta:  var(--leading-normal);
+  --tracking-meta: var(--mono-tracking);
+  --weight-meta:   var(--mono-weight);
 
   /* ---- radius + corner shape ----
      The scale was 4/8/12/16, which read sharp on every surface large enough to
@@ -70,7 +283,7 @@
      Applied only to rectangular components. At --pill (999px) the radius
      clamps to half the short side, and a squircle there flattens the ends of
      what should be a stadium — pills stay round. */
-  --radius-sm: 8px; --radius-base: 14px; --radius-lg: 22px; --radius-xl: 30px; --radius-pill: 999px;
+  --radius-sm: 10px; --radius-base: 18px; --radius-lg: 28px; --radius-xl: 36px; --radius-pill: 999px;
   --radius: var(--radius-base);
   --pill: var(--radius-pill);
   --corner-shape: squircle;
@@ -85,7 +298,7 @@
 
   /* iconography */
   --icon-size: 20px;
-  --icon-weight: 1.5;
+  --icon-weight: 1.75;
 }
 
 *{box-sizing:border-box;}
@@ -99,8 +312,23 @@
    one object without touching its container. --- */
 
 /* PLAIN — neutral surface. The default for cards and page chrome. */
-.emph-plain {--background:#FFFFFF;--text:var(--grey-900);--text-accent:var(--c-600);--text-subdued:var(--grey-500);--icon:var(--grey-400);--border:var(--grey-200);--border-subdued:var(--grey-100);--bg-hover:var(--grey-100);--bg-pressed:var(--grey-200);}
-.mode-dark.emph-plain, .mode-dark .emph-plain {--background:var(--grey-950);--text:#FFFFFF;--text-accent:var(--c-300);--text-subdued:var(--grey-500);--icon:var(--grey-600);--border:var(--grey-800);--border-subdued:var(--grey-900);--bg-hover:var(--grey-900);--bg-pressed:var(--grey-800);}
+/* --background was pinned to #FFFFFF. On oat paper a white card does not read
+   as brighter, it reads as a hole — the paper's chroma stops at the card edge.
+   The surface IS grey-50, so this needs no hex. Three of the other changes are
+   floor failures on the steeper ramp, not preferences: grey-500 measures Lc 47.6
+   on the page against a Lc 60 content floor (grey-600 is 72.2), and grey-200
+   measures Lc 10.2 against a Lc 15 non-text floor (grey-300 is 24.1). grey-200
+   stays on --border-subdued below the floor as the one knowing exception: a
+   decorative separator inside an already-bounded card, never the sole boundary
+   of a control. */
+.emph-plain {--background:var(--grey-50);--text:var(--grey-900);--text-accent:var(--c-600);--text-subdued:var(--grey-600);--icon:var(--grey-400);--border:var(--grey-300);--border-subdued:var(--grey-200);--bg-hover:var(--grey-100);--bg-pressed:var(--grey-200);--link:#00437C;}
+/* Dark is not light inverted. On this ramp three roles land under their floors
+   on grey-950: --text-subdued grey-400 is Lc 57.7 (grey-300 is 74.4), --border
+   grey-800 is Lc 4.1 (grey-600 is 25.1), and --text-accent c-300 is Lc 49.8
+   against a Lc 75 body floor (c-100 is 85.3). The accent is the one that
+   matters, and the fix is to mirror it to the light end of its own ramp rather
+   than nudge it one step. */
+.mode-dark.emph-plain, .mode-dark .emph-plain {--background:var(--grey-950);--text:var(--grey-50);--text-accent:var(--c-100);--text-subdued:var(--grey-300);--icon:var(--grey-400);--border:var(--grey-600);--border-subdued:var(--grey-700);--bg-hover:var(--grey-900);--bg-pressed:var(--grey-800);--link:var(--link-dark);}
 
 /* SUBTLE — the lightest wash of the hue. Reserved for LARGE fields (banners,
    cards): a big plane of color needs less saturation to register, so it stays
@@ -709,3 +937,139 @@
   padding-left:calc(16px * var(--density));
 }
 .lds-list--flush .lds-list__item:first-child{border-top:none;}
+
+
+/* ==========================================================================
+   Layer 2b + Layer 3 — v2 additions
+   These belong in the sections named on each block; they are grouped here so
+   the v2 diff reads in one place. Fold them into their sections when tidying.
+   ========================================================================== */
+
+/* [Layer 2 — One Token] --link resolves per emphasis, like any other role.
+   Set on the emphasis classes rather than at :root, because :root inherits one
+   concrete colour down past every surface it has to survive. A link on a
+   knockout surface is the case that breaks — #00437C on c-800 is unreadable, and
+   it is the same role, so it resolves rather than getting an exception. */
+.emph-subtle, .emph-soft{ --link:#00437C; }
+.mode-dark.emph-subtle, .mode-dark .emph-subtle,
+.mode-dark.emph-soft,   .mode-dark .emph-soft{ --link:var(--link-dark); }
+.emph-strong, .emph-stark{ --link:var(--link-dark); }
+.mode-dark.emph-stark, .mode-dark .emph-stark{ --link:#00437C; }
+
+/* [Layer 2 — One Token] .emph-cta. Not an emphasis level; see the --cta note in
+   :root. There is exactly one on a page and it does not retint. Ink on
+   chartreuse holds in both modes, so the chartreuse does not flip: a highlighter
+   is the brightest thing present, and on a dark ground that is more true, not
+   less (Lc 89.9 against grey-950). */
+.emph-cta,
+.mode-dark.emph-cta, .mode-dark .emph-cta{
+  --background:var(--cta);
+  --text:var(--cta-text);
+  --text-accent:var(--cta-text);
+  --text-subdued:var(--grey-700);
+  --icon:var(--cta-text);
+  --border:var(--cta);
+  --border-subdued:var(--cta);
+  --link:#00437C;
+  --bg-hover:var(--cta-hover);
+  --bg-pressed:var(--cta-pressed);
+}
+
+/* [Layer 3 — components] Components paint from an explicit emphasis list, so the
+   CTA is opted in per component. This is the patch every theme was writing,
+   written once. The button is the only component that needs it today; anything
+   else that grows a CTA gets a rule here rather than in a theme. */
+.lds-btn.emph-cta{
+  background:var(--background); color:var(--text);
+  border-color:transparent; box-shadow:var(--btn-shadow,none);
+}
+.lds-btn.emph-cta:hover{ background:var(--bg-hover); border-color:transparent; }
+.lds-btn.emph-cta:active{ background:var(--bg-pressed); }
+
+/* [Layer 3 — components] .lds-mark — the highlighter as a text run. The CTA's
+   other form: .emph-cta paints a control, this paints a phrase. Both take --cta,
+   and there is still only one of each on a page.
+
+   Built on a background-image rather than a background colour, because a colour
+   fills the inline box and an image can be given a size — see --mark-height.
+   box-decoration-break:clone so a phrase that wraps gets one box per line rather
+   than one box with two open ends. */
+.lds-mark{
+  color:var(--cta-text);
+  background-image:linear-gradient(var(--cta),var(--cta));
+  background-repeat:no-repeat;
+  background-size:100% var(--mark-height);
+  background-position:0 var(--mark-offset);
+  padding-block:0;
+  padding-inline:.18em;
+  margin-inline:-.06em;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+
+/* [Layer 3 — components] .lds-meta — the mono role as a utility. Six
+   declarations that were being pasted at every metadata site, three of which
+   (the adjust, the tracking, the weight) are corrections nobody applies from
+   memory. Same argument as --grain: a treatment re-typed per instance is not
+   part of the system.
+
+   font-size-adjust inherits, so an inline mono span inside a paragraph gets the
+   correction without being given the class — which was the case reading
+   heaviest. */
+.lds-meta{
+  font-family:var(--th-mono);
+  font-size:var(--text-meta);
+  font-size-adjust:var(--mono-adjust);
+  font-weight:var(--weight-meta);
+  line-height:var(--leading-meta);
+  letter-spacing:var(--tracking-meta);
+}
+/* Inline mono inside prose takes the family and the adjust and NOTHING else: no
+   size (it is a run inside a line that already has one), no line-height (it
+   would break the paragraph's rhythm), no weight. */
+.lds-meta--inline{
+  font-family:var(--th-mono);
+  font-size-adjust:var(--mono-adjust);
+  font-size:1em;
+  letter-spacing:var(--tracking-normal);
+}
+.lds-meta--upper{ text-transform:uppercase; }
+.lds-meta--subdued{ color:var(--text-subdued); }
+
+/* [Layer 3 — lds-card] The title is chrome, not prose. It took --th-display,
+   which is right when the display face is a sans and wrong now that it is a
+   high-contrast serif: a card in a library is an object you act on, and a serif
+   title makes it read as an article. Same test --th-ui is built on — would you
+   read it, or click it. The four rules that keep --th-body (card__body,
+   card__meta, banner, modal__body) are prose and are unaffected. */
+.lds-card__title{
+  font-family:var(--th-ui);
+  font-weight:var(--weight-regular);
+  letter-spacing:var(--tracking-subhead);
+}
+
+/* [Layer 3 — lds-card] The kicker is a label, not machine output. It took
+   --th-mono in uppercase, which is three signals of machine-readability spent on
+   a phrase like "Tokens · Theming". Mono is for code, tokens, counters, dates
+   and measured numbers; everything else small and quiet is a label. No
+   uppercase, no widest tracking — size, ink and position already separate it
+   from the title. */
+.lds-card__kicker{
+  font-family:var(--th-ui);
+  font-size:var(--text-label-sm);
+  font-weight:var(--weight-label-sm);
+  line-height:var(--leading-label);
+  letter-spacing:var(--tracking-label-sm);
+  text-transform:none;
+  color:var(--text-subdued);
+}
+
+/* [Layer 3 — lds-card] The meta line is prose at caption scale, and caption is
+   14px now. Stated rather than inherited, because it was picking up the kicker's
+   weight through the component and reading as a second label. */
+.lds-card__meta{
+  font-family:var(--th-body);
+  font-size:var(--text-caption);
+  font-weight:var(--weight-regular);
+  color:var(--text-subdued);
+}

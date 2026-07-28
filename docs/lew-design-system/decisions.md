@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 61 decisions: **38 human · 21 measured · 2 ai**.
+The split as it stands, across the 70 decisions: **44 human · 24 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -142,7 +142,9 @@ have had to override it, and overrides are where cascade bugs live.
 **Cost:** two exceptions survive deliberately. `.emph-plain` pins
 `--background:#FFFFFF` and `.emph-strong`/`.emph-stark` pin `--text:#FFFFFF`,
 because a knockout label must not follow the theme ramp. The banner status hues
-are also fixed hexes — see *Status colour is fixed, not themed*.
+are also fixed hexes — see *Status colour is fixed, not themed*. Reversed
+2026-07-28: core ships the ramp as a default, because an unthemed LDS was broken
+rather than neutral — see *Core ships a working brand ramp*.
 
 ### New shared components land in LDS first
 
@@ -415,6 +417,60 @@ status-bearing component is added — deliberate friction, so the set of compone
 allowed to speak in status names stays small and visible in one place.
 
 ---
+
+### Core ships a working brand ramp
+
+`2026-07-28` · `color` · `human` · `reversal`
+
+Reverses *Core never hardcodes a hex*, and amends that entry rather than
+replacing it — the other way was tried and this is why it did not hold.
+
+The rule kept core theme-agnostic by keeping it non-functional. With no `--c-*`
+ramp at `:root`, `.emph-subtle`, `.emph-soft`, `.emph-strong`, `.emph-stark` and
+every status tint resolved to nothing until a theme mounted. An unthemed LDS was
+not neutral; it was broken, and the failure was silent — a consumer who forgot
+the theme class got uncoloured components rather than an error.
+
+Core now ships the green ramp and the oat neutrals as defaults, plus the faces,
+the radius set and the shadows. Themes override exactly as before.
+
+**Ruled out:** a neutral placeholder ramp, which is a fifth brand nobody chose
+and which measures wrong against every real theme's floors. Also ruled out:
+failing loudly on a missing theme, which needs a runtime in a system that has
+none; and keeping the rule and documenting the gap, which is what the last three
+consumers did before hitting it anyway.
+
+**Cost:** the default look is now opinionated. A consumer who forgets the theme
+class gets this brand rather than nothing — a better failure, but a louder one.
+
+### A link is a role, not an emphasis level
+
+`2026-07-28` · `color` · `measured` · `structural`
+
+Promotes the portfolio theme's `--link` into core. A link is text with
+behaviour, and One Token's seven object-colour roles do not include one for
+that, so themes painted links with `--text-accent`. That reads backwards in both
+directions: every accented word looks clickable, and every link looks like
+emphasis.
+
+It is a role rather than a theme knob because the fallback has to be safe.
+Before this, a theme with no `--link` rendered links in browser blue on whatever
+ground the theme chose — the one colour in the document nobody measured.
+
+Two values. `--link-dark` is not a dark-mode variant; it is the same role solved
+against the other ground, at Lc 88.6 on the paper and Lc 75.9 on an oat-200
+panel. Resolution is set on the emphasis classes, not at `:root`, because
+`:root` inherits one concrete colour past every surface it has to survive — a
+link on `.emph-strong` is the case that breaks.
+
+**Ruled out:** an eighth One Token role, which would reopen a fixed vocabulary
+for something that is not an object colour. Also ruled out: a single link hue
+for both grounds, and colour without an underline — the distinction has to
+survive greyscale print and red-green colour blindness, which, the accent being
+green, is the whole of it.
+
+**Cost:** a theme that adds an emphasis-shaped class of its own must now set
+`--link` on it too, or links inside it inherit from the wrong ground.
 
 ## 3. Emphasis ladder
 
@@ -734,6 +790,56 @@ one component whose entire job is to stay translucent.
 
 ---
 
+### `.emph-cta` moves from the theme into core
+
+`2026-07-28` · `emphasis` · `human` · `notable`
+
+Supersedes the theme-level version in *`.emph-cta` is one button, not a sixth
+emphasis level*. The reasoning there stands unchanged; only the location moves.
+
+The theme could not finish the job. Components paint from an explicit emphasis
+list, so `themes/portfolio.css` had to hand-write a `.lds-btn.emph-cta` rule to
+opt the one component in. A role that requires a per-component patch in every
+theme that wants it belongs in core, where the patch is written once.
+
+`.lds-mark` lands with it as the CTA's second form: `.emph-cta` paints a
+control, `.lds-mark` paints a phrase. Both take `--cta`, and there is still
+exactly one of each on a page.
+
+**Ruled out:** pattern-matching `.emph-*` in components, which would make every
+future role adopt itself everywhere silently — the explicit list is a deliberate
+call and this does not reverse it. Also ruled out: an eleven-step chartreuse
+ramp, and flipping the chartreuse in dark mode.
+
+**Cost:** each new component that grows a CTA needs one rule in core. That is
+the same cost the explicit-list decision already priced, now paid in one file
+instead of three themes.
+
+### The highlight sizes its own box
+
+`2026-07-28` · `emphasis` · `measured` · `structural`
+
+`.lds-mark` paints with a `background-image` and an em-sized
+`background-size`, not a `background-color`. A colour fills the inline box,
+whose height comes from the face's metrics — roughly 1.25em — and a hero set
+tighter than that has a line box shorter than the paint. The fill then covers
+the descenders of the line above and overflows the heading's own box.
+
+Percentages do not help: they resolve against the same content area. em does,
+because it is a function of the font size and not of the leading, so
+`--mark-height: 0.92em` fits inside any leading the hero is set at. Vertical
+padding is zero for the same reason — inline padding paints outside the line box
+and cannot be contained.
+
+**Ruled out:** relaxing the hero's leading to fit the paint, which is fixing a
+component by constraining every consumer of a type role. Also ruled out:
+`padding-block` with a background colour, and a `box-shadow` spread, both of
+which move the overflow rather than remove it.
+
+**Cost:** the two knobs are metric-dependent. A theme whose display face has a
+markedly different x-height ratio has to retune them, and the failure is visible
+rather than measured — it looks fine until a descender lands on it.
+
 ## 4. Typography
 
 ### Sans heads, serif text
@@ -878,7 +984,9 @@ it sits with a geometric sans instead of reading as a terminal.
 **Cost:** Butterick's advice is to avoid monospaced fonts outright. This role is a
 deliberate exception to it, kept because the typeface is carrying *meaning* here
 (this value came from a machine and is exact) rather than mood. Worth re-opening
-if the signal ever stops earning the cost. Noted, not endorsed by him.
+if the signal ever stops earning the cost. Noted, not endorsed by him. Narrowed
+2026-07-28: the rule was applied too widely and section eyebrows leave the mono
+for the sans — see *A section eyebrow is not metadata*.
 
 **Amended 2026-07-27.** The role survives again; the typeface is now a system
 stack. DM Mono was the last face `theme-portfolio` reached a font CDN for, and
@@ -954,6 +1062,131 @@ renders identically wherever it is installed, and the alternative — naming fac
 and shipping none — is the failure mode the entry exists to prevent.
 
 ---
+
+### `--text-hero`, the display role two pages were hand-rolling
+
+`2026-07-28` · `type` · `human` · `notable`
+
+`--text-title` is a section title, and a page with one h1 needs something louder
+than one. `index.html` and `about.html` had each written the same `.display`
+rule — a literal clamp, a leading override, and a comment explaining why
+`--leading-title` was wrong for it. A role two pages reimplement identically is
+a missing role.
+
+Fluid, and the only fluid role in the system: a hero's size is a function of the
+viewport rather than of the scale. At 44px it is a heading; at 72px it is the
+page. The steps stay fixed and only this interpolates.
+
+**Ruled out:** a `--size-9` step, because a fixed step cannot be fluid. Also
+ruled out: reusing `--text-title` with a page-level override, which is what was
+already happening, and a `.lds-display` utility, which puts a type role in the
+component layer.
+
+**Cost:** a theme that wants a fixed hero has to restate the clamp as a single
+value, and its leading as a second — see *`--leading-hero` is a literal, and the
+ladder gets no step below 1.0*, which is the one line-height a theme's ladder
+does not reach.
+
+### A section eyebrow is not metadata
+
+`2026-07-28` · `type` · `human` · `reversal`
+
+Amends *Mono means machine-readable*. The rule is right and was applied too
+widely: the eyebrows took it, which put a phrase naming a section in uppercase
+mono directly beside a counter in uppercase mono, as though prose and machine
+output were the same kind of object.
+
+The split: `--th-mono` keeps dates, tokens, hex, code, counters and measured
+numbers. A label takes the sans, on `--th-ui` rather than `--th-body` for the
+reason `--th-ui` exists — an eyebrow is chrome, not prose — in sentence case,
+like the headings.
+
+Two scales, because the role names a section (19px, beside a 44px title) and a
+component (14px card kicker, panel heading), and one size cannot do both: 19px
+on a kicker competes with the card's own title. The small one is its own
+composite rather than a smaller copy — at 19px, position and subdued ink
+separate a label from prose on their own; at 14px directly above a title in the
+same family they do not, so it carries a medium weight and 0.014em of tracking.
+
+`.lds-card__kicker` moves with it, and `.lds-card__title` leaves the display
+serif for `--th-ui` at the same time: a card in a library is an object you act
+on, not an article.
+
+**Ruled out:** mono for everything small, which is where this started. Also
+ruled out: uppercase as the label signal, a size step above body to separate
+label from prose, one composite at two sizes, and leaving the weight to the
+consumer.
+
+**Cost:** weight in a type composite is a precedent — any future role wanting
+one has to justify why size will not do the work. Two of the four core roles
+(`--text-body`, `--text-subhead`) are now literals rather than scale steps: the
+scale describes headings and captions, and body and subhead are set where the
+faces actually work.
+
+### A font-family token travels with its metric corrections
+
+`2026-07-28` · `type` · `measured` · `structural`
+
+`--th-mono` shipped alone, which assumed that naming a face is the whole of
+specifying it. It is not. Two faces at one `font-size` are not one optical size:
+the mono's x-height fills more of its em, so at 12px it was optically the larger
+of the pair and the metadata outshouted the prose it annotates. Read as a weight
+problem; it is a size problem.
+
+`--mono-adjust` holds one number — the x-height-to-em ratio of `--th-body` — and
+`font-size-adjust` scales whatever face `--th-mono` names until its x-height
+matches. The correction therefore survives a face swap: change the mono and the
+balance holds with nobody re-tuning a size. It also inherits, so an inline mono
+run inside a paragraph is corrected without being given a class, which was the
+case reading heaviest.
+
+Two further corrections, both judgements: `--mono-tracking` 0.08em → 0.03em,
+because a monospace is letterspaced by construction and the widest tracking on
+top of a face that sets ~18% wider than the sans produces a label that takes a
+column to say one word; and `--mono-weight` bold → medium, since the bold was
+compensating for the size mismatch. Packaged as `.lds-meta`.
+
+The face itself is now declared rather than delegated: Martian Mono, self-hosted,
+replacing the `ui-monospace` stack that rendered three different widths for the
+same column of counters on three operating systems. It ships its own woff2, so
+the objection that retired DM Mono does not return.
+
+**Ruled out:** a smaller literal size for the mono role, and a per-face
+multiplier — both correct for exactly one typeface. Also ruled out:
+`font-size-adjust: from-font`, which normalises fallbacks within a family and not
+across roles; a Google Fonts link, which reopens *Theme faces are self-hosted*;
+Chivo Mono, too close to Ronzino to signal a different kind of object; and
+shipping the variable file for two axes the role does not use.
+
+**Cost:** `font-size-adjust` needs Chrome 127 / Safari 16.4. Below that the mono
+renders uncorrected, which is the previous behaviour — it degrades to before,
+not to broken. And ~92KB of woff2 across three instances.
+
+### `--leading-hero` is a literal, and the ladder gets no step below 1.0
+
+`2026-07-28` · `type` · `human` · `notable`
+
+Two changes to the leading ladder, arriving with `--text-hero`.
+
+`--leading-relaxed` (1.475) joins it, closing the real gap between 1.4 and 1.6
+where every measure under about 55ch sits.
+
+Nothing joins it at the other end. The tempting argument is that
+`--leading-none` is named for 1.0 as though 1.0 were the tightest a line can be
+set, when it is only the tightest that is safe without knowing the face — and
+that argument holds. The value did not survive it: 0.95 read as confident on a
+two-line hero and cramped on a three-line one, closing up exactly where a hero
+is most likely to land. So `--leading-hero` is 1.1, as a literal. It is not a
+primitive, and inventing one for a single role puts a token in the ladder that
+nothing else uses and that someone later re-derives.
+
+**Ruled out:** a `--leading-negative` primitive at 0.95, and a `--leading-snug`
+step in its place. Also ruled out: treating the relaxation as the fix for the
+highlight overflow — it is a reading call, and the box constraint is separate
+and still required. See *The highlight sizes its own box*.
+
+**Cost:** the hero's leading is now the one line-height in the system that is
+not a token reference, so a theme retuning the ladder does not reach it.
 
 ## 5. Motion
 
@@ -1578,6 +1811,27 @@ reads as "the design system broke my product" and ends adoption.
 **Ruled out:** keeping the nominal scale and asking palette to absorb the shift.
 
 ---
+
+### `theme-portfolio` becomes a shim
+
+`2026-07-28` · `themes` · `human` · `structural`
+
+The theme that was the brand has nothing left to declare: core carries the oat
+neutrals, the green ramp, `--link`, `--cta`, the faces, the radius set, the
+shadows and the retuned `.emph-plain` in both modes. `themes/portfolio.css` is
+now an empty `.theme-portfolio{}` block.
+
+It stays because `class="theme-portfolio"` is in the markup of six pages.
+Deleting the file breaks nothing — the properties resolve from core — but
+deleting the class from six pages is a separate change with its own diff.
+
+**Ruled out:** deleting the file in this commit, which turns a token change into
+a six-page markup change. Also ruled out: keeping a partial theme "for clarity",
+which would silently shadow core for every page carrying the class.
+
+**Cost:** an empty file that looks like an oversight. The comment inside it is
+the only thing stopping someone re-adding values, and that comment is
+load-bearing.
 
 ## 8. Distribution
 
