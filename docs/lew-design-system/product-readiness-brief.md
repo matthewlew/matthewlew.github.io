@@ -1,4 +1,7 @@
-# Making Road Trip feel designed — and LDS able to do it
+# Future-proofing Road Trip with LDS
+
+**A design system infrastructure brief.** No product changes proposed here — see
+"Not in this brief" at the end.
 
 **One page. Detail and evidence:** [`product-readiness.md`](product-readiness.md)
 
@@ -8,95 +11,108 @@
 
 ## The impact we want
 
-**Road Trip should feel like Google Flights, not like an internal tool.**
+**Road Trip should be able to become anything.**
 
-Google Flights is dense, data-heavy, and full of tables, filters and dates — and
-it still feels calm, familiar, and easy. Nothing about the domain forces a
-utilitarian look. That's a design system doing its job.
+The app is in its infancy. It works, it's useful, and it's inconsistent — which is
+completely fine for where it is. What matters is that it hasn't had an opinion
+placed on it yet, and right now it's cheap to make it ready for one.
 
-Road Trip has the same shape of problem and doesn't have that system yet. Today
-the app has **three different button styles**, three different toggles, and the
-same campground colour defined **five times in five different values**. A user
-doesn't read that as five bugs — they read it as an app that was assembled rather
-than designed. Every screen teaches them the interface again.
+The goal isn't a specific look. It's **adaptability**: an app that can be as slick
+as Google Flights or as sharp as Linear, and can change its mind later without a
+rewrite. That's what a design system buys — the expression becomes a layer you
+swap, not a thousand decisions baked into a thousand files.
 
-What we want on the other side:
+**Who we're building for matters here.** Road Trip is for people who love camping,
+the outdoors, and the road — people looking for adventure. The app today reads as
+techy and utilitarian, which suits the people using it now and won't reach the
+audience we want next. Being able to place a warmer, more inviting opinion on it
+later is exactly the capability we're asking to build.
 
-- **Familiar.** A button, a table, a date, a status pill look and behave the same
-  everywhere. Users learn the app once.
-- **Legible.** Every colour pair measured, not eyeballed — which matters most
-  outdoors, on a phone, in daylight.
-- **On brand.** It looks like something, instead of looking like defaults.
-- **Fast to build.** New features assemble from parts instead of inventing them,
-  so design quality stops depending on who wrote the screen.
+Doing this while the app is small is the whole point. **Every inconsistency we
+catch now is one we don't pay for across fifty screens later** — and the codebase
+gets easier to scale and build on as a side effect, not a separate project.
 
-## Why this is also the right move for LDS
+## Why this is the right thing for LDS too
 
-The same work is what makes LDS worth having at all.
+LDS is young and has never carried a product. It has no table, no tabs, no
+modal that actually behaves, no side sheet, no loading states, no responsive
+layout — because nothing has ever asked it for them.
 
-LDS is strong where it's hard to be strong — colour architecture, contrast
-rigour, a written record of every decision. But it was built for a portfolio, and
-it has never had to carry a real product. It has **no table, no tabs, no toast,
-no dropdown, no drawer**; its form support is a label and a text input; and it
-has **no responsive layout system at all**.
+Road Trip asks for all of it at once, and that's the value. It is one extreme end
+of the pressure a design system can be put under:
 
-A design system that can't carry a product app is a style guide. Road Trip is the
-first real test, and passing it is what turns LDS into something other products
-can depend on. **We get a better app and a system worth adopting from the same
-work.**
+- **Dense data.** Tables, availability grids, site matrices. LDS has no table at
+  all, and no real density story.
+- **Constant loading.** Almost every panel is async. LDS has nothing that says
+  "waiting" — no skeletons, no spinners, no progress.
+- **Real responsive.** LDS contains **zero media queries.** Not one. Road Trip
+  needs rail-to-segmented tabs, side sheets that become bottom sheets, and layouts
+  that hold on a phone.
+- **Modals and side sheets that work.** LDS's modal is paint with no behaviour.
+  Road Trip's is a core interaction.
+- **Maps.** Which LDS will deliberately *not* absorb — but it does need a colour
+  approach for data identity that survives a theme change.
 
-## The ask
+**Both systems get the infrastructure they need from the same work.** Road Trip
+gets consistency and adaptability; LDS gets the product-tested components that
+make it real for the next app. Neither is doing the other a favour.
 
-**Build the missing pieces in LDS first, then bring Road Trip onto it.**
+## How we start — small
 
-The alternative is to start converting Road Trip now and add to LDS whenever we
-hit a gap. That's tempting and it's worse: we'd design a table while under
-pressure to ship a screen, and end up with components shaped by one app's
-deadlines that the next product can't reuse. Same amount of building either way
-— the difference is whether we get a system out of it.
+**Build the missing LDS components by adopting what Road Trip already has.**
 
-**One quality bar throughout:** every component gets thought through against the
-rest of the system before it's built, not after. That's what stops us shipping a
-second thing that means the same as an existing thing — which LDS has already
-done once and paid to unwind.
+This isn't inventing a component library from scratch. Road Trip already ships a
+table, tabs, a working modal, toggles and confirm buttons — with lifecycle and
+tests. The work is bringing those into LDS properly: rebuilt on LDS's colour
+architecture, checked against the rest of the system, so they serve the next
+product too and not just this one.
+
+Then Road Trip picks them up — **by translation or by direct adoption, whichever
+Will thinks is right.** Translation means Road Trip's existing tokens point at LDS
+underneath and screens keep working untouched; adoption means moving to LDS
+components outright. That's an engineering call and it doesn't block the first
+part.
+
+**In parallel, low-hanging fruit.** There's real work available right now that
+doesn't wait on any of this: hardcoded colours (156 of them, including the same
+campground colour defined five different ways), and pairs that don't meet
+accessibility floors. Those are fixes, not migration.
 
 ## Three steps
 
-**1. Fix the foundation.** Contrast checking that runs automatically, consistent
-focus states, motion that respects accessibility settings. Unglamorous, quick,
-and everything after it is safer.
+**1. Fix what's already broken.** Hardcoded colours, failing contrast, focus
+states, motion that ignores accessibility settings. Available immediately, in
+both codebases.
 
-**2. Build what's missing.** Layout and responsive behaviour first — that's the
-biggest genuine gap, and it doesn't exist in either system today. Then forms,
-then the components: table, tabs, dropdown, drawer, toast, loading states.
+**2. Bring Road Trip's components into LDS.** Table, tabs, modal, side sheet,
+toggle, loading states — plus the responsive layout layer, which neither system
+has today and is the biggest genuine gap.
 
-**3. Road Trip adopts.** Through a translation layer, not a rewrite: existing
-screens keep working unchanged and pick up the new look, consistent spacing, and
-light mode without being rebuilt one at a time.
+**3. Road Trip adopts.** Translation or direct adoption, Will's call.
 
 Sizing needs Will — I haven't put weeks against these.
 
 ## The honest cost
 
-**Steps 1 and 2 produce nothing a user can see.** That's the real trade, and it's
-the thing most likely to sink this. The payoff is that step 3 is fast and the
-fourth product is nearly free.
-
-If that upfront stretch isn't fundable, tell me and we'll do it the other way
-deliberately — knowing we're trading the system for the schedule — rather than
-drifting into it.
+**Steps 1 and 2 change little a user can see.** That's the trade. What we get is
+that the first time we want to place a real opinion on Road Trip — a warmer brand,
+a different density, a look aimed at the audience we want — it's a theme, not a
+quarter.
 
 ## What I need back
 
-- **A yes or no on doing the system work first.**
-- **Will:** how Road Trip pulls LDS in, and whether the translation-layer approach
-  in step 3 holds up. Both answerable now, independently of the rest.
-- **One thing worth doing either way:** Road Trip's five conflicting colour
-  palettes and 156 hardcoded colours are a bug today. Its existing tests can be
-  extended to stop new ones. That's a fix, not a migration, and it doesn't wait
-  on this decision.
+- **A yes on building the shared infrastructure**, and on doing it in LDS rather
+  than only inside Road Trip.
+- **Will:** translation or adoption for step 3, and how Road Trip pulls LDS in.
+  Answerable now, independently of the rest.
+- **Agreement that step 1 starts regardless.** It's bug-fixing.
 
-## Not in scope
+## Not in this brief
 
-The map itself — pins, routes, overlays. LDS will supply the colour scale for
-data on the map so it stays consistent, but the map surface stays Road Trip's.
+**No product changes.** No new features, no redesigned flows, no visual redesign
+of Road Trip. This is infrastructure — the capability to make those changes
+cheaply later. When we want to place an actual opinion on the app, that's a
+separate brief, and this work is what makes it a short one.
+
+Also out of scope: the map surface itself. LDS supplies the colour scale so data
+on the map stays consistent; pins, routes and overlays stay Road Trip's.

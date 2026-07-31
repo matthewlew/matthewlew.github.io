@@ -119,10 +119,12 @@ The value flows both ways and mostly *upward*. `decisions.md` records the "LDS
 first" rule as holding for *components*, while primitives discovered in a real
 app are fair game to contribute up — which is most of what phases 0–4 are.
 
-**In user terms:** the app stops teaching its interface twice. Buttons, tables,
-dates and status pills behave the same on every screen; colour pairs are measured
-rather than eyeballed, which matters on a phone in daylight; and the result reads
-as designed rather than assembled. See the brief for the framing.
+**Why it's worth doing now:** Road Trip is early and inconsistent, which is
+normal and cheap to fix at this size. The outcome we want is not a particular
+look — it's the ability to place *any* opinion on the app later and have it be a
+theme rather than a rewrite. Road Trip is also the first real pressure LDS has
+ever been under: dense tables, constant loading, genuine responsive layout, and
+behavioural overlays. See the brief for that framing.
 
 ---
 
@@ -435,8 +437,8 @@ detail:
 
 | Brief | Here |
 |---|---|
-| **1. Fix the foundation** | Phase 0 |
-| **2. Build what's missing** | Phases 1–4 |
+| **1. Fix what's already broken** | Phase 0, plus the Road Trip hex/contrast ratchet noted at the end of this section |
+| **2. Bring Road Trip's components into LDS** | Phases 1–4 |
 | **3. Road Trip adopts** | Phase 5 |
 
 Phases 0–4 are entirely in this repo. Road Trip is not touched until phase 5.
