@@ -115,10 +115,14 @@ architecture, contrast methodology, and governance model.** In exchange, it is
 the forcing function that turns LDS from a portfolio system into a product
 system, and it supplies the component patterns to do it.
 
-The value flows both ways and mostly *upward*. That has precedent here: both
-`--dur-slow`/`--ease-decelerate` and `emph-media` were contributed up from
-`palette`, and `decisions.md` records the "LDS first" rule as holding for
-*components* while primitives found in the field are fair game.
+The value flows both ways and mostly *upward*. `decisions.md` records the "LDS
+first" rule as holding for *components*, while primitives discovered in a real
+app are fair game to contribute up — which is most of what phases 0–4 are.
+
+**In user terms:** the app stops teaching its interface twice. Buttons, tables,
+dates and status pills behave the same on every screen; colour pairs are measured
+rather than eyeballed, which matters on a phone in daylight; and the result reads
+as designed rather than assembled. See the brief for the framing.
 
 ---
 
@@ -242,8 +246,8 @@ These have close cousins in LDS or a strong donor in Road Trip.
 | Component | Why it's harder |
 |---|---|
 | **Popover / dropdown / menu** | Positioning is the hard part and CSS anchor positioning is not universally available. Needs a z-index scale (doesn't exist) and a decision on how much behaviour LDS owns. `.lds-chip__caret` is already waiting for this. |
-| **Toast** | Owed since the adoption audit; `palette` ships `UndoToast`. Needs a stacking model, a region, and a motion spec — `--dur-slow`/`--ease-decelerate` were contributed up *for* this class of thing. |
-| **Drawer / sheet** | Same: the motion tokens came up from `palette` for sheets and drawers, and the component stayed behind. Road Trip's is the core map interaction and its donor (`web/drawer/chrome.js`, 303 lines) is the most product-specific code in this plan. |
+| **Toast** | Long owed. Needs a stacking model, a region, and a motion spec — `--dur-slow`/`--ease-decelerate` already exist for exactly this class of thing and are currently unused. |
+| **Drawer / sheet** | Same motion tokens, same gap. Road Trip's drawer is the core map interaction and its donor (`web/drawer/chrome.js`, 303 lines) is the most product-specific code in this plan. |
 | **Modal, properly** | Promoting paint to behaviour. `<dialog>` + `::backdrop` is the modern answer and settles focus trap and scroll lock; it also constrains the markup contract. |
 | **Nav, properly** | Active state, mobile behaviour, overflow. Road Trip's topbar suggests this may be two components (a bar and a menu) rather than one. |
 
@@ -263,11 +267,11 @@ are bound centrally in the status map. The proposal is a **categorical scale**
 as a sibling to the brand ramp — theme-stable, APCA-solved for the same floors,
 bound to data identities in one place — with Road Trip as its first consumer.
 
-`decisions.md` already records the precedent for where this stops: *LDS must not
-absorb the gradient canvas.* The honest adoption ceiling for `palette` was ~54%,
-and that gap was treated as **the product, not a shortfall**. Road Trip's map
-surface is the same shape of problem and should be scoped the same way: LDS
-covers panels, forms, dashboards and chrome. It does not cover the map.
+Where this stops matters as much as where it starts. **LDS covers panels, forms,
+dashboards and chrome. It does not cover the map.** A design system that tries to
+own a product's signature surface stops being reusable and starts being that one
+product's code. The gap is the product, not a shortfall — `decisions.md` already
+holds this line elsewhere, and it should hold here.
 
 ### Icon sprite additions
 
@@ -425,6 +429,15 @@ what makes Road Trip's migration cheap — see phase 5.
 ---
 
 ## 9. Sequencing
+
+The brief states this as three steps. These are the same three, at working
+detail:
+
+| Brief | Here |
+|---|---|
+| **1. Fix the foundation** | Phase 0 |
+| **2. Build what's missing** | Phases 1–4 |
+| **3. Road Trip adopts** | Phase 5 |
 
 Phases 0–4 are entirely in this repo. Road Trip is not touched until phase 5.
 
