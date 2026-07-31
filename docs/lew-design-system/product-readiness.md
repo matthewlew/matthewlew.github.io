@@ -4,6 +4,10 @@
 **Design:** Matt Lew · **Engineering review:** Will Chen
 **Forcing function:** the Road Trip app (`wwchen/roadtrip`)
 
+**For approval, start with the one-page brief:**
+[`product-readiness-brief.md`](product-readiness-brief.md). This document is the
+evidence behind it.
+
 ---
 
 ## What this document is
