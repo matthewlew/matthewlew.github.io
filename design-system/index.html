@@ -129,6 +129,11 @@
        so the overall page layout stays clean while the components shift drastically. */
       .micro-label { font-family: var(--th-mono); font-size: 11px; letter-spacing:.04em; text-transform:uppercase; color:#999; margin-bottom:12px; }
     .chip-row { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
+    /* Demo only: the rail is a sidebar, so it needs a width from its layout.
+       Above the tabs breakpoint only — below it the segmented control takes
+       the full width, which is the behaviour being demonstrated. */
+    @media (min-width: 561px) { .demo-rail { max-width: 200px; } }
+    .demo-toggles { max-width: 340px; display:flex; flex-direction:column; gap:16px; }
   </style>
 </head>
 <body>
@@ -429,7 +434,7 @@
 
         <div>
           <div class="micro-label">Tabs &mdash; vertical rail (desktop); segmented control &le;560px</div>
-          <div class="lds-tabs" style="max-width:200px;" role="tablist">
+          <div class="lds-tabs demo-rail" role="tablist">
             <button class="lds-tabs__tab lds-tabs__tab--active" role="tab" aria-selected="true">Overview</button>
             <button class="lds-tabs__tab" role="tab" aria-selected="false">Activity</button>
             <button class="lds-tabs__tab" role="tab" aria-selected="false">Settings</button>
@@ -438,7 +443,7 @@
 
         <div>
           <div class="micro-label">Toggle &mdash; label, help text, switch</div>
-          <div style="max-width:340px; display:flex; flex-direction:column; gap:16px;">
+          <div class="demo-toggles">
             <label class="lds-toggle">
               <span class="lds-toggle__text">
                 <span class="lds-toggle__label">Email alerts</span>
