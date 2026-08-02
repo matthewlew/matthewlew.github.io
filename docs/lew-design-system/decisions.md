@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 72 decisions: **45 human · 25 measured · 2 ai**.
+The split as it stands, across the 73 decisions: **46 human · 25 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -1977,6 +1977,39 @@ which is where palette actually needs it, not just in the browser.
 
 **Ruled out:** reading pixels via `canvas` inside the module. Convenient in a
 page, unusable everywhere else palette needs ink.
+
+### Tabs, Toggle, and Table — ported from roadtrip's rt-* set, not designed fresh
+
+`2026-08-02` · `emphasis` · `human` · `notable`
+
+`.lds-tabs`/`.lds-tabs__tab`, `.lds-toggle`/`.lds-toggle__switch`, and
+`.lds-table` close the biggest parity gap between LDS and the roadtrip
+product's own `web/design-system/` (`rt-tabs`, `rt-toggle`, `rt-toggle-switch`,
+`rt-table`): the rail-tabs-collapse-to-segmented pattern, the switch, and a
+plain data table, all already validated in a shipping product.
+
+Layout, states, and the ≤560px tabs breakpoint are carried over unchanged —
+that part had no open question. What changed is the colour wiring: roadtrip's
+originals paint from fixed `--rt-*` tokens (`--rt-brand`, `--rt-text`,
+`--rt-border`), so the roadtrip product itself has one look. These paint from
+`--text`/`--border`/`--bg-hover`/`--c-*`, which is what makes them theme and
+take a `hue-*` like every other LDS component — a consumer gets the same rail
+in `theme-product` and in dark mode without a second stylesheet.
+
+**Ruled out:** copying the `rt-*` classes in as a themable component was not on
+the table — carrying `--rt-*` names into LDS would leak a single consumer's
+token namespace into the shared library, which is exactly what `hue-*` naming
+a colour rather than a meaning already rules out doing.
+
+Deferred, not built this pass: `SecretField` and `DoubleConfirmButton` from the
+same `rt-*` set. Both are single-consumer-shaped (a masked credential input, a
+two-click destructive action) rather than the general-purpose primitives every
+surface reaches for — lower parity value per hour than tabs/toggle/table, and
+easier to get right with more than one caller to check assumptions against.
+
+**Cost:** `.lds-table` ships unstriped, hover-only — no `--table-stripe` token
+yet. A product page that wants zebra rows still hand-rolls
+`tbody tr:nth-child(even)`.
 
 ---
 

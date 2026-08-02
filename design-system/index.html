@@ -169,6 +169,7 @@
     <li><a href="#cards">Cards & Surfaces</a></li>
     <li><a href="#inputs">Inputs & Badges</a></li>
     <li><a href="#status">Tags, Chips & Status</a></li>
+    <li><a href="#controls">Tabs, Toggles & Tables</a></li>
     <li><a href="#guidance">Guidance</a></li>
   </ul>
 </aside>
@@ -411,6 +412,62 @@
               <div>Your changes have been saved.</div>
             </div>
           </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="controls">
+    <div class="sec-header">
+      <h2>Tabs, Toggles &amp; Tables</h2>
+      <p>Section navigation, a binary switch, and tabular data &mdash; the three layout primitives product surfaces reach for most. Colour comes from the emphasis + hue mechanism, same as everything else: drop a <code>hue-*</code> on <code>.lds-tabs</code> or <code>.lds-toggle__track</code> to retint the active state.</p>
+    </div>
+
+    <div class="demo-box">
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Tabs &mdash; vertical rail (desktop); segmented control &le;560px</div>
+          <div class="lds-tabs" style="max-width:200px;" role="tablist">
+            <button class="lds-tabs__tab lds-tabs__tab--active" role="tab" aria-selected="true">Overview</button>
+            <button class="lds-tabs__tab" role="tab" aria-selected="false">Activity</button>
+            <button class="lds-tabs__tab" role="tab" aria-selected="false">Settings</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Toggle &mdash; label, help text, switch</div>
+          <div style="max-width:340px; display:flex; flex-direction:column; gap:16px;">
+            <label class="lds-toggle">
+              <span class="lds-toggle__text">
+                <span class="lds-toggle__label">Email alerts</span>
+                <span class="lds-toggle__help">Get notified when a watch matches.</span>
+              </span>
+              <span class="lds-toggle__switch"><input type="checkbox" checked /><span class="lds-toggle__track"></span></span>
+            </label>
+            <label class="lds-toggle">
+              <span class="lds-toggle__text">
+                <span class="lds-toggle__label">SMS alerts</span>
+                <span class="lds-toggle__help">Requires a verified phone number.</span>
+              </span>
+              <span class="lds-toggle__switch"><input type="checkbox" disabled /><span class="lds-toggle__track"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Table &mdash; hover row, subdued header</div>
+          <table class="lds-table">
+            <thead>
+              <tr><th>Site</th><th>Status</th><th>Last checked</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Half Dome — Cabin 4</td><td><span class="lds-tag lds-tag--success">available</span></td><td>2m ago</td></tr>
+              <tr><td>Yosemite Valley — Loop B</td><td><span class="lds-tag lds-tag--caution">waitlist</span></td><td>5m ago</td></tr>
+              <tr><td>Tuolumne Meadows — Site 12</td><td><span class="lds-tag lds-tag--error">booked</span></td><td>11m ago</td></tr>
+            </tbody>
+          </table>
         </div>
 
       </div>

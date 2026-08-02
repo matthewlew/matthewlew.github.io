@@ -1073,3 +1073,87 @@
   font-weight:var(--weight-regular);
   color:var(--text-subdued);
 }
+
+/* ==========================================================================
+   Layer 3 — v3 additions: Tabs, Toggle, Table
+   Ported from the roadtrip product's rt-tabs / rt-toggle / rt-table (the
+   components already in production use) into One Token: rt-* fixed on
+   --rt-brand/--rt-text, these resolve off --text/--border/--c-* so they theme
+   and take a hue like every other component. See decisions.md.
+   ========================================================================== */
+
+/* ---- Tabs ---- */
+.lds-tabs{
+  display:flex;flex-direction:column;gap:2px;padding:4px;
+  background:var(--background);border-right:1px solid var(--border-subdued);
+  min-width:140px;flex:0 0 auto;
+}
+.lds-tabs__tab{
+  display:flex;align-items:center;
+  padding:8px 12px;min-height:44px;
+  border:none;border-radius:var(--radius-sm);
+  background:transparent;color:var(--text-subdued);
+  font-family:var(--th-ui);font-size:var(--size-1);font-weight:500;
+  line-height:var(--leading-normal);
+  cursor:pointer;text-align:left;white-space:nowrap;
+  transition:background var(--dur-fast),color var(--dur-fast);
+}
+.lds-tabs__tab:hover{background:var(--bg-hover);color:var(--text);}
+.lds-tabs__tab:active{background:var(--bg-pressed);}
+.lds-tabs__tab--active,
+.lds-tabs__tab--active:hover{
+  background:var(--c-100);color:var(--text);font-weight:var(--weight-semibold);
+}
+.mode-dark .lds-tabs__tab--active,
+.mode-dark .lds-tabs__tab--active:hover{background:var(--c-800);}
+@media (max-width:560px){
+  .lds-tabs{
+    flex-direction:row;border-right:none;border-bottom:1px solid var(--border-subdued);
+    min-width:0;width:100%;
+  }
+  .lds-tabs__tab{
+    flex:1 1 0;min-width:0;justify-content:center;text-align:center;
+    padding:10px 8px;overflow:hidden;text-overflow:ellipsis;
+  }
+}
+
+/* ---- Toggle ---- */
+.lds-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.lds-toggle__text{display:grid;gap:2px;min-width:0;}
+.lds-toggle__label{font-family:var(--th-ui);font-size:var(--size-1);font-weight:600;color:var(--text);}
+.lds-toggle__help{font-family:var(--th-body);font-size:var(--size-0);line-height:1.25;color:var(--text-subdued);}
+.lds-toggle__switch{position:relative;display:inline-grid;flex:0 0 auto;cursor:pointer;}
+.lds-toggle__switch input{position:absolute;opacity:0;pointer-events:none;}
+.lds-toggle__track{
+  width:34px;height:18px;border-radius:var(--radius-pill);
+  background:var(--border);transition:background var(--dur-fast);
+}
+.lds-toggle__track::after{
+  content:"";display:block;width:14px;height:14px;margin:2px;border-radius:50%;
+  background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.2);
+  transition:transform var(--dur-fast);
+}
+.lds-toggle__switch input:checked + .lds-toggle__track{background:var(--c-600);}
+.lds-toggle__switch input:checked + .lds-toggle__track::after{transform:translateX(16px);}
+.lds-toggle__switch input:focus-visible + .lds-toggle__track{box-shadow:0 0 0 3px color-mix(in srgb,var(--text-accent) 22%,transparent);}
+.lds-toggle__switch input:disabled + .lds-toggle__track{opacity:.55;cursor:default;}
+
+/* ---- Table ---- */
+.lds-table{width:100%;border-collapse:collapse;font-family:var(--th-ui);font-size:var(--size-1);}
+.lds-table th{
+  text-align:left;padding:calc(10px * var(--density)) calc(12px * var(--density));
+  font-weight:600;color:var(--text-subdued);font-size:var(--size-0);
+  letter-spacing:var(--tracking-wide);border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.lds-table td{
+  padding:calc(12px * var(--density)) calc(12px * var(--density));
+  border-bottom:1px solid var(--border-subdued);color:var(--text);
+  vertical-align:middle;
+}
+.lds-table tbody tr{transition:background var(--dur-fast);}
+.lds-table tbody tr:hover{background:var(--bg-hover);}
+.lds-table tbody tr:last-child td{border-bottom:none;}
+.lds-table--empty{
+  padding:calc(32px * var(--density));text-align:center;color:var(--text-subdued);
+}
