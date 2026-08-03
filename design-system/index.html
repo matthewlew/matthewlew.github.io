@@ -118,23 +118,90 @@
       border-radius: var(--radius-sm); corner-shape: var(--corner-shape);
       cursor: pointer; font: inherit; font-size: var(--text-caption); font-weight: 500; }
     
+    /* -- Guidance groups. Were inline styles, which no media query could reach. -- */
+    .rule-group { padding: 32px 40px; border-bottom: 1px solid var(--border); background: var(--bg-hover); }
+    .rule-group--sep { border-top: 8px solid var(--border); }
+    .rule-group h3 { font-size: var(--size-5); font-weight: 500; margin-bottom: 8px; color: var(--text); }
+    .rule-group p { font-size: var(--size-2); color: var(--text-subdued); }
+
+    /* -- Mobile section bar. Bottom, because that is where a thumb is. --
+       Built from the sidebar's own <a> list at runtime, so the two navs cannot
+       drift: there is still exactly one place a section is named. */
+    .tabbar { display: none; }
+
     @media (max-width: 900px) {
       .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
       .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; padding: 80px 24px 40px; }
-      .menu-btn { display: block; }
+      /* 24px of top padding, not 80px: nothing floats over the content any
+         more, so nothing needs clearing. Bottom clears the tab bar. */
+      .main { margin-left: 0; padding: 24px 20px calc(84px + env(safe-area-inset-bottom)); }
+      .main > section { margin-bottom: 56px; }
+      .sec-header { margin-bottom: 20px; }
+      .sec-header h2 { font-size: 30px; margin-bottom: 8px; }
+      .sec-header p { font-size: 15px; }
+      .demo-box { padding: 24px 20px; }
+      .menu-btn { display: none; }
       .grid-2 { grid-template-columns: 1fr; }
       .spec-row { flex-direction: column; gap: 8px; }
+
+      /* Do/don't becomes one plain list. The two-column grid, the framed
+         columns and the 8px group separators were desk furniture: on a phone
+         they cost a screen of height each and say nothing the ✓/✕ does not. */
       .rules-grid { grid-template-columns: 1fr; }
-      .rule-col.do { border-right: none; border-bottom: 1px solid var(--border); }
+      .rule-col { padding: 16px 20px 20px; }
+      .rule-col.do { border-right: none; border-bottom: none; }
+      .rule-col h3 { padding-bottom: 8px; margin-bottom: 4px; }
+      .rule-group { padding: 20px; }
+      .rule-group--sep { border-top-width: 1px; }
+      .rule-group h3 { font-size: var(--size-3); }
+      .rule-group p { font-size: var(--size-1); }
+      .rule-col .lds-list__item { padding: 8px 0 8px 12px; font-size: var(--size-2); }
+      .rule-col .lds-list__item + .lds-list__item { margin-top: 4px; }
+
+      .tabbar {
+        display: flex; align-items: stretch;
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 120;
+        background: color-mix(in srgb, var(--background) 92%, transparent);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .tabbar__scroll {
+        flex: 1; min-width: 0; display: flex; gap: 4px;
+        overflow-x: auto; overscroll-behavior-x: contain;
+        /* 60px of tail so the last chip can scroll clear of the site-wide
+           hub FAB, which is fixed bottom-right at z-index 99999 and sits over
+           this bar's right end. The bar yields to it rather than fighting it. */
+        padding: 8px 60px 8px 8px; scrollbar-width: none;
+      }
+      .tabbar__scroll::-webkit-scrollbar { display: none; }
+      .tabbar a {
+        flex: 0 0 auto; display: flex; align-items: center;
+        min-height: 44px; padding: 0 14px;
+        border-radius: var(--radius-pill);
+        font-size: 13px; font-weight: 500; line-height: 1;
+        color: var(--text-subdued); text-decoration: none; white-space: nowrap;
+      }
+      .tabbar a.active { background: var(--c-100); color: var(--c-800); font-weight: 600; }
+      .mode-dark .tabbar a.active { background: var(--c-800); color: var(--c-100); }
+      .tabbar__ctl {
+        flex: 0 0 auto; width: 56px; min-height: 44px; margin: 8px 0 8px 8px;
+        display: grid; place-items: center;
+        border: none; border-right: 1px solid var(--border); border-radius: 0;
+        background: transparent; color: var(--text-subdued);
+        font: inherit; font-size: 11px; font-family: var(--th-mono, monospace);
+        text-transform: uppercase; letter-spacing: .06em; cursor: pointer;
+      }
+      .tabbar__ctl[aria-expanded="true"] { color: var(--text-accent); }
     }
 
-    /* Small phones. 48px of demo-box padding either side leaves 176px of
-       content at 320px wide, which is narrower than the controls it frames. */
+    /* Small phones. */
     @media (max-width: 400px) {
-      .main { padding: 80px 16px 40px; }
-      .demo-box { padding: 24px 16px; }
-      .rule-col { padding: 24px 20px; }
+      .main { padding: 20px 14px calc(84px + env(safe-area-inset-bottom)); }
+      .demo-box { padding: 20px 14px; }
+      .rule-col { padding: 14px 16px 18px; }
+      .rule-group { padding: 16px; }
+      .sec-header h2 { font-size: 26px; }
     }
     
     /* We override the body theme class application and only apply it to the .demo-box wrappers
@@ -154,7 +221,14 @@
 
 <button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">Menu</button>
 
-<aside class="sidebar">
+<!-- Mobile section bar. Empty on purpose: filled from the sidebar nav at
+     runtime so a section is named in exactly one place. -->
+<nav class="tabbar" id="tabbar" aria-label="Sections">
+  <button class="tabbar__ctl" id="tabbarCtl" aria-expanded="false" aria-controls="sidebar">Aa</button>
+  <div class="tabbar__scroll" id="tabbarScroll"></div>
+</nav>
+
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <h1>Lew<span>.</span>Design</h1>
     <p>System Showcase</p>
@@ -611,12 +685,12 @@
     <div class="demo-box" style="padding:0; overflow:hidden; background:var(--background); border:1px solid var(--border);">
       
       <!-- Group 1: Tokens -->
-      <div style="padding:32px 40px; border-bottom:1px solid var(--border); background:var(--bg-hover);">
-        <h3 style="font-size:20px; font-weight:500; margin-bottom:8px; color:var(--text);">1. Token Hierarchy & Inheritance</h3>
-        <p style="font-size:15px; color:var(--text-subdued);">The One-Token architecture relies on natural cascading. Do not break it.</p>
+      <div class="rule-group">
+        <h3>1. Token Hierarchy & Inheritance</h3>
+        <p>The One-Token architecture relies on natural cascading. Do not break it.</p>
       </div>
       <div class="rules-grid">
-        <div class="rule-col do">
+        <div class="rule-col do emph-plain hue-green">
           <h3>✓ Do</h3>
           <ul class="lds-list emph-plain hue-green">
           <li class="lds-list__item"><span class="lds-list__title">Inherit by default</span>Let components inherit their environment (<code>var(--text)</code>, <code>var(--background)</code>) so they adapt contextually.</li>
@@ -624,7 +698,7 @@
         
           </ul>
           </div>
-        <div class="rule-col dont">
+        <div class="rule-col dont emph-plain hue-red">
           <h3>✕ Don't</h3>
           <ul class="lds-list emph-plain hue-red">
           <li class="lds-list__item"><span class="lds-list__title">No raw hex values</span>Never use raw hex values or bypass the One-Token architecture.</li>
@@ -635,12 +709,12 @@
       </div>
       
       <!-- Group 2: Color & Surfaces -->
-      <div style="padding:32px 40px; border-top:8px solid var(--border); border-bottom:1px solid var(--border); background:var(--bg-hover);">
-        <h3 style="font-size:20px; font-weight:500; margin-bottom:8px; color:var(--text);">2. Color & Surfaces</h3>
-        <p style="font-size:15px; color:var(--text-subdued);">How to apply emphasis and style across UI components.</p>
+      <div class="rule-group rule-group--sep">
+        <h3>2. Color & Surfaces</h3>
+        <p>How to apply emphasis and style across UI components.</p>
       </div>
       <div class="rules-grid">
-        <div class="rule-col do">
+        <div class="rule-col do emph-plain hue-green">
           <h3>✓ Do</h3>
           <ul class="lds-list emph-plain hue-green">
           <li class="lds-list__item"><span class="lds-list__title">Reserve accent colors</span>Reserve signature accent colors for active states, labels, or a single rule line. Scarcity is the point.</li>
@@ -648,7 +722,7 @@
         
           </ul>
           </div>
-        <div class="rule-col dont">
+        <div class="rule-col dont emph-plain hue-red">
           <h3>✕ Don't</h3>
           <ul class="lds-list emph-plain hue-red">
           <li class="lds-list__item"><span class="lds-list__title">Don't flood with strong emphasis</span>Don't flood the UI with <code>.emph-strong</code>. If it feels loud, there's too much.</li>
@@ -659,12 +733,12 @@
       </div>
 
       <!-- Group 3: Components & Layout -->
-      <div style="padding:32px 40px; border-top:8px solid var(--border); border-bottom:1px solid var(--border); background:var(--bg-hover);">
-        <h3 style="font-size:20px; font-weight:500; margin-bottom:8px; color:var(--text);">3. Components & Layout</h3>
-        <p style="font-size:15px; color:var(--text-subdued);">Rules for spacing, shapes, and structural hierarchy.</p>
+      <div class="rule-group rule-group--sep">
+        <h3>3. Components & Layout</h3>
+        <p>Rules for spacing, shapes, and structural hierarchy.</p>
       </div>
       <div class="rules-grid">
-        <div class="rule-col do">
+        <div class="rule-col do emph-plain hue-green">
           <h3>✓ Do</h3>
           <ul class="lds-list emph-plain hue-green">
           <li class="lds-list__item"><span class="lds-list__title">Use 1px hairlines</span>Separate UI sections with 1px hairlines (<code>var(--border)</code>). Structure carries hierarchy.</li>
@@ -673,7 +747,7 @@
         
           </ul>
           </div>
-        <div class="rule-col dont">
+        <div class="rule-col dont emph-plain hue-red">
           <h3>✕ Don't</h3>
           <ul class="lds-list emph-plain hue-red">
           <li class="lds-list__item"><span class="lds-list__title">No hardcoded radii</span>Never hardcode pixel values for border-radius. These shift dynamically based on the active brand theme.</li>
@@ -694,27 +768,52 @@
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-links a');
   
+  // Mirror the sidebar nav into the mobile bottom bar. Cloning rather than
+  // re-typing means a new section is added in one place and appears in both.
+  const tabbarScroll = document.getElementById('tabbarScroll');
+  navLinks.forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.getAttribute('href');
+    a.textContent = link.textContent;
+    tabbarScroll.appendChild(a);
+  });
+
+  // One list for the spy, so both navs light up from the same observation.
+  const allNav = [...navLinks, ...tabbarScroll.querySelectorAll('a')];
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        navLinks.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === `#${entry.target.id}`) {
-            link.classList.add('active');
+        allNav.forEach(link => {
+          const on = link.getAttribute('href') === `#${entry.target.id}`;
+          link.classList.toggle('active', on);
+          // Keep the active chip in view — the bar holds ten and scrolls.
+          if (on && link.parentElement === tabbarScroll) {
+            link.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
           }
         });
       }
     });
   }, { rootMargin: '-20% 0px -60% 0px' });
-  
+
   sections.forEach(section => observer.observe(section));
 
-  // Handle smooth scroll closing mobile menu
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      document.querySelector('.sidebar').classList.remove('open');
-    });
+  // Tapping any nav link closes the controls drawer.
+  const sidebar = document.querySelector('.sidebar');
+  const tabbarCtl = document.getElementById('tabbarCtl');
+  function closeDrawer() {
+    sidebar.classList.remove('open');
+    tabbarCtl.setAttribute('aria-expanded', 'false');
+  }
+  allNav.forEach(link => link.addEventListener('click', closeDrawer));
+
+  // The bar's right-hand button is the only way to the theme and mode controls
+  // on a phone, now that the floating Menu button is gone.
+  tabbarCtl.addEventListener('click', () => {
+    const open = sidebar.classList.toggle('open');
+    tabbarCtl.setAttribute('aria-expanded', String(open));
   });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
   // Handle Inspector Tooltip
   const tooltip = document.getElementById('inspector-tooltip');
