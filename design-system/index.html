@@ -37,6 +37,10 @@
       width: var(--sidebar-w); background: var(--background); color: var(--text);
       position: fixed; top: 0; bottom: 0; left: 0;
       display: flex; flex-direction: column; padding: 32px 24px;
+      /* The whole panel scrolls, not the link list. When only .nav-links
+         scrolled, a short viewport clipped the last group mid-row, which reads
+         as a rendering fault rather than as "there is more below". */
+      overflow-y: auto;
       border-right: 1px solid var(--border);
       z-index: 100;
       transition: background 0.3s, border-color 0.3s, color 0.3s;
@@ -56,7 +60,13 @@
     .seg button { flex: 1; min-width: 0; padding: 8px 4px; background: transparent; color: var(--text-subdued); border: none; font-size: 11px; cursor: pointer; transition: 0.2s; font-family: var(--th-mono, monospace); }
     .seg button.on { background: var(--text); color: var(--background); font-weight: 700; }
     
-    .nav-links { display: flex; flex-direction: column; gap: 4px; list-style: none; overflow-y: auto; }
+    .nav-links { display: flex; flex-direction: column; gap: 2px; list-style: none; flex: 0 0 auto; }
+    .nav-group {
+      font-family: var(--th-mono, monospace); font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-subdued);
+      padding: 6px 12px; margin-top: 18px;
+    }
+    .nav-links > .nav-group:first-child { margin-top: 0; }
     .nav-links a {
       text-decoration: none; color: var(--text-subdued); font-size: 13px; font-weight: 500;
       padding: 8px 12px; border-radius: var(--radius-sm); display: block; transition: 0.2s;
@@ -178,10 +188,10 @@
       .tabbar__scroll {
         flex: 1; min-width: 0; display: flex; gap: 4px;
         overflow-x: auto; overscroll-behavior-x: contain;
-        /* 60px of tail so the last chip can scroll clear of the site-wide
-           hub FAB, which is fixed bottom-right at z-index 99999 and sits over
-           this bar's right end. The bar yields to it rather than fighting it. */
-        padding: 8px 60px 8px 8px; scrollbar-width: none;
+        /* No tail reserved any more: the site-wide hub FAB used to sit over
+           this bar's right end at z-index 99999, so 60px was left clear for it.
+           It is docked in the sidebar now and the bar gets its full width. */
+        padding: 8px; scrollbar-width: none;
       }
       .tabbar__scroll::-webkit-scrollbar { display: none; }
       .tabbar a {
@@ -275,78 +285,35 @@
     </div>
   </div>
   
+  <!-- Ordered the way the system is layered, not the way it was built:
+       foundations are what a theme decides, components are what consumes them,
+       guidelines are how to use both. Same spine as Material 3. -->
   <ul class="nav-links" id="navLinks">
-    <li><a href="#typography" class="active">Typography</a></li>
-    <li><a href="#radius">Corner Radius</a></li>
-    <li><a href="#color">Color & Emphasis</a></li>
+    <li class="nav-group">Foundations</li>
+    <li><a href="#color" class="active">Color &amp; Emphasis</a></li>
+    <li><a href="#typography">Typography</a></li>
+    <li><a href="#radius">Shape</a></li>
+    <li><a href="#surfaces">Elevation &amp; Layout</a></li>
+
+    <li class="nav-group">Components</li>
     <li><a href="#buttons">Buttons</a></li>
-    <li><a href="#cards">Cards & Surfaces</a></li>
-    <li><a href="#inputs">Inputs & Badges</a></li>
-    <li><a href="#status">Tags, Chips & Status</a></li>
-    <li><a href="#controls">Tabs, Toggles & Tables</a></li>
-    <li><a href="#forms">Forms & States</a></li>
-    <li><a href="#surfaces">Surfaces &amp; Breakpoints</a></li>
+    <li><a href="#inputs">Inputs &amp; Badges</a></li>
+    <li><a href="#forms">Forms &amp; States</a></li>
+    <li><a href="#status">Tags, Chips &amp; Status</a></li>
+    <li><a href="#controls">Tabs, Toggles &amp; Tables</a></li>
+    <li><a href="#cards">Cards</a></li>
+
+    <li class="nav-group">Guidelines</li>
     <li><a href="#guidance">Guidance</a></li>
   </ul>
+
+  <!-- The site-wide project switcher renders here instead of as a floating
+       button. global-nav.js looks for this slot; pages without one still get
+       the FAB. -->
+  <div id="lew-hub-slot"></div>
 </aside>
 
 <main class="main">
-
-  <section id="typography">
-    <div class="sec-header">
-      <h2>Typography</h2>
-      <p>A unified 9-step typographic scale driven by the selected brand theme. Themes dictate both the font family and the scale progression. Note how the composite semantic roles abstract the raw primitive values.</p>
-    </div>
-    
-    <!-- This wrapper gets the theme classes injected via JS -->
-    <div class="demo-box">
-      <h3 style="font-family:var(--th-mono); font-size:11px; text-transform:uppercase; color:var(--text-subdued); margin-bottom:24px; letter-spacing:0.1em;">Semantic Roles (Composites)</h3>
-      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-title)"><span class="spec-lbl">--text-title</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--text-title); font-weight:600; line-height:1.1; cursor:crosshair;">The system is the statement.</span></div>
-      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-subhead)"><span class="spec-lbl">--text-subhead</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--text-subhead); font-weight:500; cursor:crosshair;">Building products feels effortless.</span></div>
-      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-body)"><span class="spec-lbl">--text-body</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--text-body); cursor:crosshair;">Machine-readable design systems humans & agents can use.</span></div>
-      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-caption)"><span class="spec-lbl">--text-caption</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--text-caption); color:var(--text-subdued); cursor:crosshair;">Metadata and microcopy.</span></div>
-      
-      <h3 style="font-family:var(--th-mono); font-size:11px; text-transform:uppercase; color:var(--text-subdued); margin-top:48px; margin-bottom:24px; letter-spacing:0.1em;">Base Scale (Primitives)</h3>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-8)"><span class="spec-lbl">--size-8</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--size-8); cursor:crosshair;">Size 8</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-7)"><span class="spec-lbl">--size-7</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--size-7); cursor:crosshair;">Size 7</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-6)"><span class="spec-lbl">--size-6</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--size-6); cursor:crosshair;">Size 6</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-5)"><span class="spec-lbl">--size-5</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-5); cursor:crosshair;">Size 5</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-4)"><span class="spec-lbl">--size-4</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-4); cursor:crosshair;">Size 4</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-3)"><span class="spec-lbl">--size-3</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-3); cursor:crosshair;">Size 3</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-2)"><span class="spec-lbl">--size-2</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-2); cursor:crosshair;">Size 2</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-1)"><span class="spec-lbl">--size-1</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-1); cursor:crosshair;">Size 1</span></div>
-      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-0)"><span class="spec-lbl">--size-0</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-0); cursor:crosshair;">Size 0</span></div>
-    </div>
-  </section>
-
-  <section id="radius">
-    <div class="sec-header">
-      <h2>Corner Radius</h2>
-      <p>Border radius is a fundamental brand expression. The system supports three levels of rounding plus a pill shape, all defined by the active theme.</p>
-    </div>
-    
-    <div class="demo-box">
-      <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-end;">
-        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
-          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--radius-sm)" style="width:64px; height:64px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--radius-sm);"></div>
-          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--radius-sm</div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
-          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--radius)" style="width:80px; height:80px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--radius);"></div>
-          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--radius</div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
-          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--radius-lg)" style="width:96px; height:96px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--radius-lg);"></div>
-          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--radius-lg</div>
-        </div>
-        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
-          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--pill)" style="width:120px; height:48px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--pill);"></div>
-          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--pill</div>
-        </div>
-      </div>
-      <p style="margin-top:32px; font-size:13px; color:var(--text-subdued);"><em>Hover over the shapes above to inspect the computed pixel value for the active theme.</em></p>
-    </div>
-  </section>
 
   <section id="color">
     <div class="sec-header">
@@ -385,6 +352,107 @@
     </div>
   </section>
 
+  <section id="typography">
+    <div class="sec-header">
+      <h2>Typography</h2>
+      <p>A unified 9-step typographic scale driven by the selected brand theme. Themes dictate both the font family and the scale progression. Note how the composite semantic roles abstract the raw primitive values.</p>
+    </div>
+    
+    <!-- This wrapper gets the theme classes injected via JS -->
+    <div class="demo-box">
+      <h3 style="font-family:var(--th-mono); font-size:11px; text-transform:uppercase; color:var(--text-subdued); margin-bottom:24px; letter-spacing:0.1em;">Semantic Roles (Composites)</h3>
+      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-title)"><span class="spec-lbl">--text-title</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--text-title); font-weight:600; line-height:1.1; cursor:crosshair;">The system is the statement.</span></div>
+      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-subhead)"><span class="spec-lbl">--text-subhead</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--text-subhead); font-weight:500; cursor:crosshair;">Building products feels effortless.</span></div>
+      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-body)"><span class="spec-lbl">--text-body</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--text-body); cursor:crosshair;">Machine-readable design systems humans & agents can use.</span></div>
+      <div class="spec-row" data-inspect="fontFamily, fontSize" data-inspect-state="Theme Driven (--text-caption)"><span class="spec-lbl">--text-caption</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--text-caption); color:var(--text-subdued); cursor:crosshair;">Metadata and microcopy.</span></div>
+      
+      <h3 style="font-family:var(--th-mono); font-size:11px; text-transform:uppercase; color:var(--text-subdued); margin-top:48px; margin-bottom:24px; letter-spacing:0.1em;">Base Scale (Primitives)</h3>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-8)"><span class="spec-lbl">--size-8</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--size-8); cursor:crosshair;">Size 8</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-7)"><span class="spec-lbl">--size-7</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--size-7); cursor:crosshair;">Size 7</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-6)"><span class="spec-lbl">--size-6</span><span class="spec-val" style="font-family:var(--th-display); font-size:var(--size-6); cursor:crosshair;">Size 6</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-5)"><span class="spec-lbl">--size-5</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-5); cursor:crosshair;">Size 5</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-4)"><span class="spec-lbl">--size-4</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-4); cursor:crosshair;">Size 4</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-3)"><span class="spec-lbl">--size-3</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-3); cursor:crosshair;">Size 3</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-2)"><span class="spec-lbl">--size-2</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-2); cursor:crosshair;">Size 2</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-1)"><span class="spec-lbl">--size-1</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-1); cursor:crosshair;">Size 1</span></div>
+      <div class="spec-row" data-inspect="fontSize" data-inspect-state="Primitive (--size-0)"><span class="spec-lbl">--size-0</span><span class="spec-val" style="font-family:var(--th-body); font-size:var(--size-0); cursor:crosshair;">Size 0</span></div>
+    </div>
+  </section>
+
+  <section id="radius">
+    <div class="sec-header">
+      <h2>Shape</h2>
+      <p>Border radius is a fundamental brand expression. The system supports three levels of rounding plus a pill shape, all defined by the active theme.</p>
+    </div>
+    
+    <div class="demo-box">
+      <div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-end;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
+          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--radius-sm)" style="width:64px; height:64px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--radius-sm);"></div>
+          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--radius-sm</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
+          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--radius)" style="width:80px; height:80px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--radius);"></div>
+          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--radius</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
+          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--radius-lg)" style="width:96px; height:96px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--radius-lg);"></div>
+          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--radius-lg</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; cursor:crosshair;">
+          <div data-inspect="borderTopLeftRadius" data-inspect-state="Theme Driven (--pill)" style="width:120px; height:48px; background:var(--bg-hover); border:2px solid var(--text-accent); border-radius:var(--pill);"></div>
+          <div style="font-family:var(--th-mono); font-size:11px; color:var(--text-subdued);">--pill</div>
+        </div>
+      </div>
+      <p style="margin-top:32px; font-size:13px; color:var(--text-subdued);"><em>Hover over the shapes above to inspect the computed pixel value for the active theme.</em></p>
+    </div>
+  </section>
+
+  <section id="surfaces">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Elevation &amp; Layout</h2>
+      <p>Emphasis answers <em>how loud is this object</em>. It never answered <em>how deep is this plane</em> &mdash; a card and the page behind it can both be <code>emph-plain</code> and still must not be the same colour. Five depth roles, applied with <code>.surface-*</code>, filled by the theme.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">The stack &mdash; switch to Roadtrip above to see a dark-native theme use all five</div>
+      <div class="surf-stack surface-page">
+        <span class="surf-tag">surface-page</span>
+        <div class="surf-stack surface-sunken">
+          <span class="surf-tag">surface-sunken</span>
+          <div class="surf-stack surface-base">
+            <span class="surf-tag">surface-base</span>
+            <div class="surf-stack surface-raised">
+              <span class="surf-tag">surface-raised</span>
+              <div class="surf-stack surface-overlay">
+                <span class="surf-tag">surface-overlay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="surf-note">In <strong>light</strong> the top three collapse to one value: on oat paper a brighter card reads as a hole, not as nearer, so elevation is carried by shadow. In <strong>dark</strong> the bottom two collapse, because nothing sits below the darkest step &mdash; and shadow is invisible there, so elevation has to be lightness. That is why a dark-native product needs five distinct surfaces and the portfolio needs two.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">Breakpoints &mdash; named for what the layout gains, not for a device</div>
+      <div class="surf-scroll">
+        <table class="lds-table">
+          <thead><tr><th>Token</th><th>Value</th><th>What changes</th></tr></thead>
+          <tbody>
+            <tr><td><code>--bp-sm</code></td><td>480px</td><td>One column, thumb reach, no persistent chrome.</td></tr>
+            <tr><td><code>--bp-md</code></td><td>768px</td><td>Two columns fit, or a rail plus content.</td></tr>
+            <tr><td><code>--bp-lg</code></td><td>1024px</td><td>A persistent sidebar stops costing content width.</td></tr>
+            <tr><td><code>--bp-xl</code></td><td>1440px</td><td>Line length, not space, becomes the constraint.</td></tr>
+            <tr><td><code>--bp-short</code></td><td>520px <em>tall</em></td><td>Nothing may assume vertical room.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="surf-note"><strong>Width decides the column count; height decides whether anything may assume vertical room.</strong> A phone in landscape is ~900px wide and ~400px tall &mdash; every width-only breakpoint files it as a tablet, which is exactly how centred modals and full-height drawers end up with their buttons below an unscrollable fold. Rotate your phone: this line is visible in portrait and hidden in landscape. <span class="hide-when-short lds-tag hue-green">Tall enough</span><span class="surf-short-flag lds-tag hue-red">Short viewport &mdash; vertical room is not assumed</span></p>
+      <p class="surf-note"><strong>Gotcha:</strong> a custom property cannot be read inside a media query. <code>@media (min-width: var(--bp-md))</code> does not error &mdash; the block is silently dropped. The <code>@media</code> rules still spell the number; the token is the record of what it means, and the value JS reads so the two cannot drift.</p>
+    </div>
+  </section>
+
   <section id="buttons">
     <div class="sec-header">
       <h2>Buttons</h2>
@@ -404,47 +472,6 @@
           <button class="lds-btn lds-btn--primary emph-strong" data-inspect="backgroundColor, color" data-inspect-state="primary + emph-strong (knockout)" style="cursor:crosshair;">Knockout</button>
           <button class="lds-btn lds-btn--primary lds-btn--sm" data-inspect="fontSize" data-inspect-state="primary + .lds-btn--sm" style="cursor:crosshair;">Small Primary</button>
           <button class="lds-btn lds-btn--primary" disabled data-inspect="opacity" data-inspect-state="State: Disabled" style="cursor:crosshair;">Disabled</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="cards">
-    <div class="sec-header">
-      <h2>Cards & Surfaces</h2>
-      <p>Card components use the semantic tokens internally so they react flawlessly to theme and mode changes.</p>
-      
-      <div style="margin-top:24px; padding:24px; background:var(--background); border:1px solid var(--border); border-radius:8px;">
-        <h4 style="font-size:14px; margin-bottom:8px; color:#111;">How Emphasis Inheritance Works</h4>
-        <p style="font-size:14px; color:#555; margin-bottom:12px;">By default, buttons and text simply <strong>inherit</strong> the emphasis of their parent card. They automatically pull from <code>var(--text)</code>, <code>var(--border)</code>, and <code>var(--background)</code>.</p>
-        <h4 style="font-size:14px; margin-bottom:8px; color:#111;">Bespoke Overrides</h4>
-        <p style="font-size:14px; color:#555;">To override the emphasis for a specific element (like making a single button or badge pop), simply drop an <code>.emph-*</code> class directly onto it. Because of the One-Token architecture, the browser locally re-resolves the variables for just that node without breaking the parent surface.</p>
-      </div>
-    </div>
-    
-    <div class="demo-box" style="background:var(--bg-hover);">
-      <div class="grid-2">
-        <div class="lds-card emph-plain" data-inspect="backgroundColor, borderColor" data-inspect-state="Explicit (.emph-plain)" style="cursor:crosshair;">
-          <div class="lds-card__kicker">Default Card</div>
-          <div class="lds-card__title">Design tokens at scale</div>
-          <div class="lds-card__body">A machine-readable token architecture consumed by 50+ designers and every downstream platform.</div>
-          <hr class="lds-card__divider">
-          <div class="lds-card__meta">Published 2 days ago</div>
-          <div class="lds-card__actions">
-            <button class="lds-btn emph-strong" data-inspect="backgroundColor, color" data-inspect-state="Bespoke (.emph-strong)">Read Case</button>
-          </div>
-        </div>
-        
-        <div class="lds-card emph-stark" data-inspect="backgroundColor, borderColor" data-inspect-state="Bespoke Override (.emph-stark)" style="cursor:crosshair;">
-          <div class="lds-card__kicker">Stark Card</div>
-          <div class="lds-card__title">Maximum Contrast</div>
-          <div class="lds-card__body">This card uses the stark emphasis to invert itself from the standard flow of the page.</div>
-          <hr class="lds-card__divider">
-          <div class="lds-card__meta">Requires immediate attention</div>
-          <div class="lds-card__actions">
-            <!-- This button uses emph-plain so it falls back to neutral against the dark card -->
-            <button class="lds-btn emph-plain" data-inspect="backgroundColor, color" data-inspect-state="Bespoke Override (.emph-plain)">Action</button>
-          </div>
         </div>
       </div>
     </div>
@@ -484,108 +511,6 @@
             <div>Hardcoded hex found. Please refactor to tokens.</div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="status">
-    <div class="sec-header">
-      <h2><span class="sec-tag lds-tag hue-blue">Updated</span>Tags, Chips &amp; Status</h2>
-      <p>Semantic status built on the same One&nbsp;Token engine: <code>hue-*</code> sets intent, an emphasis class sets tone, and the <code>--icon</code> token tracks it automatically. <strong>Tags describe; chips do.</strong> These use the fixed semantic hues, so they hold their meaning regardless of the active brand theme.</p>
-    </div>
-
-    <div class="demo-box">
-      <div style="display:flex; flex-direction:column; gap:34px;">
-
-        <div>
-          <div class="micro-label">Soft tags &mdash; the everyday status pill</div>
-          <div class="chip-row"><span class="lds-tag lds-tag--error"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>error</span><span class="lds-tag lds-tag--warning"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#warning"/></svg></span>warning</span><span class="lds-tag lds-tag--caution"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#error"/></svg></span>caution</span><span class="lds-tag lds-tag--success"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>success</span><span class="lds-tag lds-tag--info"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#infoCircle"/></svg></span>info</span><span class="lds-tag lds-tag--info"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#helpCircle"/></svg></span>helpful</span></div>
-          <div class="micro-label" style="margin-top:20px;">Plain tags &mdash; white bg, hue border + label</div>
-          <div class="chip-row"><span class="lds-tag lds-tag--error emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>error</span><span class="lds-tag lds-tag--warning emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#warning"/></svg></span>warning</span><span class="lds-tag lds-tag--caution emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#error"/></svg></span>caution</span><span class="lds-tag lds-tag--success emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>success</span><span class="lds-tag lds-tag--info emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#infoCircle"/></svg></span>info</span><span class="lds-tag lds-tag--info emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#helpCircle"/></svg></span>helpful</span></div>
-        </div>
-
-        <div>
-          <div class="micro-label">Inline status &mdash; icon + text, no container (icon = label color)</div>
-          <div class="chip-row" style="gap:24px;"><span class="lds-inline lds-inline--error"><span class="lds-inline__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>Enter a valid email address.</span><span class="lds-inline lds-inline--success"><span class="lds-inline__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>Username is available.</span><span class="lds-inline lds-inline--warning"><span class="lds-inline__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#warning"/></svg></span>This can’t be undone.</span></div>
-        </div>
-
-        <div>
-          <div class="micro-label">Chips &mdash; interactive: filter / selected, dropdown, removable</div>
-          <div class="chip-row"><span class="lds-chip" tabindex="0">Filter</span><span class="lds-chip lds-chip--selected" tabindex="0">Selected</span></div>
-          <div class="chip-row" style="margin-top:10px;"><span class="lds-chip" tabindex="0">Status<span class="lds-chip__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronDown"/></svg></span></span><span class="lds-chip" aria-expanded="true" tabindex="0">Sort: Newest<span class="lds-chip__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronDown"/></svg></span></span></div>
-          <div class="chip-row" style="margin-top:10px;"><span class="lds-chip" tabindex="0">Design<span class="lds-chip__remove" aria-label="remove"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#close"/></svg></span></span><span class="lds-chip" tabindex="0"><span class="lds-chip__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>Bug<span class="lds-chip__remove" aria-label="remove"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#close"/></svg></span></span></div>
-        </div>
-
-        <div>
-          <div class="micro-label">Tag &amp; banner &mdash; same composition, different scale</div>
-          <div style="display:flex; flex-direction:column; gap:12px; max-width:520px;">
-            <div class="lds-banner lds-banner--error" data-inspect="backgroundColor, color" data-inspect-state="lds-banner--error (baked)">
-              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>
-              <div>Payment failed &mdash; update your card to continue.</div>
-            </div>
-            <div class="lds-banner lds-banner--success" data-inspect="backgroundColor, color" data-inspect-state="lds-banner--success (baked)">
-              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>
-              <div>Your changes have been saved.</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section id="controls">
-    <div class="sec-header">
-      <h2><span class="sec-tag lds-tag hue-green">New</span>Tabs, Toggles &amp; Tables</h2>
-      <p>Section navigation, a binary switch, and tabular data &mdash; the three layout primitives product surfaces reach for most. Colour comes from the emphasis + hue mechanism, same as everything else: drop a <code>hue-*</code> on <code>.lds-tabs</code> or <code>.lds-toggle__track</code> to retint the active state.</p>
-    </div>
-
-    <div class="demo-box">
-      <div style="display:flex; flex-direction:column; gap:34px;">
-
-        <div>
-          <div class="micro-label">Tabs &mdash; vertical rail (desktop); segmented control &le;560px</div>
-          <div class="lds-tabs demo-rail" role="tablist">
-            <button class="lds-tabs__tab lds-tabs__tab--active" role="tab" aria-selected="true">Overview</button>
-            <button class="lds-tabs__tab" role="tab" aria-selected="false">Activity</button>
-            <button class="lds-tabs__tab" role="tab" aria-selected="false">Settings</button>
-          </div>
-        </div>
-
-        <div>
-          <div class="micro-label">Toggle &mdash; label, help text, switch</div>
-          <div class="demo-toggles">
-            <label class="lds-toggle">
-              <span class="lds-toggle__text">
-                <span class="lds-toggle__label">Email alerts</span>
-                <span class="lds-toggle__help">Get notified when a watch matches.</span>
-              </span>
-              <span class="lds-toggle__switch"><input type="checkbox" checked /><span class="lds-toggle__track"></span></span>
-            </label>
-            <label class="lds-toggle">
-              <span class="lds-toggle__text">
-                <span class="lds-toggle__label">SMS alerts</span>
-                <span class="lds-toggle__help">Requires a verified phone number.</span>
-              </span>
-              <span class="lds-toggle__switch"><input type="checkbox" disabled /><span class="lds-toggle__track"></span></span>
-            </label>
-          </div>
-        </div>
-
-        <div>
-          <div class="micro-label">Table &mdash; hover row, subdued header</div>
-          <table class="lds-table">
-            <thead>
-              <tr><th>Site</th><th>Status</th><th>Last checked</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Half Dome — Cabin 4</td><td><span class="lds-tag lds-tag--success">available</span></td><td>2m ago</td></tr>
-              <tr><td>Yosemite Valley — Loop B</td><td><span class="lds-tag lds-tag--caution">waitlist</span></td><td>5m ago</td></tr>
-              <tr><td>Tuolumne Meadows — Site 12</td><td><span class="lds-tag lds-tag--error">booked</span></td><td>11m ago</td></tr>
-            </tbody>
-          </table>
-        </div>
-
       </div>
     </div>
   </section>
@@ -700,48 +625,146 @@
     </div>
   </section>
 
-  <section id="surfaces">
+  <section id="status">
     <div class="sec-header">
-      <h2><span class="sec-tag lds-tag hue-green">New</span>Surfaces &amp; Breakpoints</h2>
-      <p>Emphasis answers <em>how loud is this object</em>. It never answered <em>how deep is this plane</em> &mdash; a card and the page behind it can both be <code>emph-plain</code> and still must not be the same colour. Five depth roles, applied with <code>.surface-*</code>, filled by the theme.</p>
+      <h2><span class="sec-tag lds-tag hue-blue">Updated</span>Tags, Chips &amp; Status</h2>
+      <p>Semantic status built on the same One&nbsp;Token engine: <code>hue-*</code> sets intent, an emphasis class sets tone, and the <code>--icon</code> token tracks it automatically. <strong>Tags describe; chips do.</strong> These use the fixed semantic hues, so they hold their meaning regardless of the active brand theme.</p>
     </div>
 
     <div class="demo-box">
-      <div class="micro-label">The stack &mdash; switch to Roadtrip above to see a dark-native theme use all five</div>
-      <div class="surf-stack surface-page">
-        <span class="surf-tag">surface-page</span>
-        <div class="surf-stack surface-sunken">
-          <span class="surf-tag">surface-sunken</span>
-          <div class="surf-stack surface-base">
-            <span class="surf-tag">surface-base</span>
-            <div class="surf-stack surface-raised">
-              <span class="surf-tag">surface-raised</span>
-              <div class="surf-stack surface-overlay">
-                <span class="surf-tag">surface-overlay</span>
-              </div>
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Soft tags &mdash; the everyday status pill</div>
+          <div class="chip-row"><span class="lds-tag lds-tag--error"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>error</span><span class="lds-tag lds-tag--warning"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#warning"/></svg></span>warning</span><span class="lds-tag lds-tag--caution"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#error"/></svg></span>caution</span><span class="lds-tag lds-tag--success"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>success</span><span class="lds-tag lds-tag--info"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#infoCircle"/></svg></span>info</span><span class="lds-tag lds-tag--info"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#helpCircle"/></svg></span>helpful</span></div>
+          <div class="micro-label" style="margin-top:20px;">Plain tags &mdash; white bg, hue border + label</div>
+          <div class="chip-row"><span class="lds-tag lds-tag--error emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>error</span><span class="lds-tag lds-tag--warning emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#warning"/></svg></span>warning</span><span class="lds-tag lds-tag--caution emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#error"/></svg></span>caution</span><span class="lds-tag lds-tag--success emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>success</span><span class="lds-tag lds-tag--info emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#infoCircle"/></svg></span>info</span><span class="lds-tag lds-tag--info emph-plain"><span class="lds-tag__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#helpCircle"/></svg></span>helpful</span></div>
+        </div>
+
+        <div>
+          <div class="micro-label">Inline status &mdash; icon + text, no container (icon = label color)</div>
+          <div class="chip-row" style="gap:24px;"><span class="lds-inline lds-inline--error"><span class="lds-inline__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>Enter a valid email address.</span><span class="lds-inline lds-inline--success"><span class="lds-inline__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>Username is available.</span><span class="lds-inline lds-inline--warning"><span class="lds-inline__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#warning"/></svg></span>This can’t be undone.</span></div>
+        </div>
+
+        <div>
+          <div class="micro-label">Chips &mdash; interactive: filter / selected, dropdown, removable</div>
+          <div class="chip-row"><span class="lds-chip" tabindex="0">Filter</span><span class="lds-chip lds-chip--selected" tabindex="0">Selected</span></div>
+          <div class="chip-row" style="margin-top:10px;"><span class="lds-chip" tabindex="0">Status<span class="lds-chip__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronDown"/></svg></span></span><span class="lds-chip" aria-expanded="true" tabindex="0">Sort: Newest<span class="lds-chip__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronDown"/></svg></span></span></div>
+          <div class="chip-row" style="margin-top:10px;"><span class="lds-chip" tabindex="0">Design<span class="lds-chip__remove" aria-label="remove"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#close"/></svg></span></span><span class="lds-chip" tabindex="0"><span class="lds-chip__icon"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>Bug<span class="lds-chip__remove" aria-label="remove"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#close"/></svg></span></span></div>
+        </div>
+
+        <div>
+          <div class="micro-label">Tag &amp; banner &mdash; same composition, different scale</div>
+          <div style="display:flex; flex-direction:column; gap:12px; max-width:520px;">
+            <div class="lds-banner lds-banner--error" data-inspect="backgroundColor, color" data-inspect-state="lds-banner--error (baked)">
+              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#xCircle"/></svg></span>
+              <div>Payment failed &mdash; update your card to continue.</div>
+            </div>
+            <div class="lds-banner lds-banner--success" data-inspect="backgroundColor, color" data-inspect-state="lds-banner--success (baked)">
+              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg></span>
+              <div>Your changes have been saved.</div>
             </div>
           </div>
         </div>
+
       </div>
-      <p class="surf-note">In <strong>light</strong> the top three collapse to one value: on oat paper a brighter card reads as a hole, not as nearer, so elevation is carried by shadow. In <strong>dark</strong> the bottom two collapse, because nothing sits below the darkest step &mdash; and shadow is invisible there, so elevation has to be lightness. That is why a dark-native product needs five distinct surfaces and the portfolio needs two.</p>
+    </div>
+  </section>
+
+  <section id="controls">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Tabs, Toggles &amp; Tables</h2>
+      <p>Section navigation, a binary switch, and tabular data &mdash; the three layout primitives product surfaces reach for most. Colour comes from the emphasis + hue mechanism, same as everything else: drop a <code>hue-*</code> on <code>.lds-tabs</code> or <code>.lds-toggle__track</code> to retint the active state.</p>
     </div>
 
     <div class="demo-box">
-      <div class="micro-label">Breakpoints &mdash; named for what the layout gains, not for a device</div>
-      <div class="surf-scroll">
-        <table class="lds-table">
-          <thead><tr><th>Token</th><th>Value</th><th>What changes</th></tr></thead>
-          <tbody>
-            <tr><td><code>--bp-sm</code></td><td>480px</td><td>One column, thumb reach, no persistent chrome.</td></tr>
-            <tr><td><code>--bp-md</code></td><td>768px</td><td>Two columns fit, or a rail plus content.</td></tr>
-            <tr><td><code>--bp-lg</code></td><td>1024px</td><td>A persistent sidebar stops costing content width.</td></tr>
-            <tr><td><code>--bp-xl</code></td><td>1440px</td><td>Line length, not space, becomes the constraint.</td></tr>
-            <tr><td><code>--bp-short</code></td><td>520px <em>tall</em></td><td>Nothing may assume vertical room.</td></tr>
-          </tbody>
-        </table>
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Tabs &mdash; vertical rail (desktop); segmented control &le;560px</div>
+          <div class="lds-tabs demo-rail" role="tablist">
+            <button class="lds-tabs__tab lds-tabs__tab--active" role="tab" aria-selected="true">Overview</button>
+            <button class="lds-tabs__tab" role="tab" aria-selected="false">Activity</button>
+            <button class="lds-tabs__tab" role="tab" aria-selected="false">Settings</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Toggle &mdash; label, help text, switch</div>
+          <div class="demo-toggles">
+            <label class="lds-toggle">
+              <span class="lds-toggle__text">
+                <span class="lds-toggle__label">Email alerts</span>
+                <span class="lds-toggle__help">Get notified when a watch matches.</span>
+              </span>
+              <span class="lds-toggle__switch"><input type="checkbox" checked /><span class="lds-toggle__track"></span></span>
+            </label>
+            <label class="lds-toggle">
+              <span class="lds-toggle__text">
+                <span class="lds-toggle__label">SMS alerts</span>
+                <span class="lds-toggle__help">Requires a verified phone number.</span>
+              </span>
+              <span class="lds-toggle__switch"><input type="checkbox" disabled /><span class="lds-toggle__track"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Table &mdash; hover row, subdued header</div>
+          <table class="lds-table">
+            <thead>
+              <tr><th>Site</th><th>Status</th><th>Last checked</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Half Dome — Cabin 4</td><td><span class="lds-tag lds-tag--success">available</span></td><td>2m ago</td></tr>
+              <tr><td>Yosemite Valley — Loop B</td><td><span class="lds-tag lds-tag--caution">waitlist</span></td><td>5m ago</td></tr>
+              <tr><td>Tuolumne Meadows — Site 12</td><td><span class="lds-tag lds-tag--error">booked</span></td><td>11m ago</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
-      <p class="surf-note"><strong>Width decides the column count; height decides whether anything may assume vertical room.</strong> A phone in landscape is ~900px wide and ~400px tall &mdash; every width-only breakpoint files it as a tablet, which is exactly how centred modals and full-height drawers end up with their buttons below an unscrollable fold. Rotate your phone: this line is visible in portrait and hidden in landscape. <span class="hide-when-short lds-tag hue-green">Tall enough</span><span class="surf-short-flag lds-tag hue-red">Short viewport &mdash; vertical room is not assumed</span></p>
-      <p class="surf-note"><strong>Gotcha:</strong> a custom property cannot be read inside a media query. <code>@media (min-width: var(--bp-md))</code> does not error &mdash; the block is silently dropped. The <code>@media</code> rules still spell the number; the token is the record of what it means, and the value JS reads so the two cannot drift.</p>
+    </div>
+  </section>
+
+  <section id="cards">
+    <div class="sec-header">
+      <h2>Cards</h2>
+      <p>Card components use the semantic tokens internally so they react flawlessly to theme and mode changes.</p>
+      
+      <div style="margin-top:24px; padding:24px; background:var(--background); border:1px solid var(--border); border-radius:8px;">
+        <h4 style="font-size:14px; margin-bottom:8px; color:#111;">How Emphasis Inheritance Works</h4>
+        <p style="font-size:14px; color:#555; margin-bottom:12px;">By default, buttons and text simply <strong>inherit</strong> the emphasis of their parent card. They automatically pull from <code>var(--text)</code>, <code>var(--border)</code>, and <code>var(--background)</code>.</p>
+        <h4 style="font-size:14px; margin-bottom:8px; color:#111;">Bespoke Overrides</h4>
+        <p style="font-size:14px; color:#555;">To override the emphasis for a specific element (like making a single button or badge pop), simply drop an <code>.emph-*</code> class directly onto it. Because of the One-Token architecture, the browser locally re-resolves the variables for just that node without breaking the parent surface.</p>
+      </div>
+    </div>
+    
+    <div class="demo-box" style="background:var(--bg-hover);">
+      <div class="grid-2">
+        <div class="lds-card emph-plain" data-inspect="backgroundColor, borderColor" data-inspect-state="Explicit (.emph-plain)" style="cursor:crosshair;">
+          <div class="lds-card__kicker">Default Card</div>
+          <div class="lds-card__title">Design tokens at scale</div>
+          <div class="lds-card__body">A machine-readable token architecture consumed by 50+ designers and every downstream platform.</div>
+          <hr class="lds-card__divider">
+          <div class="lds-card__meta">Published 2 days ago</div>
+          <div class="lds-card__actions">
+            <button class="lds-btn emph-strong" data-inspect="backgroundColor, color" data-inspect-state="Bespoke (.emph-strong)">Read Case</button>
+          </div>
+        </div>
+        
+        <div class="lds-card emph-stark" data-inspect="backgroundColor, borderColor" data-inspect-state="Bespoke Override (.emph-stark)" style="cursor:crosshair;">
+          <div class="lds-card__kicker">Stark Card</div>
+          <div class="lds-card__title">Maximum Contrast</div>
+          <div class="lds-card__body">This card uses the stark emphasis to invert itself from the standard flow of the page.</div>
+          <hr class="lds-card__divider">
+          <div class="lds-card__meta">Requires immediate attention</div>
+          <div class="lds-card__actions">
+            <!-- This button uses emph-plain so it falls back to neutral against the dark card -->
+            <button class="lds-btn emph-plain" data-inspect="backgroundColor, color" data-inspect-state="Bespoke Override (.emph-plain)">Action</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 

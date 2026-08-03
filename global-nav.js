@@ -97,11 +97,43 @@
     @media (prefers-reduced-motion: reduce) {
       .lew-hub-menu, .lew-hub-fab { transition: none; }
     }
+
+    /* ---- Docked mode ----
+       A page that owns a nav of its own (the design-system showcase has a
+       sidebar AND a bottom bar on mobile) can host these links instead of
+       having a fixed button land on top of its own controls. Same links, same
+       markup, no floating layer: the widget stops being positioned and the
+       menu stops being a hover popover. */
+    .lew-hub-widget--docked {
+      position: static;
+      display: block;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .lew-hub-widget--docked .lew-hub-fab { display: none; }
+    /* Match the host nav's own group labels rather than the island's title. */
+    .lew-hub-widget--docked .lew-hub-menu-title { font-size: 10px; letter-spacing: 0.1em; padding: 6px 12px; }
+    .lew-hub-widget--docked .lew-hub-menu a { padding: 8px 12px; font-size: 13px; }
+    .lew-hub-widget--docked .lew-hub-menu {
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
   `;
   document.head.appendChild(style);
 
+  // A docked slot inherits the host page's theme and mode; the floating
+  // island does not, so only the floating one declares its own.
+  const slot = document.getElementById('lew-hub-slot');
   const widget = document.createElement('div');
-  widget.className = 'lew-hub-widget mode-dark emph-plain';
+  widget.className = slot
+    ? 'lew-hub-widget lew-hub-widget--docked'
+    : 'lew-hub-widget mode-dark emph-plain';
 
   const menu = document.createElement('div');
   menu.className = 'lew-hub-menu';
@@ -147,13 +179,14 @@
   widget.appendChild(menu);
   widget.appendChild(fab);
 
-  // Fallback for touch devices (hover might stick or act as click)
-  fab.addEventListener('click', () => {
+  // Fallback for touch devices (hover might stick or act as click). Docked mode
+  // has no hover state to rescue and no fab to press.
+  if (!slot) fab.addEventListener('click', () => {
     const isVisible = menu.style.opacity === '1';
     menu.style.opacity = isVisible ? '' : '1';
     menu.style.pointerEvents = isVisible ? '' : 'auto';
     menu.style.transform = isVisible ? '' : 'translateY(0) scale(1)';
   });
 
-  document.body.appendChild(widget);
+  (slot || document.body).appendChild(widget);
 })();
