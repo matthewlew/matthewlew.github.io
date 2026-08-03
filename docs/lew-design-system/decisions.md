@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 77 decisions: **49 human · 26 measured · 2 ai**.
+The split as it stands, across the 78 decisions: **49 human · 27 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -1977,6 +1977,31 @@ which is where palette actually needs it, not just in the browser.
 
 **Ruled out:** reading pixels via `canvas` inside the module. Convenient in a
 page, unusable everywhere else palette needs ink.
+
+### A banner's children shrink; the banner itself does not
+
+`2026-08-03` · `emphasis` · `measured` · `minor`
+
+`.lds-banner` is a flex container and its message was a flex child at the
+default `min-width:auto`, which refuses to shrink below its longest unbreakable
+word. A banner carrying a URL, a site id or a long token pushed the whole page
+sideways on a phone instead of wrapping.
+
+`min-width:0` goes on the children, not on the banner. The banner has to stay
+shrinkable *by its own parent*, and zeroing its min-width would have solved the
+symptom one level too high.
+
+Found by measuring, not by looking: the showcase scrolled sideways at every
+phone width and had done for a long time. The visible overflow was eight pixels
+— small enough to read as a rendering quirk rather than a layout bug.
+
+**Ruled out:** `overflow:hidden` on the banner, which stops the scroll by
+clipping the message instead of wrapping it.
+
+**Cost:** `overflow-wrap:anywhere` on the message will break a long word
+mid-character rather than overflow. That is the right trade for a token or a
+URL and the wrong one for prose, but a banner is never long enough for it to
+show.
 
 ### A field is label, control, help and error
 

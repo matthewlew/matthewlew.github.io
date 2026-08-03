@@ -775,6 +775,13 @@
   font-family:var(--th-body);font-size:var(--size-2);line-height:var(--leading-normal);letter-spacing:var(--tracking-body);
   background:var(--background);color:var(--text);border:1px solid var(--border);
 }
+/* The message is a flex child, and a flex child's default min-width:auto will
+   not shrink below its longest unbreakable word — so a banner containing a URL
+   or a long token pushed the page sideways on a phone rather than wrapping.
+   Applied to the children rather than the banner: the banner itself must stay
+   shrinkable by its own parent. */
+.lds-banner > *{min-width:0;}
+.lds-banner > *:not(.lds-banner__dismiss){overflow-wrap:anywhere;}
 /* default = neutral grey, baked at zero specificity */
 :where(.lds-banner){--icon:var(--grey-500);--background:var(--grey-50);--text:var(--grey-900);--border:var(--grey-200);}
 :where(.mode-dark .lds-banner){--icon:var(--grey-400);--background:var(--grey-900);--text:#FFFFFF;--border:var(--grey-800);}

@@ -60,7 +60,11 @@
     .nav-links a.active { color: var(--text); background: var(--bg-hover); font-weight: 600; }
     
     /* -- Main Content -- */
-    .main { margin-left: var(--sidebar-w); flex: 1; padding: 64px; max-width: 1200px; }
+    /* min-width:0 because .main is a flex item, and a flex item's default
+       min-width:auto refuses to shrink below its content's intrinsic minimum.
+       Without it the column sizes to its widest unbreakable content and the
+       whole page scrolls sideways on a phone — which it has been doing. */
+    .main { margin-left: var(--sidebar-w); flex: 1; min-width: 0; padding: 64px; max-width: 1200px; }
     
     .main > section { margin-bottom: 100px; }
     .sec-header { margin-bottom: 32px; max-width: 68ch; }
@@ -123,6 +127,14 @@
       .spec-row { flex-direction: column; gap: 8px; }
       .rules-grid { grid-template-columns: 1fr; }
       .rule-col.do { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    /* Small phones. 48px of demo-box padding either side leaves 176px of
+       content at 320px wide, which is narrower than the controls it frames. */
+    @media (max-width: 400px) {
+      .main { padding: 80px 16px 40px; }
+      .demo-box { padding: 24px 16px; }
+      .rule-col { padding: 24px 20px; }
     }
     
     /* We override the body theme class application and only apply it to the .demo-box wrappers
