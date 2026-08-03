@@ -331,13 +331,48 @@
   /* density multiplier */
   --density: 1;
 
+  /* ---- control size scale ----
+     One ladder of min-heights for everything a finger or a cursor lands on.
+     Before this, controls sized themselves from padding alone, so a button, a
+     text input and a tab in the same row came out three different heights and
+     nothing in the system said what a "medium" control was.
+
+     Steps are 4px apart because the whole spacing system is on a 4px grid;
+     a scale that drifts off it produces controls that cannot be aligned with
+     anything around them.
+
+       --control-sm    32   dense tables, toolbars, secondary chips
+       --control-md    36   compact forms, small buttons
+       --control-lg    40   the default for tabs and list rows
+       --control-xl    44   the touch floor: default buttons, inputs
+       --control-2xl   48   primary actions, mobile-first surfaces
+       --control-3xl   52   hero CTAs, single-action screens
+
+     THE FLOOR IS PART OF THE SCALE. --target-min is now an alias for the xl
+     step rather than a separate number, because the two were describing the
+     same thing and could drift apart. sm and md sit BELOW the floor on
+     purpose: they are legitimate sizes for a mouse and illegitimate for a
+     thumb, and the coarse-pointer rule further down grows their hit area
+     without changing their size. Anything smaller than sm is not a control. */
+  --control-sm: 32px;
+  --control-md: 36px;
+  --control-lg: 40px;
+  --control-xl: 44px;
+  --control-2xl: 48px;
+  --control-3xl: 52px;
+
   /* minimum interactive target. Themes may raise it (palette uses 44px for
      chrome that sits over artwork); components should never hardcode a size
      below it. */
-  --target-min: 44px;
+  --target-min: var(--control-xl);
 
-  /* iconography */
+  /* iconography — three steps, because an icon is sized by the text it sits
+     beside, not by the component it sits in. sm pairs with caption, base with
+     body, lg with subhead. Tag icons were a hardcoded 13px, which is not a
+     step on anything. */
+  --icon-size-sm: 16px;
   --icon-size: 20px;
+  --icon-size-lg: 24px;
   --icon-weight: 1.75;
 }
 
@@ -619,7 +654,8 @@
   border-radius:var(--pill);
   border:1px solid transparent;
   cursor:pointer;
-  display:inline-flex;align-items:center;gap:8px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:var(--control-xl);
   transition:filter var(--dur-fast) var(--ease-standard),
              background var(--dur-fast) var(--ease-standard),
              transform var(--dur-fast) var(--ease-standard),
@@ -638,7 +674,8 @@
 .lds-btn--ghost{background:transparent;color:var(--text-accent);border-color:transparent;}
 .lds-btn--ghost:hover{background:var(--bg-hover);}
 
-.lds-btn--sm{font-size:calc(var(--size-1) * var(--density));padding:calc(6px * var(--density)) calc(12px * var(--density));}
+.lds-btn--sm{font-size:calc(var(--size-1) * var(--density));padding:calc(6px * var(--density)) calc(12px * var(--density));min-height:var(--control-md);}
+.lds-btn--lg{font-size:calc(var(--text-subhead) * var(--density));padding:calc(12px * var(--density)) calc(22px * var(--density));min-height:var(--control-2xl);}
 
 /* icon-only — drops the horizontal padding so the button is square at exactly
    --target-min. Without this an icon button inherits the label padding and
@@ -735,7 +772,7 @@
 .lds-field textarea,
 .lds-field select{
   width:100%;font-family:var(--th-ui);font-size:var(--text-body);line-height:var(--leading-normal);letter-spacing:var(--tracking-body);
-  padding:10px 12px;border-radius:var(--radius);
+  padding:10px 12px;border-radius:var(--radius);min-height:var(--control-xl);
   border:1px solid var(--border);background:var(--background);color:var(--text);
   outline:none;transition:border-color var(--dur-fast),box-shadow var(--dur-fast);
 }
@@ -785,7 +822,7 @@
 .lds-tag.emph-plain{--icon:var(--c-600);background:#FFFFFF;color:var(--c-800);border-color:var(--c-300);}
 .mode-dark .lds-tag.emph-plain{--icon:var(--c-300);background:transparent;color:var(--c-200);border-color:var(--c-700);}
 /* leading marker — icon takes the icon color token; dot takes the label color */
-.lds-tag__icon{width:13px;height:13px;flex-shrink:0;color:var(--icon);}
+.lds-tag__icon{width:var(--icon-size-sm);height:var(--icon-size-sm);flex-shrink:0;color:var(--icon);}
 .lds-tag__icon svg{width:100%;height:100%;display:block;}
 .lds-tag__dot{width:6px;height:6px;border-radius:50%;background:var(--icon);flex-shrink:0;}
 /* interactive (filter / removable chips) — one-token hover + pressed states */
@@ -808,7 +845,12 @@
   line-height:1.4;color:var(--c-700);
 }
 .mode-dark .lds-inline{color:var(--c-300);}
-.lds-inline__icon{width:14px;height:14px;flex-shrink:0;color:currentColor;}
+/* --icon, not just color: an .lds-icon child sets `color:var(--icon)` on
+   itself, which beat the currentColor inherited from here — so the icon took
+   the neutral icon role while the label took the status hue, and the two read
+   as unrelated. Re-pointing --icon at currentColor fixes it wherever the icon
+   sits in the subtree. */
+.lds-inline__icon{width:var(--icon-size-sm);height:var(--icon-size-sm);flex-shrink:0;color:currentColor;--icon:currentColor;}
 .lds-inline__icon svg{width:100%;height:100%;display:block;}
 
 /* ---- Chip ---- the interactive counterpart to the tag. Tags are read-only
@@ -819,7 +861,7 @@
   --icon:var(--grey-500);
   font-family:var(--th-ui);font-size:var(--text-caption);font-weight:var(--weight-semibold);
   letter-spacing:var(--tracking-wide);line-height:1.4;
-  padding:5px 11px;border-radius:var(--pill);
+  padding:5px 11px;border-radius:var(--pill);min-height:var(--control-md);
   display:inline-flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer;
   background:#FFFFFF;color:var(--grey-800);border:1px solid var(--grey-300);
   transition:background var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard);
@@ -1220,7 +1262,7 @@
 }
 .lds-tabs__tab{
   display:flex;align-items:center;
-  padding:8px 12px;min-height:44px;
+  padding:8px 12px;min-height:var(--control-lg);
   border:none;border-radius:var(--radius-sm);
   background:transparent;color:var(--text-subdued);
   font-family:var(--th-ui);font-size:var(--size-1);font-weight:500;
@@ -1374,6 +1416,7 @@
    keyboard behaviour, form submission and :checked all stay the browser's. */
 .lds-check{
   display:flex;align-items:flex-start;gap:10px;
+  min-height:var(--control-xl);
   font-family:var(--th-ui);font-size:var(--size-1);
   line-height:var(--leading-normal);color:var(--text);
   cursor:pointer;
@@ -1485,7 +1528,7 @@
 .lds-banner__dismiss{
   flex:0 0 auto;align-self:flex-start;
   display:inline-grid;place-items:center;
-  width:28px;height:28px;margin:-4px -6px -4px auto;
+  width:var(--control-sm);height:var(--control-sm);margin:-4px -6px -4px auto;
   border:none;border-radius:var(--radius-sm);
   background:transparent;color:var(--icon);
   cursor:pointer;
@@ -1545,4 +1588,34 @@
    correct: it has the width of a tablet and the height of a phone. */
 @media (max-height:520px){
   .hide-when-short{display:none !important;}
+}
+
+/* ==========================================================================
+   Hit area — for controls deliberately smaller than the touch floor
+   ==========================================================================
+
+   --control-sm and --control-md sit below --target-min on purpose: a 36px
+   button is a reasonable size for a mouse and an unreasonable one for a thumb.
+   The wrong fix is to grow them to 44px everywhere, which throws away the
+   dense sizes the scale exists to provide and inflates every toolbar on a
+   laptop that happens to have a touchscreen.
+
+   So the SIZE stays and the TARGET grows. An absolutely positioned ::after,
+   centred on the control and floored at --target-min, takes the press without
+   participating in layout — nothing shifts, nothing reflows, and the control
+   still measures 36px to a ruler.
+
+   Scoped to (pointer:coarse) so it costs a mouse user nothing. Written with
+   :where() so a component can opt out by stating its own ::after. */
+@media (pointer:coarse){
+  :where(.lds-btn--sm,.lds-chip,.lds-banner__dismiss,.lds-tag--interactive){
+    position:relative;
+  }
+  :where(.lds-btn--sm,.lds-chip,.lds-banner__dismiss,.lds-tag--interactive)::after{
+    content:"";
+    position:absolute;left:50%;top:50%;
+    width:100%;height:100%;
+    min-width:var(--target-min);min-height:var(--target-min);
+    transform:translate(-50%,-50%);
+  }
 }

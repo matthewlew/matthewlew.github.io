@@ -84,10 +84,15 @@
     .main > section { margin-bottom: 100px; }
     .sec-header { margin-bottom: 32px; max-width: 68ch; }
     .sec-header h2 { font-size: 44px; font-weight: 500; letter-spacing: -0.03em; margin-bottom: 12px; color: var(--text); font-family: var(--th-display, sans-serif); }
-    /* Status tag rides the heading. float-free so it wraps with the text, and
-       vertically centred against the cap rather than the line box. */
-    .sec-tag { float: right; margin: 10px 0 0 16px; }
-    @media (max-width: 900px) { .sec-tag { float: none; display: inline-flex; margin: 0 0 8px; } }
+    /* The heading is the flex row, not the tag. Floating the tag took it out
+       of flow, so nothing reserved space beside it and it aligned to the line
+       box rather than to the words — it read as touching the title. As a flex
+       child it is centred on the text and separated by the row's own gap. */
+    .sec-header h2 { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .sec-tag { order: 1; margin-left: auto; }
+    /* On a phone it leads the heading instead of being pushed to a far edge
+       that is only ~20px away. */
+    @media (max-width: 900px) { .sec-tag { order: -1; margin-left: 0; } }
     .sec-header p { font-size: 17px; color: var(--text-subdued); line-height: 1.6; }
     
     .demo-box {
@@ -149,7 +154,12 @@
     .tabbar { display: none; }
 
     @media (max-width: 900px) {
-      .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+      /* 32/24 was sized for a permanent 260px rail. As a drawer over content
+         it spends a fifth of its width on gutters. */
+      .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                 padding: 20px 14px; }
+      .sidebar-header { margin-bottom: 18px; }
+      .sidebar-controls { padding-bottom: 18px; margin-bottom: 18px; gap: 12px; }
       .sidebar.open { transform: translateX(0); }
       /* 24px of top padding, not 80px: nothing floats over the content any
          more, so nothing needs clearing. Bottom clears the tab bar. */
@@ -242,6 +252,25 @@
     .surf-note { font-family: var(--th-body); font-size: var(--text-caption);
                  line-height: 1.6; color: var(--text-subdued); margin-top: 16px; max-width: 68ch; }
     .surf-scroll { overflow-x: auto; }
+    .size-rows { display: flex; flex-direction: column; gap: 10px; }
+    .size-row { display: flex; align-items: center; gap: 16px; }
+    .size-row code { font-family: var(--th-mono, monospace); font-size: 12px; color: var(--text-accent); width: 118px; flex: 0 0 auto; }
+    .size-bar {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 68px; flex: 0 0 auto; border-radius: var(--radius-sm);
+      background: var(--bg-hover); border: 1px solid var(--border);
+      font-family: var(--th-mono, monospace); font-size: 11px; color: var(--text-subdued);
+      font-variant-numeric: tabular-nums;
+    }
+    .size-use { font-size: 13px; color: var(--text-subdued); min-width: 0; }
+    @media (max-width: 560px) {
+      /* The token names differ in width, so letting the code column shrink
+         staggered the bars and made a comparison scale impossible to compare.
+         The label keeps its column; the description drops to its own line. */
+      .size-row { flex-wrap: wrap; gap: 6px 12px; }
+      .size-row code { width: 104px; font-size: 11px; }
+      .size-use { flex-basis: 100%; }
+    }
     /* Inverse of .hide-when-short — the demo needs to show both states. */
     .surf-short-flag { display: none; }
     @media (max-height: 520px) { .surf-short-flag { display: inline-flex; } }
@@ -294,6 +323,7 @@
     <li><a href="#typography">Typography</a></li>
     <li><a href="#radius">Shape</a></li>
     <li><a href="#surfaces">Elevation &amp; Layout</a></li>
+    <li><a href="#sizing">Control Sizes</a></li>
 
     <li class="nav-group">Components</li>
     <li><a href="#buttons">Buttons</a></li>
@@ -450,6 +480,53 @@
       </div>
       <p class="surf-note"><strong>Width decides the column count; height decides whether anything may assume vertical room.</strong> A phone in landscape is ~900px wide and ~400px tall &mdash; every width-only breakpoint files it as a tablet, which is exactly how centred modals and full-height drawers end up with their buttons below an unscrollable fold. Rotate your phone: this line is visible in portrait and hidden in landscape. <span class="hide-when-short lds-tag hue-green">Tall enough</span><span class="surf-short-flag lds-tag hue-red">Short viewport &mdash; vertical room is not assumed</span></p>
       <p class="surf-note"><strong>Gotcha:</strong> a custom property cannot be read inside a media query. <code>@media (min-width: var(--bp-md))</code> does not error &mdash; the block is silently dropped. The <code>@media</code> rules still spell the number; the token is the record of what it means, and the value JS reads so the two cannot drift.</p>
+    </div>
+  </section>
+
+  <section id="sizing">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Control Sizes</h2>
+      <p>One ladder of min-heights for everything a finger or a cursor lands on. Before this, controls sized themselves from padding alone &mdash; a button, an input and a tab in the same row came out three different heights, and nothing in the system said what a &ldquo;medium&rdquo; control was.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">The scale &mdash; steps are 4px apart, on the same grid as spacing</div>
+      <div class="size-rows">
+        <div class="size-row"><code>--control-sm</code><span class="size-bar" style="height:var(--control-sm)">32</span><span class="size-use">Dense toolbars, banner dismiss</span></div>
+        <div class="size-row"><code>--control-md</code><span class="size-bar" style="height:var(--control-md)">36</span><span class="size-use">Compact forms, small buttons, chips</span></div>
+        <div class="size-row"><code>--control-lg</code><span class="size-bar" style="height:var(--control-lg)">40</span><span class="size-use">Tabs and list rows</span></div>
+        <div class="size-row"><code>--control-xl</code><span class="size-bar" style="height:var(--control-xl)">44</span><span class="size-use">The touch floor. Default buttons and inputs</span></div>
+        <div class="size-row"><code>--control-2xl</code><span class="size-bar" style="height:var(--control-2xl)">48</span><span class="size-use">Primary actions, mobile-first surfaces</span></div>
+        <div class="size-row"><code>--control-3xl</code><span class="size-bar" style="height:var(--control-3xl)">52</span><span class="size-use">Hero CTA, single-action screens</span></div>
+      </div>
+      <p class="surf-note"><code>--target-min</code> is now an alias for <code>--control-xl</code> rather than a separate number &mdash; the two were describing the same thing and could drift apart. <strong>sm and md sit below the floor on purpose:</strong> 36px is a reasonable size for a mouse and an unreasonable one for a thumb. Rather than grow them everywhere, a <code>(pointer:coarse)</code> rule adds a centred <code>::after</code> floored at <code>--target-min</code>, so the target grows and the control still measures 36px to a ruler. Nothing reflows.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">Which components use which step</div>
+      <div class="surf-scroll">
+        <table class="lds-table">
+          <thead><tr><th>Token</th><th>Value</th><th>Components</th></tr></thead>
+          <tbody>
+            <tr><td><code>--control-sm</code></td><td>32px</td><td><code>.lds-banner__dismiss</code></td></tr>
+            <tr><td><code>--control-md</code></td><td>36px</td><td><code>.lds-btn--sm</code>, <code>.lds-chip</code></td></tr>
+            <tr><td><code>--control-lg</code></td><td>40px</td><td><code>.lds-tabs__tab</code></td></tr>
+            <tr><td><code>--control-xl</code></td><td>44px</td><td><code>.lds-btn</code>, <code>.lds-btn--icon</code>, <code>.lds-btn.emph-media</code>, <code>.lds-field input</code>, <code>.lds-field select</code>, <code>.lds-check</code>, and <code>--target-min</code></td></tr>
+            <tr><td><code>--control-2xl</code></td><td>48px</td><td><code>.lds-btn--lg</code></td></tr>
+            <tr><td><code>--control-3xl</code></td><td>52px</td><td><em>Unused.</em> Reserved for a hero CTA; the scale ships the step so the first one does not invent a number.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="surf-note">Gaining a hit area but not a height: <code>.lds-tag--interactive</code>. A tag is sized by its label and stays that size; on a coarse pointer it takes a 44px press.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">Icon steps &mdash; an icon is sized by the text beside it, not by its container</div>
+      <div class="chip-row">
+        <span class="lds-tag lds-tag--success"><span class="lds-tag__icon"><svg class="lds-icon"><use href="dist/icons.svg#checkCircle"/></svg></span>caption &middot; icon-size-sm</span>
+        <span class="lds-inline lds-inline--error"><span class="lds-inline__icon"><svg class="lds-icon"><use href="dist/icons.svg#xCircle"/></svg></span>body &middot; icon follows the label</span>
+      </div>
+      <p class="surf-note">Tag icons were a hardcoded 13px, which is not a step on anything; they take <code>--icon-size-sm</code> (16px) now. Inline status icons were taking the neutral <code>--icon</code> role while the label took the status hue, so the two read as unrelated &mdash; the icon slot re-points <code>--icon</code> at <code>currentColor</code>, which fixes it wherever the icon sits in the subtree.</p>
     </div>
   </section>
 

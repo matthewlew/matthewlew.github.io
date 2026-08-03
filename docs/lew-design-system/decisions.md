@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 81 decisions: **51 human · 27 measured · 3 ai**.
+The split as it stands, across the 83 decisions: **52 human · 28 measured · 3 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -1261,6 +1261,40 @@ motion feel broken in a way that is hard to attribute.
 
 ## 6. Geometry & targets
 
+### One control size scale, with the touch floor as a step on it
+
+`2026-08-03` · `geometry` · `human` · `structural`
+
+`--control-sm 32` · `md 36` · `lg 40` · `xl 44` · `2xl 48` · `3xl 52`, as
+min-heights. Controls previously sized themselves from padding alone, so a
+button, a text input and a tab in the same row came out three different heights
+and nothing in the system said what a "medium" control was. Steps are 4px apart
+because the rest of the spacing system is on a 4px grid; a control scale that
+drifts off it produces controls that cannot be aligned with anything near them.
+
+`--target-min` becomes an alias for `--control-xl` rather than a separate 44px.
+The two were describing the same thing from different directions and could drift
+apart — the floor is a step on the ladder, not a parallel rule.
+
+**sm and md sit below the floor deliberately.** 36px is a reasonable size for a
+mouse and an unreasonable one for a thumb, and a system with no sub-floor step
+has no way to express a dense toolbar.
+
+**Ruled out:** growing every control to 44px on touch. It throws away the dense
+sizes the scale exists to provide, and inflates toolbars on any laptop that
+happens to report a touchscreen. Instead the size stays and the *target* grows:
+under `(pointer:coarse)` a centred `::after` floored at `--target-min` takes the
+press without participating in layout. Nothing reflows, and the control still
+measures 36px to a ruler.
+
+**Ruled out:** a `--control-xs` below 32. Anything smaller is not a control —
+it is a glyph that happens to be clickable, and giving it a name in the scale
+would licence building more of them.
+
+**Cost:** `--control-3xl` ships unused. A step nobody has needed yet is a step
+that has not been proven, but the alternative is that the first hero CTA invents
+its own number, which is the failure the scale exists to prevent.
+
 ### Radius is a token, and themes move it hard
 
 `2026-07-24` · `geometry` · `human` · `notable`
@@ -2024,6 +2058,32 @@ the ramp, not to this theme.
 theme now declares all five surfaces and drops none. The cost stands as the
 record of how the gap was found: it took a real product's tokens landing on the
 system to show that the ramp was being asked to carry two unrelated jobs.
+
+### An icon slot re-points --icon, it does not just set color
+
+`2026-08-03` · `color` · `measured` · `minor`
+
+`.lds-inline__icon` set `color:currentColor` so a validation icon would match
+its message exactly. It did not: `.lds-icon` sets `color:var(--icon)` **on
+itself**, so the inherited `currentColor` never reached the glyph. The icon took
+the neutral icon role while the label took the status hue, and the two read as
+two unrelated marks rather than one message.
+
+The fix is `--icon:currentColor` on the slot, not a more specific `color` rule.
+A custom property inherits into the whole subtree, so it holds however the icon
+is nested — as a bare `<svg class="lds-icon">`, wrapped, or swapped for a
+different icon component later. A `color` override only wins against today's
+markup.
+
+**Ruled out:** dropping `color:var(--icon)` from `.lds-icon` so it inherits
+everywhere. That is the same trap in reverse — `--icon` is a real One Token
+role and most icons should take it; a handful of slots want the label's colour
+instead, and those slots are the ones that should say so.
+
+Tag icons were a hardcoded `13px` at the same time — not a step on any scale.
+They take `--icon-size-sm` (16px) now, one of three icon steps: sm pairs with
+caption, base with body, lg with subhead. An icon is sized by the text beside
+it, not by the component around it.
 
 ### Depth is a role, not five more steps on the ramp
 
