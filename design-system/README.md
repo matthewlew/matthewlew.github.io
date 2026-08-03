@@ -117,6 +117,7 @@ via `file://`, so serve the site when checking them.
 | *(none)* | matthewlew.github.io | Editorial, light-default — **this is core** |
 | `themes/product.css` | product surfaces | Neutral, functional |
 | `themes/palette.css` | [palette](https://github.com/matthewlew/palette) | Chromeless, dark-native, media-forward |
+| `themes/roadtrip.css` | [roadtrip](https://roadtrip.floo.ca) | Dark-native, dense, one interactive colour |
 
 The portfolio has no theme file. Core *is* the portfolio brand — the oat
 neutrals, the green ramp, the Coconat/Ronzino/Martian Mono faces, the radius

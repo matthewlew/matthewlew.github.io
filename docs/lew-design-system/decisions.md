@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 78 decisions: **49 human · 27 measured · 2 ai**.
+The split as it stands, across the 79 decisions: **50 human · 27 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -1978,6 +1978,48 @@ which is where palette actually needs it, not just in the browser.
 **Ruled out:** reading pixels via `canvas` inside the module. Convenient in a
 page, unusable everywhere else palette needs ink.
 
+### A roadtrip theme, to argue the proposal in the product's own colours
+
+`2026-08-03` · `themes` · `human` · `notable`
+
+`themes/roadtrip.css`. Dark-native, dense, one interactive colour. It exists so
+the roadtrip app can be seen wearing LDS before a single component is swapped,
+and so the places where the two token sets disagree surface now rather than
+mid-migration.
+
+Every value is read from roadtrip's shipped `web/design-system/tokens.css`, and
+the file marks which hexes are theirs and which are interpolated to fill an LDS
+slot they have no value for.
+
+The brand blues are placed **by role, not by lightness**. `--c-600` is their
+`--rt-brand`, because LDS paints `.emph-strong`, buttons and checked controls
+from `--c-600` — so the app's real brand lands where the app's real fills are.
+`--c-700` and `--c-800` take the hover and pressed blues they already tuned.
+`--c-500` is their `--rt-brand-text`, which exists because they measured
+`--rt-brand` at 4.05:1 as text on `--rt-surface` and it missed the AA floor;
+LDS reads `--c-500` for the same kind of job, so their fix travels with them
+rather than being re-discovered.
+
+`--corner-shape` is set to `round`. Core's squircle is a portfolio flourish and
+would have quietly restyled every panel in the app.
+
+**Ruled out:** inventing a blue ramp on the LDS curve and calling it roadtrip.
+A theme whose values are not the consumer's own values proves nothing about
+what adoption would look like.
+
+**Ruled out:** pointing roadtrip at `themes/product.css`, whose blue is close.
+Close is what makes it dangerous — the diff would have been invisible in review
+and wrong in the app.
+
+**Cost — and the first real finding.** LDS has three slots at the dark end of
+its neutral ramp (`--grey-800/900/950`). Roadtrip's UI uses **five** distinct
+dark surfaces: `bg-base` #0E0F12, `bg` #16171B, `bg-sunken` #1C1D21, `surface`
+#26272D and `surface-raised` #2F3037. Two of the five have nowhere to land, so
+the theme currently drops `bg` and `surface` — the page background and the
+panel colour. A dark-native product surface stack is finer-grained than an
+eleven-step ramp designed around light paper, and closing that is a change to
+the ramp, not to this theme.
+
 ### A banner's children shrink; the banner itself does not
 
 `2026-08-03` · `emphasis` · `measured` · `minor`
@@ -2002,6 +2044,22 @@ clipping the message instead of wrapping it.
 mid-character rather than overflow. That is the right trade for a token or a
 URL and the wrong one for prose, but a banner is never long enough for it to
 show.
+
+**Amended 2026-08-03.** The banner had a second, louder version of the same
+problem. An icon dropped straight into it as a flex child, carrying the
+sprite markup habit used across this codebase —
+`style="width:100%;height:100%"` on the `<svg>` — resolved that 100% against
+the banner rather than against a sized wrapper. Two banners in the showcase
+measured **481px and 772px tall**.
+
+`.lds-banner > .lds-icon` now states its own width, height, `max-width`,
+`max-height` and `aspect-ratio`. Stated width loses to an inline style, so it
+is the max-* pair that actually holds the line — the component sizes its own
+icon rather than trusting the markup to wrap it in something sized.
+
+**Ruled out:** fixing only the two showcase call sites. The markup habit is
+everywhere in this repo and will be repeated; the component is the place that
+can refuse it.
 
 ### A field is label, control, help and error
 

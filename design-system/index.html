@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="dist/lds.css">
   <link rel="stylesheet" href="dist/themes/palette.css">
   <link rel="stylesheet" href="dist/themes/product.css">
+  <link rel="stylesheet" href="dist/themes/roadtrip.css">
   
   <style>
     :root {
@@ -48,7 +49,11 @@
     .sidebar-controls { display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
     .ctl-group label { display: block; font-family: var(--th-mono, monospace); font-size: 10px; color: var(--text-subdued); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; }
     .seg { display: flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-    .seg button { flex: 1; padding: 8px 4px; background: transparent; color: var(--text-subdued); border: none; font-size: 11px; cursor: pointer; transition: 0.2s; font-family: var(--th-mono, monospace); }
+    /* Four themes do not fit one 260px row — the first label was being clipped
+       to "folio". A 2x2 grid holds any even count without shrinking the text. */
+    #segTheme { display: grid; grid-template-columns: 1fr 1fr; }
+    #segTheme button + button + button { border-top: 1px solid var(--border); }
+    .seg button { flex: 1; min-width: 0; padding: 8px 4px; background: transparent; color: var(--text-subdued); border: none; font-size: 11px; cursor: pointer; transition: 0.2s; font-family: var(--th-mono, monospace); }
     .seg button.on { background: var(--text); color: var(--background); font-weight: 700; }
     
     .nav-links { display: flex; flex-direction: column; gap: 4px; list-style: none; overflow-y: auto; }
@@ -69,6 +74,10 @@
     .main > section { margin-bottom: 100px; }
     .sec-header { margin-bottom: 32px; max-width: 68ch; }
     .sec-header h2 { font-size: 44px; font-weight: 500; letter-spacing: -0.03em; margin-bottom: 12px; color: var(--text); font-family: var(--th-display, sans-serif); }
+    /* Status tag rides the heading. float-free so it wraps with the text, and
+       vertically centred against the cap rather than the line box. */
+    .sec-tag { float: right; margin: 10px 0 0 16px; }
+    @media (max-width: 900px) { .sec-tag { float: none; display: inline-flex; margin: 0 0 8px; } }
     .sec-header p { font-size: 17px; color: var(--text-subdued); line-height: 1.6; }
     
     .demo-box {
@@ -241,6 +250,7 @@
         <button data-v="portfolio" class="on">Portfolio</button>
         <button data-v="palette">Palette</button>
         <button data-v="product">Product</button>
+        <button data-v="roadtrip">Roadtrip</button>
       </div>
     </div>
     <div class="ctl-group">
@@ -428,7 +438,7 @@
 
   <section id="inputs">
     <div class="sec-header">
-      <h2>Inputs & Badges</h2>
+      <h2><span class="sec-tag lds-tag hue-blue">Updated</span>Inputs & Badges</h2>
       <p>Form controls, badges, and banners. Note how the border radii and type scales update across all these smaller elements simultaneously.</p>
     </div>
     
@@ -452,11 +462,11 @@
         
         <div style="display:flex; flex-direction:column; gap:16px;">
           <div class="lds-banner lds-banner--success">
-            <svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#checkCircle"/></svg>
+            <svg class="lds-icon"><use href="dist/icons.svg#checkCircle"/></svg>
             <div>Changes saved successfully.</div>
           </div>
           <div class="lds-banner lds-banner--error">
-            <svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#error"/></svg>
+            <svg class="lds-icon"><use href="dist/icons.svg#error"/></svg>
             <div>Hardcoded hex found. Please refactor to tokens.</div>
           </div>
         </div>
@@ -466,7 +476,7 @@
 
   <section id="status">
     <div class="sec-header">
-      <h2>Tags, Chips &amp; Status</h2>
+      <h2><span class="sec-tag lds-tag hue-blue">Updated</span>Tags, Chips &amp; Status</h2>
       <p>Semantic status built on the same One&nbsp;Token engine: <code>hue-*</code> sets intent, an emphasis class sets tone, and the <code>--icon</code> token tracks it automatically. <strong>Tags describe; chips do.</strong> These use the fixed semantic hues, so they hold their meaning regardless of the active brand theme.</p>
     </div>
 
@@ -512,7 +522,7 @@
 
   <section id="controls">
     <div class="sec-header">
-      <h2>Tabs, Toggles &amp; Tables</h2>
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Tabs, Toggles &amp; Tables</h2>
       <p>Section navigation, a binary switch, and tabular data &mdash; the three layout primitives product surfaces reach for most. Colour comes from the emphasis + hue mechanism, same as everything else: drop a <code>hue-*</code> on <code>.lds-tabs</code> or <code>.lds-toggle__track</code> to retint the active state.</p>
     </div>
 
@@ -568,7 +578,7 @@
 
   <section id="forms">
     <div class="sec-header">
-      <h2>Forms &amp; States</h2>
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Forms &amp; States</h2>
       <p>A field is label, control, help and error &mdash; not just label and input. The error red comes from the status map, the same one line that colours <code>lds-tag--error</code>, so repointing it moves both. Loading and empty are states the system had no way to express at all; both now paint from tokens, so they survive a theme and a mode.</p>
     </div>
 
@@ -845,6 +855,7 @@
   });
 
   // Handle Theme Logic
+  const DARK_NATIVE = new Set(['roadtrip', 'palette']);
   const state = { theme: 'portfolio', mode: 'light' };
   
   function applyTheme() {
@@ -862,6 +873,15 @@
         seg.querySelectorAll('button').forEach(b => b.classList.remove('on'));
         btn.classList.add('on');
         state[key] = btn.dataset.v;
+        // roadtrip and palette are dark-native: their canvas is a near-black
+        // frame, and previewing them on light paper shows a surface neither
+        // app ever renders. Selecting one lands you in dark; the mode control
+        // still overrides freely afterwards.
+        if (key === 'theme' && DARK_NATIVE.has(btn.dataset.v)) {
+          state.mode = 'dark';
+          document.querySelectorAll('#segMode button').forEach(b =>
+            b.classList.toggle('on', b.dataset.v === 'dark'));
+        }
         applyTheme();
       });
     });
