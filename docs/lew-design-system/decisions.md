@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 73 decisions: **46 human · 25 measured · 2 ai**.
+The split as it stands, across the 77 decisions: **49 human · 26 measured · 2 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -1977,6 +1977,91 @@ which is where palette actually needs it, not just in the browser.
 
 **Ruled out:** reading pixels via `canvas` inside the module. Convenient in a
 page, unusable everywhere else palette needs ink.
+
+### A field is label, control, help and error
+
+`2026-08-03` · `emphasis` · `human` · `notable`
+
+`.lds-field` styled `label` and `input` and stopped. That meant a form could not
+show a validation error at all, and a `select` or `textarea` dropped to the
+browser's own chrome in the middle of an otherwise styled form.
+
+`lds-inline--error` already existed and was never wired to a field, so every
+consumer either invented a message style or shipped none. `.lds-field__error`
+is now the wiring, and `.lds-field--error` is registered in the status map
+beside `lds-tag--error` — so the red comes from the one line that binds error to
+a colour, and repointing that line moves fields and tags together.
+
+The errored control gets a border **and** a message, never a border alone.
+Colour is not an accessible carrier by itself, which is the same argument that
+puts an icon on every status tag.
+
+**Ruled out:** a standalone `lds-form-message` component. A message that can be
+placed anywhere is a message that gets placed inconsistently; binding it to the
+field is what makes the error and the control impossible to separate.
+
+**Ruled out:** styling `input` only and telling consumers to bring their own
+select. The gap was the reason forms drifted in the first place.
+
+### Checkbox and radio are one component, two shapes
+
+`2026-08-03` · `emphasis` · `human` · `minor`
+
+`.lds-check` with a `--radio` modifier. Everything but the corner radius and the
+mark is shared, and two components would have been two copies of the same eight
+rules that drift the first time one is touched.
+
+Both keep a real, visually-hidden native `input`. Keyboard behaviour, form
+submission and `:checked` stay the browser's; the box is a sibling that paints.
+
+**Ruled out:** restyling the native control with `appearance:none` directly. It
+is fewer elements and it loses `:checked` styling control across browsers.
+
+### The skeleton mixes against the ink, not against white
+
+`2026-08-03` · `emphasis` · `measured` · `notable`
+
+LDS had no loading state at all. The obvious implementation — the one the
+consuming product already shipped — is a white wash:
+`rgba(255,255,255,0.06)` to `0.14`.
+
+That only works on a dark ground. On the oat paper it is invisible, and it
+cannot respond to a theme. `.lds-skeleton` mixes `--text` into transparent
+instead, so it resolves on whatever surface it is dropped on, in either mode,
+under any theme, with no variant.
+
+Heights come from the type role the placeholder stands in for
+(`--text-body × --leading-body`, and the caption and subhead equivalents) rather
+than from round pixel values, so the skeleton occupies exactly the space its
+content will and the layout does not jump on arrival.
+
+**Ruled out:** a white or black wash with a dark-mode twin. Two values that both
+need maintaining, and neither survives a theme with a tinted surface.
+
+**Ruled out:** a spinner as the system's loading primitive. A spinner says
+*something is happening*; a skeleton says *this much content is coming*, which
+is the thing that stops someone reloading.
+
+### Empty state has no variants
+
+`2026-08-03` · `emphasis` · `human` · `minor`
+
+`.lds-empty` with an optional icon, title, body and actions. No `--search`, no
+`--error`, no `--first-run`.
+
+An empty list, a search with no matches and a filter that excluded everything
+differ in their **words**, not their shape. Variants here would encode the
+difference in CSS, where it cannot be translated and cannot be reworded.
+
+**Ruled out:** per-cause modifiers. They multiply with every new cause and none
+of them changes a single declaration.
+
+**Cost:** `.lds-field__error`, `.lds-empty` and `.lds-banner__dismiss` state
+`width`/`height` on their icons rather than driving `--icon-size`. An inline
+`style="width:100%;height:100%"` — the pattern the showcase uses everywhere else
+for `<use>` sprites — beats `--icon-size` on specificity and inflates the icon to
+fill its flex parent. Stating the size is what makes these three robust against
+the markup habit already in the codebase.
 
 ### Tabs, Toggle, and Table — ported from roadtrip's rt-* set, not designed fresh
 

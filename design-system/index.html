@@ -175,6 +175,7 @@
     <li><a href="#inputs">Inputs & Badges</a></li>
     <li><a href="#status">Tags, Chips & Status</a></li>
     <li><a href="#controls">Tabs, Toggles & Tables</a></li>
+    <li><a href="#forms">Forms & States</a></li>
     <li><a href="#guidance">Guidance</a></li>
   </ul>
 </aside>
@@ -473,6 +474,116 @@
               <tr><td>Tuolumne Meadows — Site 12</td><td><span class="lds-tag lds-tag--error">booked</span></td><td>11m ago</td></tr>
             </tbody>
           </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="forms">
+    <div class="sec-header">
+      <h2>Forms &amp; States</h2>
+      <p>A field is label, control, help and error &mdash; not just label and input. The error red comes from the status map, the same one line that colours <code>lds-tag--error</code>, so repointing it moves both. Loading and empty are states the system had no way to express at all; both now paint from tokens, so they survive a theme and a mode.</p>
+    </div>
+
+    <div class="demo-box">
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Field &mdash; help text, required, error, and the controls past <code>input</code></div>
+          <div class="grid-2" style="gap:24px; align-items:start;">
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <div class="lds-field">
+                <label for="f-name" class="lds-field__req">Watch name</label>
+                <input id="f-name" type="text" value="Half Dome, late June" required />
+                <span class="lds-field__help">Shown in the alert subject line.</span>
+              </div>
+              <div class="lds-field lds-field--error">
+                <label for="f-mail">Notify this address</label>
+                <input id="f-mail" type="email" value="matthew@" aria-invalid="true" aria-describedby="f-mail-err" />
+                <span class="lds-field__error" id="f-mail-err">
+                  <svg class="lds-icon"><use href="dist/icons.svg#xCircle"/></svg>
+                  Add the part after the @ &mdash; we could not send to this address.
+                </span>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <div class="lds-field">
+                <label for="f-cadence">Check every</label>
+                <select id="f-cadence">
+                  <option>5 minutes</option>
+                  <option>15 minutes</option>
+                  <option selected>1 hour</option>
+                </select>
+                <span class="lds-field__help">Tighter cadences are rate-limited per vendor.</span>
+              </div>
+              <div class="lds-field">
+                <label for="f-note">Note</label>
+                <textarea id="f-note" rows="2">Two nights, arriving late.</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Checkbox &amp; radio &mdash; one component, two shapes</div>
+          <div class="grid-2" style="gap:24px;">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <label class="lds-check"><input type="checkbox" checked /><span class="lds-check__box"></span>Email me</label>
+              <label class="lds-check"><input type="checkbox" /><span class="lds-check__box"></span>Post to Slack</label>
+              <label class="lds-check"><input type="checkbox" disabled /><span class="lds-check__box"></span>Send a text (needs a number)</label>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <label class="lds-check lds-check--radio"><input type="radio" name="scope" checked /><span class="lds-check__box"></span>Whole campground</label>
+              <label class="lds-check lds-check--radio"><input type="radio" name="scope" /><span class="lds-check__box"></span>One site only</label>
+              <label class="lds-check lds-check--radio"><input type="radio" name="scope" disabled /><span class="lds-check__box"></span>Loop (not yet supported)</label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Skeleton &mdash; height comes from the type role it stands in for</div>
+          <div class="grid-2" style="gap:24px; align-items:start;">
+            <div>
+              <span class="lds-skeleton lds-skeleton--title" style="width:70%"></span>
+              <span class="lds-skeleton lds-skeleton--text" style="margin-top:14px"></span>
+              <span class="lds-skeleton lds-skeleton--text"></span>
+              <span class="lds-skeleton lds-skeleton--text lds-skeleton--last"></span>
+            </div>
+            <div style="display:flex; gap:14px; align-items:center;">
+              <span class="lds-skeleton lds-skeleton--circle" style="width:44px"></span>
+              <div style="flex:1">
+                <span class="lds-skeleton lds-skeleton--text" style="width:52%"></span>
+                <span class="lds-skeleton lds-skeleton--caption" style="width:78%"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Empty state &mdash; no variants; an empty list and a failed search differ in words, not shape</div>
+          <div class="lds-empty" style="border:1px solid var(--border-subdued); border-radius:var(--radius);">
+            <svg class="lds-icon"><use href="dist/icons.svg#search"/></svg>
+            <p class="lds-empty__title">No sites match this window</p>
+            <p class="lds-empty__body">Nothing is open between 12 and 15 June. Widening the window by a night is usually enough.</p>
+            <div class="lds-empty__actions">
+              <button class="lds-btn lds-btn--sm emph-plain">Change dates</button>
+              <button class="lds-btn lds-btn--sm emph-strong">Watch instead</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Banner &mdash; now dismissible</div>
+          <div style="display:flex; flex-direction:column; gap:12px; max-width:560px;">
+            <div class="lds-banner lds-banner--success">
+              <span style="width:16px;height:16px;flex-shrink:0;color:var(--icon);display:inline-flex"><svg class="lds-icon"><use href="dist/icons.svg#checkCircle"/></svg></span>
+              <div>Watch created. We will email you the moment something opens.</div>
+              <button class="lds-banner__dismiss" aria-label="Dismiss">
+                <svg class="lds-icon"><use href="dist/icons.svg#close"/></svg>
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
