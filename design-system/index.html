@@ -222,6 +222,19 @@
        the full width, which is the behaviour being demonstrated. */
     @media (min-width: 561px) { .demo-rail { max-width: 200px; } }
     .demo-toggles { max-width: 340px; display:flex; flex-direction:column; gap:16px; }
+
+    /* Surfaces demo. Nested rather than side by side: the whole point is that a
+       plane is only legible against the plane it sits on. */
+    .surf-stack { padding: 14px; border-radius: var(--radius); }
+    .surf-tag { font-family: var(--th-mono); font-size: 11px; letter-spacing:.04em;
+                color: var(--text-subdued); display:block; margin-bottom: 10px; }
+    .surf-stack > .surf-stack { box-shadow: var(--card-shadow); }
+    .surf-note { font-family: var(--th-body); font-size: var(--text-caption);
+                 line-height: 1.6; color: var(--text-subdued); margin-top: 16px; max-width: 68ch; }
+    .surf-scroll { overflow-x: auto; }
+    /* Inverse of .hide-when-short — the demo needs to show both states. */
+    .surf-short-flag { display: none; }
+    @media (max-height: 520px) { .surf-short-flag { display: inline-flex; } }
   </style>
 </head>
 <body>
@@ -272,6 +285,7 @@
     <li><a href="#status">Tags, Chips & Status</a></li>
     <li><a href="#controls">Tabs, Toggles & Tables</a></li>
     <li><a href="#forms">Forms & States</a></li>
+    <li><a href="#surfaces">Surfaces &amp; Breakpoints</a></li>
     <li><a href="#guidance">Guidance</a></li>
   </ul>
 </aside>
@@ -683,6 +697,51 @@
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <section id="surfaces">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Surfaces &amp; Breakpoints</h2>
+      <p>Emphasis answers <em>how loud is this object</em>. It never answered <em>how deep is this plane</em> &mdash; a card and the page behind it can both be <code>emph-plain</code> and still must not be the same colour. Five depth roles, applied with <code>.surface-*</code>, filled by the theme.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">The stack &mdash; switch to Roadtrip above to see a dark-native theme use all five</div>
+      <div class="surf-stack surface-page">
+        <span class="surf-tag">surface-page</span>
+        <div class="surf-stack surface-sunken">
+          <span class="surf-tag">surface-sunken</span>
+          <div class="surf-stack surface-base">
+            <span class="surf-tag">surface-base</span>
+            <div class="surf-stack surface-raised">
+              <span class="surf-tag">surface-raised</span>
+              <div class="surf-stack surface-overlay">
+                <span class="surf-tag">surface-overlay</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="surf-note">In <strong>light</strong> the top three collapse to one value: on oat paper a brighter card reads as a hole, not as nearer, so elevation is carried by shadow. In <strong>dark</strong> the bottom two collapse, because nothing sits below the darkest step &mdash; and shadow is invisible there, so elevation has to be lightness. That is why a dark-native product needs five distinct surfaces and the portfolio needs two.</p>
+    </div>
+
+    <div class="demo-box">
+      <div class="micro-label">Breakpoints &mdash; named for what the layout gains, not for a device</div>
+      <div class="surf-scroll">
+        <table class="lds-table">
+          <thead><tr><th>Token</th><th>Value</th><th>What changes</th></tr></thead>
+          <tbody>
+            <tr><td><code>--bp-sm</code></td><td>480px</td><td>One column, thumb reach, no persistent chrome.</td></tr>
+            <tr><td><code>--bp-md</code></td><td>768px</td><td>Two columns fit, or a rail plus content.</td></tr>
+            <tr><td><code>--bp-lg</code></td><td>1024px</td><td>A persistent sidebar stops costing content width.</td></tr>
+            <tr><td><code>--bp-xl</code></td><td>1440px</td><td>Line length, not space, becomes the constraint.</td></tr>
+            <tr><td><code>--bp-short</code></td><td>520px <em>tall</em></td><td>Nothing may assume vertical room.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="surf-note"><strong>Width decides the column count; height decides whether anything may assume vertical room.</strong> A phone in landscape is ~900px wide and ~400px tall &mdash; every width-only breakpoint files it as a tablet, which is exactly how centred modals and full-height drawers end up with their buttons below an unscrollable fold. Rotate your phone: this line is visible in portrait and hidden in landscape. <span class="hide-when-short lds-tag hue-green">Tall enough</span><span class="surf-short-flag lds-tag hue-red">Short viewport &mdash; vertical room is not assumed</span></p>
+      <p class="surf-note"><strong>Gotcha:</strong> a custom property cannot be read inside a media query. <code>@media (min-width: var(--bp-md))</code> does not error &mdash; the block is silently dropped. The <code>@media</code> rules still spell the number; the token is the record of what it means, and the value JS reads so the two cannot drift.</p>
     </div>
   </section>
 

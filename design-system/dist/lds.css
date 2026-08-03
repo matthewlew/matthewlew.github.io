@@ -108,6 +108,46 @@
   --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
   --grain-opacity:.4;
 
+  /* ---- breakpoints ----
+     READ THIS BEFORE USING THEM: a custom property CANNOT be read inside a
+     media query. `@media (min-width: var(--bp-md))` does not fail loudly, it
+     fails silently — the whole block is dropped. These tokens exist so that
+     JS (matchMedia, ResizeObserver), container queries, and clamp()/calc()
+     read the same numbers the stylesheet does, and so the numbers have names.
+     The @media rules below still spell the value; the token is the record of
+     what that value MEANS.
+
+     Four widths, chosen by what the layout has to do rather than by device:
+       --bp-sm   one column, thumb reach, no persistent chrome
+       --bp-md   two columns fit, or a rail plus content
+       --bp-lg   a persistent sidebar stops costing content width
+       --bp-xl   line length, not space, becomes the constraint
+
+     min-width-first, always. The 767/768 style off-by-one only exists when a
+     max-width query and a min-width query try to describe the same boundary
+     from both sides; one of them is always wrong by a pixel, and fractional
+     viewport widths (browser zoom, Windows scaling) land in the crack. Write
+     the base rule for small and add capability upward — then there is one
+     number per boundary and no gap to fall into. */
+  --bp-sm:480px;
+  --bp-md:768px;
+  --bp-lg:1024px;
+  --bp-xl:1440px;
+
+  /* ---- the height breakpoint, which is the one people forget ----
+     A phone in landscape is ~740-930px WIDE and ~380-430px TALL. Every
+     width-only breakpoint files it as a tablet and hands it a tablet layout
+     with a tablet's assumptions about vertical room — and that is where
+     centred modals, bottom sheets, sticky headers and full-height drawers
+     break, because the thing that ran out was height and nothing measured it.
+
+     So: width decides the COLUMN COUNT, height decides whether anything may
+     assume vertical room. Any component that fills or centres vertically pairs
+     its width query with `(max-height:520px)`. 520 clears the tallest phone
+     landscape (932x430 on a Pro Max) with room, and no tablet in portrait or
+     landscape is under it. */
+  --bp-short:520px;
+
   --space-0:0;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;
   --space-5:20px;--space-6:24px;--space-7:32px;--space-8:40px;
 
@@ -329,6 +369,71 @@
    matters, and the fix is to mirror it to the light end of its own ramp rather
    than nudge it one step. */
 .mode-dark.emph-plain, .mode-dark .emph-plain {--background:var(--grey-950);--text:var(--grey-50);--text-accent:var(--c-100);--text-subdued:var(--grey-300);--icon:var(--grey-400);--border:var(--grey-600);--border-subdued:var(--grey-700);--bg-hover:var(--grey-900);--bg-pressed:var(--grey-800);--link:var(--link-dark);}
+
+/* ---- Layer 2b: surface elevation ----
+   Emphasis answers "how loud is this OBJECT". It does not answer "how deep is
+   this PLANE", and those are different questions: a card and the page behind it
+   can both be .emph-plain and still must not be the same colour.
+
+   Five planes, named by depth rather than by lightness, because which direction
+   is "up" is a property of the mode and not of the system:
+
+     --surface-sunken    a well: inset lists, code, map gutters, empty tracks
+     --surface-page      the frame everything sits in
+     --surface-base      the default panel
+     --surface-raised    a card sitting on a panel
+     --surface-overlay   modal, popover, drawer, sheet
+
+   The ramp is NOT extended to hold these. --grey-* is a lightness scale and its
+   eleven steps are consumed by text, borders and icons across the whole system;
+   adding an 850 and a 925 to solve an elevation problem changes the shape of a
+   scale that has nothing to do with elevation. Depth gets its own roles, and a
+   theme points them wherever it likes — at ramp steps, or at its own hexes.
+
+   Note what the defaults do at the ends:
+
+   LIGHT COLLAPSES AT THE TOP. base, raised and overlay are all grey-50. On oat
+   paper a brighter card reads as a hole, not as nearer (the same finding that
+   took --background off #FFFFFF), so in light, elevation is carried by SHADOW.
+   Three planes are enough.
+
+   DARK COLLAPSES AT THE BOTTOM. sunken and page are both grey-950, because
+   there is nothing below it. In dark, shadow is nearly invisible against a
+   near-black ground, so elevation has to be carried by LIGHTNESS — and the
+   moment that is true you need every step distinct.
+
+   Which is the whole answer to why roadtrip ships five dark surfaces and the
+   portfolio ships two: it is not that one of them is over-specified. A
+   dark-native product spends its entire elevation budget in the bottom three
+   steps of the ramp, so that is where it needs resolution. */
+:root{
+  --surface-sunken:var(--grey-200);
+  --surface-page:var(--grey-100);
+  --surface-base:var(--grey-50);
+  --surface-raised:var(--grey-50);
+  --surface-overlay:var(--grey-50);
+}
+.mode-dark{
+  --surface-sunken:var(--grey-950);
+  --surface-page:var(--grey-950);
+  --surface-base:var(--grey-900);
+  --surface-raised:var(--grey-800);
+  --surface-overlay:var(--grey-800);
+}
+
+/* The roles are applied through classes rather than being baked into
+   components, because depth is a decision about LAYOUT and the component does
+   not know what it has been put inside. A .lds-card is a card whether it is on
+   the page or in a drawer.
+
+   Setting --background as well as background is what makes them compose: a
+   child that paints from --background inherits the plane, and a child carrying
+   its own .emph-* still wins on itself. */
+.surface-sunken{background:var(--surface-sunken);--background:var(--surface-sunken);}
+.surface-page{background:var(--surface-page);--background:var(--surface-page);}
+.surface-base{background:var(--surface-base);--background:var(--surface-base);}
+.surface-raised{background:var(--surface-raised);--background:var(--surface-raised);}
+.surface-overlay{background:var(--surface-overlay);--background:var(--surface-overlay);}
 
 /* SUBTLE — the lightest wash of the hue. Reserved for LARGE fields (banners,
    cards): a big plane of color needs less saturation to register, so it stays
@@ -826,6 +931,9 @@
 
 /* ---- Modal ---- */
 .lds-modal-scrim{background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:24px;}
+/* Zero-specificity, so an .emph-* on the modal itself still wins. A modal is
+   the top plane by definition; it should not have to be told. */
+:where(.lds-modal){--background:var(--surface-overlay);}
 .lds-modal{
   background:var(--background);color:var(--text);
   border:1px solid var(--border);border-radius:var(--radius-lg);
@@ -1386,3 +1494,55 @@
 .lds-banner__dismiss:hover{background:color-mix(in srgb,currentColor 12%,transparent);color:var(--text);}
 .lds-banner__dismiss:focus-visible{outline:2px solid var(--text-accent);outline-offset:1px;}
 .lds-banner__dismiss .lds-icon{width:16px;height:16px;color:currentColor;}
+
+/* ==========================================================================
+   Responsive — the four widths, and the height nobody checks
+   ========================================================================== */
+
+/* ---- phone landscape ----
+   The concrete failure this fixes: a centred modal in a 932x430 viewport is
+   filed as "desktop" by every width query in the system, so it keeps its 24px
+   scrim padding and its natural height, and its buttons end up below the fold
+   of a window that cannot scroll — the scrim is the scroll container and it is
+   exactly viewport-height.
+
+   Note the query is height-only. Adding `(orientation:landscape)` reads as more
+   precise and is worse: a short window on a desktop is still short, and a
+   phone with the keyboard open is portrait and short at the same time. Height
+   is the thing that ran out. Measure that. */
+@media (max-height:520px){
+  .lds-modal-scrim{
+    align-items:flex-start;
+    padding:16px;
+    overflow-y:auto;
+  }
+  .lds-modal{
+    max-height:calc(100dvh - 32px);
+    overflow-y:auto;
+  }
+}
+
+/* ---- visibility utilities ----
+   min-width-first: the un-suffixed state is the small one, and each step adds.
+   Named for the boundary they cross, not for a device — `hide-below-lg` stays
+   true when a tablet gets bigger, `hide-on-tablet` does not.
+
+   `display:revert` and not `display:block`: these are put on flex rows, grid
+   items and inline spans, and forcing block silently breaks the layout the
+   element was already in. */
+.hide-below-md,
+.hide-below-lg{display:none !important;}
+@media (min-width:768px){
+  .hide-below-md{display:revert !important;}
+  .hide-md-up{display:none !important;}
+}
+@media (min-width:1024px){
+  .hide-below-lg{display:revert !important;}
+  .hide-lg-up{display:none !important;}
+}
+/* Short viewports are a third axis, not a width. A phone in landscape is
+   `hide-md-up`-visible and `hide-when-short`-hidden at the same time, which is
+   correct: it has the width of a tablet and the height of a phone. */
+@media (max-height:520px){
+  .hide-when-short{display:none !important;}
+}

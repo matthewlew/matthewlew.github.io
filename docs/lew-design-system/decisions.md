@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 79 decisions: **50 human · 27 measured · 2 ai**.
+The split as it stands, across the 81 decisions: **51 human · 27 measured · 3 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -2019,6 +2019,96 @@ the theme currently drops `bg` and `surface` — the page background and the
 panel colour. A dark-native product surface stack is finer-grained than an
 eleven-step ramp designed around light paper, and closing that is a change to
 the ramp, not to this theme.
+
+**Resolved** by *Depth is a role, not five more steps on the ramp* (below). The
+theme now declares all five surfaces and drops none. The cost stands as the
+record of how the gap was found: it took a real product's tokens landing on the
+system to show that the ramp was being asked to carry two unrelated jobs.
+
+### Depth is a role, not five more steps on the ramp
+
+`2026-08-03` · `color` · `ai` · `structural`
+
+Five surface-elevation roles — `--surface-sunken`, `--surface-page`,
+`--surface-base`, `--surface-raised`, `--surface-overlay` — sitting alongside
+the emphasis ladder rather than inside it, applied through `.surface-*` classes.
+
+Emphasis answers *how loud is this object*. It never answered *how deep is this
+plane*, and those are different questions: a card and the page behind it can
+both be `.emph-plain` and still must not be the same colour.
+
+The defaults collapse at opposite ends, and that is the finding rather than a
+compromise. In light, `base`/`raised`/`overlay` are all `--grey-50` — on oat
+paper a brighter card reads as a hole, not as nearer, so elevation is carried by
+**shadow** and three planes suffice. In dark, `sunken` and `page` are both
+`--grey-950` because there is nothing below it, and shadow is nearly invisible
+on a near-black ground, so elevation has to be carried by **lightness** — and
+the moment that is true, every step has to be distinct. A dark-native product
+spends its entire elevation budget in the bottom three steps of the ramp. That
+is why roadtrip ships five dark surfaces and the portfolio ships two, and
+neither is over-specified.
+
+**Ruled out:** extending `--grey-*` with an 850 and a 925 to hold the missing
+two. That was the obvious fix and it is the wrong shape — the ramp is a
+*lightness scale* whose eleven steps are consumed by text, borders and icons
+across the entire system, and changing its shape to solve an *elevation* problem
+would move every one of those. The ramp stays raw material; depth gets roles.
+
+**Ruled out:** baking the roles into components (`.lds-card` painting
+`--surface-raised` directly). A component does not know what it has been put
+inside — a card is a card whether it sits on the page or in a drawer. Depth is a
+decision about layout, so it is applied by the layout. `.lds-modal` is the one
+exception, wired at zero specificity through `:where()`: a modal is the top
+plane by definition, and an `.emph-*` on it still wins.
+
+**Cost:** `.surface-*` sets both `background` and `--background`, which is what
+makes a plane inherit into its children. A child that needs a different ground
+must carry its own `.emph-*` or `.surface-*` — reaching for a bare
+`background:` on it will look right and leave `--background` lying about what it
+is sitting on.
+
+### Breakpoint tokens that media queries cannot read
+
+`2026-08-03` · `geometry` · `human` · `notable`
+
+`--bp-sm 480` · `--bp-md 768` · `--bp-lg 1024` · `--bp-xl 1440`, plus
+`--bp-short 520` on the height axis. Named for what the layout gains at each —
+one column, two columns, a sidebar that stops costing content width, line length
+becoming the constraint — rather than for a device, because the device that
+matches a number changes yearly and the layout behaviour does not.
+
+Six literal breakpoints were in use across the system, including a 767/768 pair
+describing one boundary from both sides. **All queries are min-width-first.** An
+off-by-one only exists when a `max-width` rule and a `min-width` rule meet at the
+same edge: one of them is wrong by a pixel, and fractional viewport widths —
+browser zoom, Windows display scaling — land in the crack. Write the base rule
+small and add capability upward and there is one number per boundary.
+
+**The height axis is not optional.** A phone in landscape is ~740–930px wide and
+~380–430px tall. Every width-only breakpoint files it as a tablet and hands it a
+tablet's assumptions about vertical room, which is precisely where centred
+modals, sticky headers and full-height drawers break — the thing that ran out
+was height, and nothing measured it. So: **width decides column count, height
+decides whether anything may assume vertical room.** Anything that fills or
+centres vertically pairs its width query with `(max-height:520px)`; 520 clears
+the tallest phone landscape (932×430) with room and sits under no tablet in
+either orientation. `.lds-modal` now scrolls and pins to the top there instead
+of putting its buttons below an unscrollable fold.
+
+**Ruled out:** `(orientation:landscape)` in that query. It reads as more precise
+and is worse — a short window on a desktop is still short, and a phone with the
+keyboard open is portrait *and* short simultaneously. Orientation is a proxy;
+height is the measurement.
+
+**Ruled out:** a `--bp-2xl`. Past 1440 the constraint is line length, which
+`max-width` on the content already solves; a breakpoint there would invite
+layouts that get wider for no reason.
+
+**Cost:** a custom property **cannot** be read inside a media query.
+`@media (min-width: var(--bp-md))` does not error — the entire block is
+silently dropped. The `@media` rules still spell the number; the token is the
+record of what that number means, and the value JS and container queries read
+so they cannot drift from it.
 
 ### A banner's children shrink; the banner itself does not
 

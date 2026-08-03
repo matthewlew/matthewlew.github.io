@@ -45,11 +45,9 @@
      roles from --grey-*, so a theme that sets only --c-* renders roadtrip's
      dark blue chrome on the portfolio's oat paper.
 
-     Roadtrip's neutrals are a cool dark ramp with five distinct dark surfaces:
-     bg-base #0E0F12, bg #16171B, bg-sunken #1C1D21, surface #26272D and
-     surface-raised #2F3037. LDS has three slots at that end — 800, 900, 950 —
-     so two of the five have nowhere to land. See the cost note in
-     decisions.md; this is the first real finding the theme surfaces. */
+     Roadtrip's neutrals are a cool dark ramp. Its five dark surfaces do NOT
+     live here — they land on the surface-elevation roles below, which is what
+     those roles were added for. The ramp carries text, borders and icons. */
   --grey-50:#F4F5F7;   /* interpolated */
   --grey-100:#E8EAED;  /* --rt-text */
   --grey-200:#CFD3D8;  /* interpolated */
@@ -61,6 +59,22 @@
   --grey-800:#2F3037;  /* --rt-surface-raised */
   --grey-900:#1C1D21;  /* --rt-bg-sunken */
   --grey-950:#0E0F12;  /* --rt-bg-base — the frame behind everything */
+
+  /* ---- Surfaces ----
+     All five, distinct, straight from roadtrip's own tokens. This is the whole
+     reason the elevation roles exist: they are a five-slot stack that a theme
+     fills, so a dark-native product does not have to force five planes through
+     the three dark steps of a lightness ramp.
+
+     Mapped by ORDER, not by name. Roadtrip's --rt-bg-sunken (#1C1D21) is
+     LIGHTER than its --rt-bg (#16171B), so it lands on --surface-base rather
+     than on the role that shares its word. Depth is what the eye reads; the
+     names are historical. */
+  --surface-page:#0E0F12;     /* --rt-bg-base — the frame behind everything */
+  --surface-sunken:#16171B;   /* --rt-bg */
+  --surface-base:#1C1D21;     /* --rt-bg-sunken */
+  --surface-raised:#26272D;   /* --rt-surface */
+  --surface-overlay:#2F3037;  /* --rt-surface-raised */
 
   /* ---- Type ----
      Roadtrip ships a system stack, not a licensed face. Its workhorse is 13px
