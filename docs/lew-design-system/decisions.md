@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 83 decisions: **52 human · 28 measured · 3 ai**.
+The split as it stands, across the 87 decisions: **56 human · 28 measured · 3 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -2325,9 +2325,136 @@ two-click destructive action) rather than the general-purpose primitives every
 surface reaches for — lower parity value per hour than tabs/toggle/table, and
 easier to get right with more than one caller to check assumptions against.
 
-**Cost:** `.lds-table` ships unstriped, hover-only — no `--table-stripe` token
-yet. A product page that wants zebra rows still hand-rolls
-`tbody tr:nth-child(even)`.
+**Cost:** `.lds-table` ships unstriped, hover-only — no `--table-stripe` token.
+That was an open question when this was written; it is now settled deliberately,
+below, and is not a gap waiting to be filled.
+
+### The table separates rows with a divider, never a stripe
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+`.lds-table` will not grow a `--table-stripe` token. A 1px `--border-subdued`
+rule between rows is enough separation, and it is the separation the rest of the
+system already uses — the card divider, the modal header and footer seams, the
+tabs rail edge are all the same line.
+
+A stripe is a second, competing mechanism for the same job, and it is the more
+expensive one. It paints a background on every other row, so it collides with
+the row `:hover` fill, with any `emph-*` a cell carries, and with the tinted
+surfaces a theme is free to introduce — and it has to be re-derived per theme
+and per mode, because a wash that reads as a stripe on oat paper reads as a
+banded defect on a dark ground.
+
+**Ruled out:** a `--table-stripe` token, and zebra rows generally. The earlier
+entry recorded their absence as a cost to be paid off later; it is not. A
+product that genuinely needs banding for a very wide table can still state
+`tbody tr:nth-child(even)` itself — the system just does not bless it.
+
+### The secret field is a composition inside `.lds-field`, not a component
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+Deferred in the entry above as too single-consumer-shaped. It came back smaller
+than the deferral implied, because it is not a component: `.lds-secret` is two
+rows — the mask with a Replace button, and the password input with a Cancel —
+that sit *inside* a `.lds-field`.
+
+roadtrip's `rt-secret-field` carried its own label and its own help text. That is
+a second, divergent copy of the label and help `.lds-field` already owns, and it
+is why the original had no error state at all: having stepped outside the field,
+it had nowhere to report a rejected credential. Nested, it inherits the label,
+the help, the error and the required marker for free.
+
+The Replace and Cancel buttons are `.lds-btn--secondary` and `.lds-btn--tertiary`
+at `--sm`. The originals were those two buttons re-implemented at a different
+size, with their own borders and hovers, which is how they drifted from the
+button scale without anyone noticing.
+
+The mask takes the mono face, and that is a real requirement rather than a
+stylistic one: the hint suffix — the last few characters, the only part that
+says *which* credential this is — has to sit at the same offset from row to row
+or a list of credentials cannot be scanned.
+
+**Ruled out:** `.lds-secret` as a standalone component with its own label and
+help. Two labels in the system means two things to restyle, and the one outside
+the field would keep losing the states the field gains.
+
+**Ruled out:** a `type="password"` variant on `.lds-field` instead. It would
+style the input and miss the point — the component is the *stored/replacing*
+mode switch, not the masking.
+
+### Two-step confirm is a state a button is in, not a button
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+The other deferred piece. `.lds-btn.is-armed` — first press arms, second
+commits; the consumer owns the label change and the disarm timeout, the system
+owns what armed looks like.
+
+roadtrip's `rt-dbl-btn` was an entire button re-implemented in order to add one
+state: its own height, padding, border, font and hover, plus a `--compact`
+modifier duplicating a size the scale already had. The cost of that shape is
+what it cannot be — it could never be a primary button, never be large, and
+never picked up the focus ring `.lds-btn` gets. As a state it composes with
+every variant and size on the shelf and inherits all of them.
+
+Red is bound at the state rather than asked for with a `hue-*`, because armed is
+a status and not a colour choice — the same binding `.lds-banner--error` gets,
+and the reason there is no `hue-error` to reach for.
+
+**Ruled out:** `.lds-confirm` as a component. It would have to re-state the
+button, and then track it.
+
+**Ruled out:** `--compact`. `.lds-btn--sm` is that size, and it is on the
+control scale.
+
+**Cost:** `is-armed` is a bare state class, not `lds-`-prefixed, so it is on the
+consumer to keep it off unrelated elements. It reads as a state at the call site,
+which is worth more here than the namespace.
+
+### The modal grows a header, and a sheet on phones
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+The modal shipped as a padded card with a title, a body and an actions row. It
+had no close affordance, no way to scroll the body while the title stayed put,
+and no answer for a phone.
+
+Padding moves off the card and onto the parts as soon as a header is present,
+selected with `:has(.lds-modal__header)` rather than a `--framed` modifier: a
+header that has to sit inside 22px of card padding cannot draw its divider edge
+to edge, and the author should not have to declare a fact the markup already
+states. The body becomes the only scrolling region and the actions sit outside
+it, so the commit button is reachable without scrolling a long body to its end.
+
+`.lds-modal--sheet` docks the modal to the bottom edge below 560px and rounds
+only the top corners. Above that width the class does nothing — it is still a
+centred modal, one markup path. 560px is the tabs breakpoint, reused
+deliberately: a second phone width in the same system produces a viewport where
+the tabs have collapsed and the modal has not, and nobody can say which of the
+two is wrong.
+
+The close button shares its paint with `.lds-banner__dismiss`. Same control,
+same job, different container; only the margins differ.
+
+Being flush with the bottom edge is also what makes the sheet the one component
+in the system that has to know about `env(safe-area-inset-bottom)`: on a phone
+that edge is where the home indicator sits, and without the inset the commit
+button renders underneath it. It goes on whichever region is last, and resolves
+to zero on every device that has no inset.
+
+**Ruled out:** shipping the drag-to-dismiss gesture. LDS has no runtime and is
+not getting one. The CSS ships the hook instead — set `.is-dragging` and the
+sheet drops its transition so it can track the finger — and the consumer owns
+the pointer handling.
+
+**Ruled out:** a `--framed` or `--sectioned` modifier to opt into the header
+layout. `:has()` reads the markup that already exists; a modifier is a second
+place to get it wrong.
+
+**Cost:** a modal with a `__header` gets `overflow:hidden` and a max-height, so
+a popover or menu that needs to escape the modal's bounds cannot be a child of
+one. It has to render to the scrim.
 
 ---
 

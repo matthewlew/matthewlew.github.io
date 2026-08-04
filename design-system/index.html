@@ -331,6 +331,7 @@
     <li><a href="#forms">Forms &amp; States</a></li>
     <li><a href="#status">Tags, Chips &amp; Status</a></li>
     <li><a href="#controls">Tabs, Toggles &amp; Tables</a></li>
+    <li><a href="#overlays">Secrets, Confirm &amp; Modal</a></li>
     <li><a href="#cards">Cards</a></li>
 
     <li class="nav-group">Guidelines</li>
@@ -508,7 +509,7 @@
         <table class="lds-table">
           <thead><tr><th>Token</th><th>Value</th><th>Components</th></tr></thead>
           <tbody>
-            <tr><td><code>--control-sm</code></td><td>32px</td><td><code>.lds-banner__dismiss</code></td></tr>
+            <tr><td><code>--control-sm</code></td><td>32px</td><td><code>.lds-banner__dismiss</code>, <code>.lds-modal__close</code></td></tr>
             <tr><td><code>--control-md</code></td><td>36px</td><td><code>.lds-btn--sm</code>, <code>.lds-chip</code></td></tr>
             <tr><td><code>--control-lg</code></td><td>40px</td><td><code>.lds-tabs__tab</code></td></tr>
             <tr><td><code>--control-xl</code></td><td>44px</td><td><code>.lds-btn</code>, <code>.lds-btn--icon</code>, <code>.lds-btn.emph-media</code>, <code>.lds-field input</code>, <code>.lds-field select</code>, <code>.lds-check</code>, and <code>--target-min</code></td></tr>
@@ -798,6 +799,78 @@
               <tr><td>Tuolumne Meadows — Site 12</td><td><span class="lds-tag lds-tag--error">booked</span></td><td>11m ago</td></tr>
             </tbody>
           </table>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="overlays">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Secrets, Confirm &amp; Modal</h2>
+      <p>The two components deferred from the last pass, and the parts the modal was missing. Neither deferred piece turned out to be a component: the secret field is a composition <em>inside</em> <code>.lds-field</code>, so it inherits the label, help and error the field already owns, and the two-step confirm is <code>.is-armed</code> &mdash; a state any button can be in, at any variant or size.</p>
+    </div>
+
+    <div class="demo-box">
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Secret field &mdash; stored, then replacing</div>
+          <div class="grid-2">
+            <div class="lds-field">
+              <label>Recreation.gov API key</label>
+              <div class="lds-secret">
+                <div class="lds-secret__stored">
+                  <span class="lds-secret__masked">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;4f2a</span>
+                  <button class="lds-btn lds-btn--secondary lds-btn--sm">Replace</button>
+                </div>
+              </div>
+              <p class="lds-field__help">Write-only. The stored value is never returned.</p>
+            </div>
+
+            <div class="lds-field">
+              <label>Slack signing secret</label>
+              <div class="lds-secret">
+                <div class="lds-secret__replacing">
+                  <input type="password" value="hunter2hunter2" aria-label="New signing secret" />
+                  <button class="lds-btn lds-btn--tertiary lds-btn--sm">Cancel</button>
+                </div>
+              </div>
+              <p class="lds-field__help">Paste the new secret, then save the form.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Armed &mdash; the same button, resting and armed</div>
+          <div class="chip-row">
+            <button class="lds-btn lds-btn--secondary">Disconnect Slack</button>
+            <button class="lds-btn lds-btn--secondary is-armed">Tap again to confirm</button>
+            <button class="lds-btn lds-btn--secondary lds-btn--sm is-armed">Delete watch</button>
+            <button class="lds-btn lds-btn--secondary is-armed" disabled>Disconnecting&hellip;</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Modal &mdash; header, scrolling body, pinned actions</div>
+          <div class="lds-modal-scrim" style="border-radius:var(--radius);">
+            <div class="lds-modal">
+              <div class="lds-modal__header">
+                <div class="lds-modal__title">Delete this watch?</div>
+                <button class="lds-modal__close" aria-label="Close">
+                  <svg class="lds-icon"><use href="dist/icons.svg#close"/></svg>
+                </button>
+              </div>
+              <div class="lds-modal__body">
+                Tuolumne Meadows &mdash; Site 12 has been watched since 14 July. Deleting it stops the checks and discards the availability history collected so far.
+              </div>
+              <div class="lds-modal__actions">
+                <button class="lds-btn lds-btn--tertiary">Keep watching</button>
+                <button class="lds-btn lds-btn--secondary is-armed">Tap again to delete</button>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:var(--text-caption); color:var(--text-subdued); margin-top:12px; line-height:var(--leading-normal);">Add <code>.lds-modal--sheet</code> and a <code>.lds-modal__handle</code> and the same modal docks to the bottom edge below 560px &mdash; the tabs breakpoint, reused. Above it, the class does nothing: it is still a centred modal. LDS ships no JS, so drag-to-dismiss is the consumer&rsquo;s; set <code>.is-dragging</code> while the finger is down and the sheet stops transitioning so it can track the touch.</p>
         </div>
 
       </div>

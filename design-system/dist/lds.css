@@ -1521,22 +1521,220 @@
 }
 .lds-empty__actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:calc(8px * var(--density));}
 
-/* ---- Banner dismiss ----
+/* ---- Dismiss ----
    The banner could not be dismissed, so a consumer needing one built a second
-   banner. Sits in the banner's own flow rather than absolutely positioned:
-   absolute leaves the text running under the button at narrow widths. */
-.lds-banner__dismiss{
+   banner. Sits in its container's own flow rather than absolutely positioned:
+   absolute leaves the text running under the button at narrow widths.
+
+   The paint is shared with the modal's close button, which is the same control
+   doing the same job on a different container — quiet, square, icon-only, and
+   sized below the touch floor on purpose (the coarse-pointer rule at the end of
+   this file grows the target without growing the button). Only the margins
+   differ, and they are stated per container below. */
+.lds-banner__dismiss,
+.lds-modal__close{
   flex:0 0 auto;align-self:flex-start;
   display:inline-grid;place-items:center;
-  width:var(--control-sm);height:var(--control-sm);margin:-4px -6px -4px auto;
+  width:var(--control-sm);height:var(--control-sm);
   border:none;border-radius:var(--radius-sm);
   background:transparent;color:var(--icon);
   cursor:pointer;
   transition:background var(--dur-fast),color var(--dur-fast);
 }
-.lds-banner__dismiss:hover{background:color-mix(in srgb,currentColor 12%,transparent);color:var(--text);}
-.lds-banner__dismiss:focus-visible{outline:2px solid var(--text-accent);outline-offset:1px;}
-.lds-banner__dismiss .lds-icon{width:16px;height:16px;color:currentColor;}
+.lds-banner__dismiss:hover,
+.lds-modal__close:hover{background:color-mix(in srgb,currentColor 12%,transparent);color:var(--text);}
+.lds-banner__dismiss:focus-visible,
+.lds-modal__close:focus-visible{outline:2px solid var(--text-accent);outline-offset:1px;}
+.lds-banner__dismiss .lds-icon,
+.lds-modal__close .lds-icon{width:16px;height:16px;color:currentColor;}
+.lds-banner__dismiss{margin:-4px -6px -4px auto;}
+
+/* ==========================================================================
+   Layer 3 — v5: the deferred pair, and the modal's missing parts.
+
+   `SecretField` and `DoubleConfirmButton` were held back in the tabs/toggle/
+   table pass as too single-consumer-shaped to generalise. Building them turned
+   out to be smaller than the deferral implied, because neither is a component:
+   one is a composition of parts the system already ships, and the other is a
+   state a button can be in. See decisions.md.
+   ========================================================================== */
+
+/* ---- Secret field ----
+   A write-only credential input with two modes. `stored` shows the mask and a
+   Replace button; `replacing` swaps in the password input and a Cancel.
+
+   Composes INSIDE .lds-field rather than beside it. The roadtrip original
+   carried its own label and its own help text — a second, divergent copy of
+   what .lds-field already owns — and had no error state at all, so a rejected
+   credential had nowhere to report:
+
+     <div class="lds-field">
+       <label>API key</label>
+       <div class="lds-secret">
+         <div class="lds-secret__stored">
+           <span class="lds-secret__masked">••••••••••••4f2a</span>
+           <button class="lds-btn lds-btn--secondary lds-btn--sm">Replace</button>
+         </div>
+       </div>
+       <p class="lds-field__help">Write-only. Stored encrypted.</p>
+     </div>
+
+   Nested, it inherits the label, the help, the error and the required marker,
+   and the two buttons are .lds-btn rather than bespoke — the originals were a
+   secondary and a tertiary button re-implemented at a different size. */
+.lds-secret{display:grid;gap:calc(6px * var(--density));}
+.lds-secret__stored,
+.lds-secret__replacing{display:flex;align-items:center;gap:8px;min-height:var(--control-xl);}
+/* The mask is data, so it takes the mono face: a proportional face makes a run
+   of bullets ragged and pushes the hint suffix — the last few real characters,
+   the only part that identifies which credential this is — out of alignment
+   between one row and the next. */
+.lds-secret__masked{
+  flex:1 1 auto;min-width:0;
+  font-family:var(--th-mono);font-size:var(--text-caption);
+  letter-spacing:var(--tracking-wide);color:var(--text-subdued);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* .lds-field states width:100% on its inputs, which fights flex-basis in a row
+   that also holds a button. auto hands sizing back to the flex line. */
+.lds-secret__replacing input{flex:1 1 auto;min-width:0;width:auto;}
+/* Buttons hold their label when the mask is long; the mask ellipses instead. */
+.lds-secret .lds-btn{flex:0 0 auto;}
+
+/* ---- Armed — the two-step destructive action ----
+   First press arms, second commits. The consumer owns the label change and the
+   disarm timeout; the system owns what armed LOOKS like.
+
+   A state on .lds-btn, not a .lds-confirm component. The roadtrip original was
+   an entire button re-implemented — its own size, padding, border and hover —
+   in order to add one state, which meant it could never be primary, never be
+   large, and never got the button's focus ring. As a state it composes with
+   every variant and size already on the shelf:
+
+     <button class="lds-btn lds-btn--secondary is-armed">Tap again to confirm</button>
+
+   The red is bound here rather than asked for, because armed is a STATUS and
+   not a colour choice. Same binding as .lds-banner--error, and the reason there
+   is no `hue-error` to reach for. */
+:where(.lds-btn.is-armed){--c-50:var(--red-50);--c-100:var(--red-100);--c-200:var(--red-200);--c-300:var(--red-300);--c-400:var(--red-400);--c-500:var(--red-500);--c-600:var(--red-600);--c-700:var(--red-700);--c-800:var(--red-800);--c-900:var(--red-900);--c-950:var(--red-950);}
+/* c-900 and not c-800 for the label. c-800 measures Lc 79.5 resting, which
+   passes, and Lc 71.8 once hover deepens the fill to c-200 — under the 75
+   floor at exactly the moment the button is being pressed. c-900 holds 88.4
+   and 80.8 across the same pair. */
+.lds-btn.is-armed{
+  background:var(--c-100);border-color:var(--c-500);color:var(--c-900);
+  font-weight:var(--weight-semibold);
+}
+.lds-btn.is-armed:hover{background:var(--c-200);filter:none;}
+.mode-dark .lds-btn.is-armed{background:var(--c-900);border-color:var(--c-600);color:var(--c-100);}
+.mode-dark .lds-btn.is-armed:hover{background:var(--c-800);}
+/* Committing is not instant — the caller disables while the request is in
+   flight, and `wait` says *this is happening* where the button's default
+   disabled cursor says *this is refused*. */
+.lds-btn.is-armed:disabled{cursor:wait;}
+
+/* ---- Modal: header, close, and the sheet ----
+   The modal shipped as a padded card with a title, a body and an actions row.
+   What it had no answer for: a close affordance, a body that scrolls while the
+   title and the actions stay put, and the bottom sheet that every phone-sized
+   modal wants to be.
+
+   Padding moves off the card and onto the parts as soon as a header is present,
+   because a header that has to sit inside 22px of card padding cannot draw its
+   divider edge to edge. `:has()` rather than a `--framed` modifier, so the
+   author is not made to declare a fact the markup already states. */
+.lds-modal:has(.lds-modal__header){
+  padding:0;display:flex;flex-direction:column;overflow:hidden;
+  max-height:min(80vh,640px);
+}
+.lds-modal__header{
+  flex:0 0 auto;display:flex;align-items:center;gap:12px;
+  padding:calc(14px * var(--density)) calc(22px * var(--density));
+  min-height:var(--control-xl);
+  border-bottom:1px solid var(--border-subdued);
+}
+/* Inside the header the title is a row item, so it drops the standalone
+   title's bottom margin and truncates rather than wrapping the close button
+   onto a second line. */
+.lds-modal__header .lds-modal__title{
+  flex:1 1 auto;min-width:0;margin-bottom:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.lds-modal__close{margin:0 -6px 0 auto;align-self:center;}
+/* The body is the only scrolling region; overscroll-behavior stops a flick at
+   its end from scrolling the page behind the scrim. */
+.lds-modal:has(.lds-modal__header) .lds-modal__body{
+  flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;
+  padding:calc(20px * var(--density)) calc(22px * var(--density));
+}
+/* Actions sit outside the scroll area, so the commit button is reachable
+   without scrolling to the end of a long body. Divider, matching the header. */
+.lds-modal:has(.lds-modal__header) .lds-modal__actions{
+  flex:0 0 auto;margin-top:0;
+  padding:calc(14px * var(--density)) calc(22px * var(--density));
+  border-top:1px solid var(--border-subdued);
+}
+
+/* The grab handle. The visible bar is 4px, which is an unusable drag target for
+   a thumb, so the element is a 24px band and the bar is drawn inside it by
+   ::after — the affordance stays visually quiet while staying grabbable.
+   Hidden until the sheet breakpoint: on a centred modal it affords a drag that
+   does nothing. */
+.lds-modal__handle{
+  display:none;flex:0 0 auto;position:relative;
+  width:100%;height:24px;cursor:grab;
+}
+.lds-modal__handle::after{
+  content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:36px;height:4px;border-radius:var(--radius-pill);
+  background:var(--border);
+}
+
+/* ---- Sheet ----
+   On a phone a centred modal is a compromise: it is pinned to the middle of a
+   screen whose only comfortably reachable region is the bottom third.
+   .lds-modal--sheet drops it to the bottom edge below the breakpoint and rounds
+   only the top corners. Above the breakpoint it IS a centred modal — one class,
+   one markup path, no second component.
+
+   560px is the tabs breakpoint, deliberately reused. A second phone width in
+   the same system produces a viewport where the tabs have collapsed and the
+   modal has not, and nobody can say which of the two is wrong. */
+@media (max-width:560px){
+  .lds-modal-scrim:has(.lds-modal--sheet){align-items:flex-end;padding:0;}
+  .lds-modal--sheet{
+    max-width:none;width:100%;
+    max-height:88dvh;
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom:none;
+    /* Snap back when a drag is released short of the dismiss threshold. */
+    transition:transform var(--dur-base) var(--ease-standard);
+  }
+  .lds-modal--sheet .lds-modal__handle{display:block;}
+  /* A sheet is flush with the bottom edge, which on a phone is where the home
+     indicator lives — so the commit button ends up underneath it. The inset
+     goes on whichever region is last, and resolves to 0 everywhere else.
+     :has() to match the header rules' specificity; without it the base padding
+     wins on source order and the inset silently does nothing. */
+  .lds-modal--sheet:has(.lds-modal__header) .lds-modal__actions{
+    padding-bottom:calc(14px * var(--density) + env(safe-area-inset-bottom));
+  }
+  .lds-modal--sheet:has(.lds-modal__header):not(:has(.lds-modal__actions)) .lds-modal__body{
+    padding-bottom:calc(20px * var(--density) + env(safe-area-inset-bottom));
+  }
+  /* Claim the vertical gesture on the drag region, or the browser scrolls the
+     page while the sheet is following the finger. Confined to the handle and
+     the header — the body has to keep its own scrolling. */
+  .lds-modal--sheet .lds-modal__handle,
+  .lds-modal--sheet .lds-modal__header{touch-action:none;}
+  /* LDS ships no JS, so the gesture is the consumer's: set .is-dragging and
+     drive `transform` while the finger is down. The transition has to be off
+     for that, or the sheet lags behind the touch it is supposed to track. */
+  .lds-modal--sheet.is-dragging{transition:none;cursor:grabbing;}
+}
+@media (prefers-reduced-motion:reduce){
+  .lds-modal--sheet{transition:none;}
+}
 
 /* ==========================================================================
    Responsive — the four widths, and the height nobody checks
@@ -1608,10 +1806,10 @@
    Scoped to (pointer:coarse) so it costs a mouse user nothing. Written with
    :where() so a component can opt out by stating its own ::after. */
 @media (pointer:coarse){
-  :where(.lds-btn--sm,.lds-chip,.lds-banner__dismiss,.lds-tag--interactive){
+  :where(.lds-btn--sm,.lds-chip,.lds-banner__dismiss,.lds-modal__close,.lds-tag--interactive){
     position:relative;
   }
-  :where(.lds-btn--sm,.lds-chip,.lds-banner__dismiss,.lds-tag--interactive)::after{
+  :where(.lds-btn--sm,.lds-chip,.lds-banner__dismiss,.lds-modal__close,.lds-tag--interactive)::after{
     content:"";
     position:absolute;left:50%;top:50%;
     width:100%;height:100%;
