@@ -34,7 +34,7 @@ hold.
 | `measured` | The measurement decided it. Neither person nor AI had latitude — the numbers only went one way. |
 | `ai` | AI-proposed, human-approved. |
 
-The split as it stands, across the 83 decisions: **52 human · 28 measured · 3 ai**.
+The split as it stands, across the 98 decisions: **64 human · 30 measured · 4 ai**.
 The judgment is human; the verification is machine.
 
 Every entry names what it **ruled out**. If a change ruled nothing out, it is a
@@ -2325,9 +2325,413 @@ two-click destructive action) rather than the general-purpose primitives every
 surface reaches for — lower parity value per hour than tabs/toggle/table, and
 easier to get right with more than one caller to check assumptions against.
 
-**Cost:** `.lds-table` ships unstriped, hover-only — no `--table-stripe` token
-yet. A product page that wants zebra rows still hand-rolls
-`tbody tr:nth-child(even)`.
+**Cost:** `.lds-table` ships unstriped, hover-only — no `--table-stripe` token.
+That was an open question when this was written; it is now settled deliberately,
+below, and is not a gap waiting to be filled.
+
+### The table separates rows with a divider, never a stripe
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+`.lds-table` will not grow a `--table-stripe` token. A 1px `--border-subdued`
+rule between rows is enough separation, and it is the separation the rest of the
+system already uses — the card divider, the modal header and footer seams, the
+tabs rail edge are all the same line.
+
+A stripe is a second, competing mechanism for the same job, and it is the more
+expensive one. It paints a background on every other row, so it collides with
+the row `:hover` fill, with any `emph-*` a cell carries, and with the tinted
+surfaces a theme is free to introduce — and it has to be re-derived per theme
+and per mode, because a wash that reads as a stripe on oat paper reads as a
+banded defect on a dark ground.
+
+**Ruled out:** a `--table-stripe` token, and zebra rows generally. The earlier
+entry recorded their absence as a cost to be paid off later; it is not. A
+product that genuinely needs banding for a very wide table can still state
+`tbody tr:nth-child(even)` itself — the system just does not bless it.
+
+### The secret field is a composition inside `.lds-field`, not a component
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+Deferred in the entry above as too single-consumer-shaped. It came back smaller
+than the deferral implied, because it is not a component: `.lds-secret` is two
+rows — the mask with a Replace button, and the password input with a Cancel —
+that sit *inside* a `.lds-field`.
+
+roadtrip's `rt-secret-field` carried its own label and its own help text. That is
+a second, divergent copy of the label and help `.lds-field` already owns, and it
+is why the original had no error state at all: having stepped outside the field,
+it had nowhere to report a rejected credential. Nested, it inherits the label,
+the help, the error and the required marker for free.
+
+The Replace and Cancel buttons are `.lds-btn--secondary` and `.lds-btn--tertiary`
+at `--sm`. The originals were those two buttons re-implemented at a different
+size, with their own borders and hovers, which is how they drifted from the
+button scale without anyone noticing.
+
+The mask takes the mono face, and that is a real requirement rather than a
+stylistic one: the hint suffix — the last few characters, the only part that
+says *which* credential this is — has to sit at the same offset from row to row
+or a list of credentials cannot be scanned.
+
+**Ruled out:** `.lds-secret` as a standalone component with its own label and
+help. Two labels in the system means two things to restyle, and the one outside
+the field would keep losing the states the field gains.
+
+**Ruled out:** a `type="password"` variant on `.lds-field` instead. It would
+style the input and miss the point — the component is the *stored/replacing*
+mode switch, not the masking.
+
+### Two-step confirm is a state a button is in, not a button
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+The other deferred piece. `.lds-btn.is-armed` — first press arms, second
+commits; the consumer owns the label change and the disarm timeout, the system
+owns what armed looks like.
+
+roadtrip's `rt-dbl-btn` was an entire button re-implemented in order to add one
+state: its own height, padding, border, font and hover, plus a `--compact`
+modifier duplicating a size the scale already had. The cost of that shape is
+what it cannot be — it could never be a primary button, never be large, and
+never picked up the focus ring `.lds-btn` gets. As a state it composes with
+every variant and size on the shelf and inherits all of them.
+
+Red is bound at the state rather than asked for with a `hue-*`, because armed is
+a status and not a colour choice — the same binding `.lds-banner--error` gets,
+and the reason there is no `hue-error` to reach for.
+
+**Ruled out:** `.lds-confirm` as a component. It would have to re-state the
+button, and then track it.
+
+**Ruled out:** `--compact`. `.lds-btn--sm` is that size, and it is on the
+control scale.
+
+**Cost:** `is-armed` is a bare state class, not `lds-`-prefixed, so it is on the
+consumer to keep it off unrelated elements. It reads as a state at the call site,
+which is worth more here than the namespace.
+
+### The modal grows a header, and a sheet on phones
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+The modal shipped as a padded card with a title, a body and an actions row. It
+had no close affordance, no way to scroll the body while the title stayed put,
+and no answer for a phone.
+
+Padding moves off the card and onto the parts as soon as a header is present,
+selected with `:has(.lds-modal__header)` rather than a `--framed` modifier: a
+header that has to sit inside 22px of card padding cannot draw its divider edge
+to edge, and the author should not have to declare a fact the markup already
+states. The body becomes the only scrolling region and the actions sit outside
+it, so the commit button is reachable without scrolling a long body to its end.
+
+`.lds-modal--sheet` docks the modal to the bottom edge below 560px and rounds
+only the top corners. Above that width the class does nothing — it is still a
+centred modal, one markup path. 560px is the tabs breakpoint, reused
+deliberately: a second phone width in the same system produces a viewport where
+the tabs have collapsed and the modal has not, and nobody can say which of the
+two is wrong.
+
+The close button shares its paint with `.lds-banner__dismiss`. Same control,
+same job, different container; only the margins differ.
+
+Being flush with the bottom edge is also what makes the sheet the one component
+in the system that has to know about `env(safe-area-inset-bottom)`: on a phone
+that edge is where the home indicator sits, and without the inset the commit
+button renders underneath it. It goes on whichever region is last, and resolves
+to zero on every device that has no inset.
+
+**Ruled out:** shipping the drag-to-dismiss gesture. LDS has no runtime and is
+not getting one. The CSS ships the hook instead — set `.is-dragging` and the
+sheet drops its transition so it can track the finger — and the consumer owns
+the pointer handling.
+
+**Ruled out:** a `--framed` or `--sectioned` modifier to opt into the header
+layout. `:has()` reads the markup that already exists; a modifier is a second
+place to get it wrong.
+
+**Cost:** a modal with a `__header` gets `overflow:hidden` and a max-height, so
+a popover or menu that needs to escape the modal's bounds cannot be a child of
+one. It has to render to the scrim.
+
+---
+
+### The modal size scale is derived from the measure ceiling
+
+`2026-08-04` · `emphasis` · `measured` · `notable`
+
+`max-width:420px` was hardcoded, so every consumer that needed more re-declared
+it. The replacement is a scale, but the steps are derived rather than chosen:
+`--modal-lg` is 560px because at `--text-body` 18px that is ~62 characters, the
+top of the comfortable measure band. Everything at or below `lg` is one column
+of prose. Everything above it is not a column of prose at all — it is two
+columns or a table — which is why `xl` and `2xl` are separate steps and not
+degrees of "bigger".
+
+`--modal-full` is `min(100vw - 2*gutter, 1280px)`, and the gutter collapses to
+zero at `--bp-sm`, so one expression is a capped dialog on a desktop and
+edge-to-edge on a phone.
+
+**Ruled out:** picking round numbers that looked right. Without an anchor the
+next person adds a 640 because it sat between two steps, and the scale stops
+meaning anything.
+
+**Ruled out:** `--modal-full: 100vw`. Full-screen on a 5K display is nobody's
+intent; "as large as is useful" is, and that is a cap.
+
+**Cost:** `max-height` used to be `min(80vh,640px)` for every modal with a
+header, which strangles a `2xl` or `full` workspace and is what sends people
+back to a full page. Height now tracks the width step, so a consumer overriding
+`--modal-w` alone gets a panel wider than it is tall by design.
+
+---
+
+### Size is declared from content shape, never measured from content
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+A modal's size is a lookup from what the content *is* — one question and two
+buttons is `sm`, a scrolling form is `lg`, a map or an editor is `2xl` — not a
+judgement made per dialog.
+
+The named class sets nothing except `--modal-w`, so `--modal-w:640px` inline
+remains available. Intent lives in the class and survives a redesign; the raw
+property is the escape hatch. Overriding it in three places is a missing step in
+the scale, not three exceptions.
+
+**Ruled out:** sizing to content. CSS cannot measure content and pick a token,
+but the deeper objection is that it should not: the same dialog would be one
+width while loading and another once loaded, one width in its error state and
+another without. A panel that resizes as its own content settles reads as
+broken. Stability beats fit.
+
+---
+
+### A side sheet accompanies; a centred modal interrupts
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+`.lds-modal--side` docks to the right edge at full height. The dock is chosen by
+what the overlay is *for*: if dismissing it to look at what is behind would lose
+work, it accompanies, and it is a side sheet. If the overlay *is* the decision,
+it interrupts, and it is centred.
+
+"Accompanies" has a measurable consequence, so the width is
+`clamp(320px, var(--modal-w), 40vw)`. Past half the screen neither side is
+primary and the claim is simply untrue. The floor matters as much as the cap:
+under 320px a side sheet is a column of broken labels.
+
+Below `--bp-md` there is no "beside" — the content it accompanies is off-screen
+— so `--side` becomes a bottom sheet. One class, correct at every width, the
+same convergence `--sheet` already uses.
+
+**Ruled out:** a separate drawer component. It would duplicate the header, body,
+actions and scrim to change one axis.
+
+**Ruled out:** allowing an alert to dock right. A destructive confirmation
+pushed to the edge of a 1440px display sits outside the reader's gaze.
+
+**Cost:** a bottom sheet needs no width cap at all, because it only exists below
+the breakpoint. Geometry rules it out, so there is no token to look for.
+
+---
+
+### The large title is content; the bar is chrome
+
+`2026-08-04` · `emphasis` · `ai` · `structural`
+
+`.lds-modal__title--large` sits at the top of the scroll region, not in the
+header. It therefore scrolls away on its own, with nothing animating it — which
+is what makes an iOS-style collapsing header buildable in a system that has no
+runtime and is not getting one.
+
+Scroll-driven animation adds only the polish: the bar title cross-fades in and
+the divider appears. Both sit behind `@supports (timeline-scope: --x)`, and
+without support the bar title simply stays visible — redundant beside the large
+one at rest, never broken.
+
+**Ruled out:** `animation-timeline: scroll(nearest)`. The bar is not inside the
+scroller, so `nearest` binds to the page. The body names a timeline and the
+modal scopes it with `timeline-scope` so the header can reach it.
+
+**Ruled out:** a JS scroll listener, which is the obvious implementation and the
+one that would have put a runtime in LDS for a visual nicety.
+
+---
+
+### The modal header is a three-column grid, and its title is centred
+
+`2026-08-04` · `emphasis` · `human` · `reversal`
+
+Reverses the flex row shipped in "The modal grows a header, and a sheet on
+phones", where the title was left-aligned and flexed to fill.
+
+The header is now `minmax(--control-xl, auto) 1fr minmax(--control-xl, auto)`,
+with the title in column 2 and centred, back in column 1 and close in column 3.
+The leading column is reserved whether or not a back button is present.
+
+The reason is nesting. With `text-align` and a flex row, the title slides
+sideways the moment a stack grows a back button, and a nested flow reads as
+unstable. Reserving the slot costs 44px on a dialog that never nests and buys a
+title that never moves.
+
+Centring is for overlays that **interrupt** — centre modal and bottom sheet, which
+are screens and own the attention. A side sheet sits beside live content, so its
+title stays left and subordinate to the page's own hierarchy.
+
+**Ruled out:** centring with `text-align:center` on the existing flex row. It
+looks identical until a back button appears, which is exactly when it fails.
+
+---
+
+### Back pops one level; the scrim closes the whole stack
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+A nested overlay is a stack — one scrim, one panel, contents replaced — not a
+second overlay. `.lds-modal__back` sits at the origin edge and pops one level;
+`.lds-modal__close` sits at the far edge and dismisses everything. They are never
+the same target.
+
+A tap on the scrim closes the entire stack.
+
+**Ruled out:** the scrim popping one level. The user tapped outside *all* of it,
+not on the parent panel. Popping one level makes an outside tap behave
+differently depending on a depth they cannot see.
+
+**Ruled out:** replacing back with close at depth 1 to save the slot. The
+affordance would move under the user's thumb between panels.
+
+**Cost:** dismissal is only free when it is reversible. Where closing loses
+work, the confirm is a centred modal that stacks above — never a sheet, since it
+is an alert — its destructive button is named for the loss ("Discard", not
+"Close"), and the safe choice holds focus. A sheet with unsaved work should not
+swipe-dismiss at all: firing a dialog from a gesture already in flight reads as
+the system fighting the user, so the path is removed rather than guarded. LDS
+ships the paint; the consumer owns the dirty-state check.
+
+---
+
+### Tables wrap by default; not wrapping is a stated intent
+
+`2026-08-04` · `emphasis` · `human` · `reversal`
+
+Reverses `white-space:nowrap` on `.lds-table th`, shipped with the table port.
+
+Header cells refused to compress while body cells wrapped, so the table pushed
+past its container and handed back a horizontal scrollbar for content that would
+have fitted had it been allowed to use vertical space. Both now wrap, and a
+column that genuinely cannot says so: `.lds-table__col--wrap` (with a `--col-min`
+floor), `--nowrap`, or `--truncate`.
+
+**Ruled out:** letting everything wrap. A wrapped date column is worse than a
+scrolled one, and a truncated title is worse than a wrapped one — the three
+intents are not interchangeable, which is why the consumer states them per
+column rather than the system guessing.
+
+**Ruled out:** keeping `overflow-x:auto` as the only answer. It is the escape
+hatch that made the bug invisible.
+
+---
+
+### Sticky headers and frozen columns carry their own background
+
+`2026-08-04` · `emphasis` · `measured` · `notable`
+
+`.lds-table--sticky` sticks the header; `.lds-table__col--freeze` sticks a
+leading column. Both paint `--surface-raised` / `--surface-base` rather than
+inheriting, because a transparent sticky cell lets rows ghost through it. Taking
+a surface token rather than a hex means dark needs no second rule.
+
+Only leading columns freeze — a frozen middle column is not a thing — and a
+frozen column draws its own right edge, because the border it would otherwise
+rely on vanishes under the scrolling content. Below `--bp-md` freezing is
+dropped: a frozen column eats the width it exists to preserve.
+
+**Ruled out:** `border-collapse:collapse`, which the table shipped with.
+Collapsed borders belong to the table, not the cell, and travel unpredictably
+once a cell is stuck. The model is now `separate` with zero spacing, which looks
+identical and behaves.
+
+**Cost:** two silent failures. The scroll container must have a bounded height
+or `top:0` has nothing to stick to — nothing errors, the header simply scrolls.
+And a sticky `th` carries `z-index:2`, which beats an unpositioned overlay
+stacked later in the DOM, so a side sheet over a table needs its own stacking
+context or the header paints straight through it.
+
+---
+
+### The sort caret is visible at rest
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+A sortable header is a `<button>` inside the `th` — that is what carries keyboard
+and screen-reader semantics — and every sortable column shows a dimmed
+both-directions caret when unsorted, solid and accented when active. State is
+read from `aria-sort` rather than a class, so the accessible attribute and the
+visual are the same source.
+
+**Ruled out:** revealing the caret on hover. There is no hover on touch, so the
+user cannot discover that the column sorts at all.
+
+**Ruled out:** a text `▲`/`▼`, which roadtrip used. It cannot take
+`--icon-size-*` or `currentColor` and sits on a different baseline than every
+other icon in the system.
+
+---
+
+### List row, and the anatomy shared with menu items
+
+`2026-08-04` · `emphasis` · `human` · `structural`
+
+`.lds-row` is leading slot, content column, trailing slot, affordance — the
+component the system never had, and the thing a table should become below
+`--bp-sm` rather than pretending to still be a table. `.lds-menu__item` is the
+same anatomy at compact density, which is why the menu cost almost nothing once
+the row existed.
+
+Heights come from the existing `--control-*` scale rather than new tokens, and
+the whole row is the target, so every variant clears the 44px floor.
+
+**Ruled out:** three separate anatomies for table row, list row and menu item.
+Built independently they will not resolve to the same thing, and the drift shows
+wherever two of them appear on one screen.
+
+**Ruled out:** a row that is both navigable and multi-select from one tap
+target. Where it needs both, the checkbox is its own target and the rest
+navigates — two targets, both clearing the floor.
+
+**Cost:** `.lds-row__content` needs `min-width:0`. A flex child defaults to
+`min-width:auto`, so without it the subtitle refuses to truncate and shoves the
+trailing slot off the row — the same trap already documented on the banner.
+
+---
+
+### Menu nesting branches on pointer, not preference
+
+`2026-08-04` · `emphasis` · `human` · `notable`
+
+On a fine pointer a submenu opens beside its parent and the parent stays
+visible. On a coarse pointer, activating a parent **replaces** the panel and
+grows a back affordance in `.lds-menu__header`.
+
+The replace branch is the base case and the cascade is the enhancement, not the
+other way round: the markup is one nested `.lds-menu`, and only
+`(hover:hover) and (pointer:fine)` lifts it out into a cascade.
+
+**Ruled out:** cascading submenus everywhere. On touch they open under the thumb
+and there is no hover to keep them alive.
+
+**Ruled out:** growing a runtime for positioning. Keeping a menu in the viewport
+is a real problem and the answer is `popover` plus CSS anchor positioning when
+it is available, with the consumer owning placement until then — the same
+posture as the modal's focus trap.
+
+**Cost:** `.lds-menu__item--danger` states the `--c-*` ramp directly and carries
+a `.mode-dark` step. `emph-plain` is neutral by design and cannot mark a
+destructive action, so the item cannot get this from an emphasis class.
 
 ---
 

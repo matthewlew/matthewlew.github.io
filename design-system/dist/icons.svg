@@ -62,7 +62,21 @@
     <symbol id="arrowRight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 12h15.5M13.5 6l6 6-6 6"/>
     </symbol>
-    <symbol id="chevronRight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Directional chevrons. chevronLeft is the modal stack's back affordance;
+       chevronUp/chevronUpDown are the table's sort states. chevronUpDown is
+       the UNSORTED state and is drawn rather than faded, because a sortable
+       column has to announce itself at rest — a touch user has no hover with
+       which to discover it. -->
+  <symbol id="chevronLeft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 18 9 12l6-6"/>
+  </symbol>
+  <symbol id="chevronUp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m18 15-6-6-6 6"/>
+  </symbol>
+  <symbol id="chevronUpDown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m7 10 5-5 5 5M7 14l5 5 5-5"/>
+  </symbol>
+  <symbol id="chevronRight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 5l7 7-7 7"/>
     </symbol>
     <symbol id="more" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">

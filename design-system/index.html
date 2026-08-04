@@ -331,6 +331,8 @@
     <li><a href="#forms">Forms &amp; States</a></li>
     <li><a href="#status">Tags, Chips &amp; Status</a></li>
     <li><a href="#controls">Tabs, Toggles &amp; Tables</a></li>
+    <li><a href="#rows">List Rows &amp; Menus</a></li>
+    <li><a href="#overlays">Sheets, Modals &amp; Overlays</a></li>
     <li><a href="#cards">Cards</a></li>
 
     <li class="nav-group">Guidelines</li>
@@ -508,7 +510,7 @@
         <table class="lds-table">
           <thead><tr><th>Token</th><th>Value</th><th>Components</th></tr></thead>
           <tbody>
-            <tr><td><code>--control-sm</code></td><td>32px</td><td><code>.lds-banner__dismiss</code></td></tr>
+            <tr><td><code>--control-sm</code></td><td>32px</td><td><code>.lds-banner__dismiss</code>, <code>.lds-modal__close</code></td></tr>
             <tr><td><code>--control-md</code></td><td>36px</td><td><code>.lds-btn--sm</code>, <code>.lds-chip</code></td></tr>
             <tr><td><code>--control-lg</code></td><td>40px</td><td><code>.lds-tabs__tab</code></td></tr>
             <tr><td><code>--control-xl</code></td><td>44px</td><td><code>.lds-btn</code>, <code>.lds-btn--icon</code>, <code>.lds-btn.emph-media</code>, <code>.lds-field input</code>, <code>.lds-field select</code>, <code>.lds-check</code>, and <code>--target-min</code></td></tr>
@@ -787,17 +789,260 @@
         </div>
 
         <div>
-          <div class="micro-label">Table &mdash; hover row, subdued header</div>
-          <table class="lds-table">
-            <thead>
-              <tr><th>Site</th><th>Status</th><th>Last checked</th></tr>
-            </thead>
+          <div class="micro-label">Table &mdash; sticky header, frozen first column, sortable</div>
+          <p style="font-size:13px;color:var(--text-subdued);max-width:62ch;margin:-4px 0 12px;">Scroll it both ways. Wrapping is the default on <code>th</code> and <code>td</code> now; a column that genuinely cannot wrap says so with <code>.lds-table__col--nowrap</code>. The sort caret is visible at rest, because hover-only discovery does not exist on touch.</p>
+          <div class="lds-table-scroll" style="--table-max-h:250px;max-width:560px;">
+            <table class="lds-table lds-table--sticky">
+              <thead>
+                <tr>
+                  <th class="lds-table__col--freeze" aria-sort="ascending">
+                    <button class="lds-table__sort">Site <span class="lds-table__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronUp"/></svg></span></button>
+                  </th>
+                  <th><button class="lds-table__sort">Trigger <span class="lds-table__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronUpDown"/></svg></span></button></th>
+                  <th><button class="lds-table__sort">Last checked <span class="lds-table__caret"><svg class="lds-icon" style="width:100%;height:100%"><use href="dist/icons.svg#chevronUpDown"/></svg></span></button></th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="lds-table__col--freeze lds-table__col--wrap">Half Dome &mdash; Cabin 4</td><td class="lds-table__col--wrap">Any night, two guests</td><td class="lds-table__col--nowrap">2m ago</td><td><span class="lds-tag lds-tag--success">available</span></td></tr>
+                <tr><td class="lds-table__col--freeze lds-table__col--wrap">Yosemite Valley &mdash; Loop B</td><td class="lds-table__col--wrap">Weekends only</td><td class="lds-table__col--nowrap">5m ago</td><td><span class="lds-tag lds-tag--caution">waitlist</span></td></tr>
+                <tr><td class="lds-table__col--freeze lds-table__col--wrap">Tuolumne Meadows &mdash; Site 12</td><td class="lds-table__col--wrap">Sites 1&ndash;20, two nights</td><td class="lds-table__col--nowrap">11m ago</td><td><span class="lds-tag lds-tag--error">booked</span></td></tr>
+                <tr><td class="lds-table__col--freeze lds-table__col--wrap">Glacier Point &mdash; Site 3</td><td class="lds-table__col--wrap">Any night</td><td class="lds-table__col--nowrap">18m ago</td><td><span class="lds-tag lds-tag--success">available</span></td></tr>
+                <tr><td class="lds-table__col--freeze lds-table__col--wrap">Wawona &mdash; Loop A</td><td class="lds-table__col--wrap">Sites 4&ndash;9, one night</td><td class="lds-table__col--nowrap">31m ago</td><td><span class="lds-tag lds-tag--caution">waitlist</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="rows">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>List Rows &amp; Menus</h2>
+      <p>The anatomy the system never had. A table row, a list row and a menu item are the same three regions at different densities &mdash; leading slot, a content column that truncates, trailing slot &mdash; so they are one set of rules rather than three. Below <code>--bp-sm</code> a table with more than about three columns should become these rows rather than pretend.</p>
+    </div>
+
+    <div class="demo-box">
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">List row &mdash; compact, default, roomy</div>
+          <div class="lds-rows" style="max-width:480px;">
+            <div class="lds-row lds-row--compact">
+              <div class="lds-row__lead">
+                <label class="lds-check"><input type="checkbox" checked /><span class="lds-check__box"></span></label>
+              </div>
+              <div class="lds-row__content"><div class="lds-row__title">Weekends only</div></div>
+            </div>
+            <a class="lds-row" href="#rows">
+              <div class="lds-row__lead"><span class="lds-row__avatar"></span></div>
+              <div class="lds-row__content">
+                <div class="lds-row__title">Kirk Creek Campground</div>
+                <div class="lds-row__subtitle">Big Sur &middot; 12 sites tracked</div>
+              </div>
+              <div class="lds-row__trail">
+                <span class="lds-row__label">3 open</span>
+                <span class="lds-row__meta">2h ago</span>
+              </div>
+              <span class="lds-row__chevron"><svg class="lds-icon"><use href="dist/icons.svg#chevronRight"/></svg></span>
+            </a>
+            <a class="lds-row lds-row--roomy" href="#rows">
+              <div class="lds-row__lead"><span class="lds-row__thumb"></span></div>
+              <div class="lds-row__content">
+                <div class="lds-row__title">Pfeiffer Big Sur State Park</div>
+                <div class="lds-row__subtitle">A subtitle long enough that it truncates rather than pushing the trailing slot off the row</div>
+              </div>
+              <div class="lds-row__trail"><span class="lds-tag lds-tag--success">active</span></div>
+              <span class="lds-row__chevron"><svg class="lds-icon"><use href="dist/icons.svg#chevronRight"/></svg></span>
+            </a>
+          </div>
+          <p style="font-size:13px;color:var(--text-subdued);max-width:62ch;margin-top:12px;">Heights come from the <code>--control-*</code> scale, and the whole row is the target, so every variant clears the 44px floor. A row cannot be both navigable and multi-select from one tap target: where it needs both, the checkbox is its own target and the rest of the row navigates.</p>
+        </div>
+
+        <div>
+          <div class="micro-label">Menu &mdash; root, and the submenu it replaces itself with</div>
+          <div style="display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start;">
+            <div class="lds-menu">
+              <button class="lds-menu__item"><svg class="lds-icon"><use href="dist/icons.svg#editBox"/></svg><span class="lds-menu__label">Edit watch</span></button>
+              <button class="lds-menu__item"><svg class="lds-icon"><use href="dist/icons.svg#settings"/></svg><span class="lds-menu__label">Settings</span></button>
+              <div class="lds-menu__sub">
+                <button class="lds-menu__item"><svg class="lds-icon"><use href="dist/icons.svg#user"/></svg><span class="lds-menu__label">Notifications</span><span class="lds-row__chevron"><svg class="lds-icon"><use href="dist/icons.svg#chevronRight"/></svg></span></button>
+                <div class="lds-menu">
+                  <button class="lds-menu__item"><span class="lds-menu__label">Push</span><span class="lds-menu__hint">on</span></button>
+                  <button class="lds-menu__item"><span class="lds-menu__label">Email</span><span class="lds-menu__hint">on</span></button>
+                  <button class="lds-menu__item"><span class="lds-menu__label">SMS</span><span class="lds-menu__hint">off</span></button>
+                </div>
+              </div>
+              <hr class="lds-menu__separator" />
+              <button class="lds-menu__item lds-menu__item--danger"><svg class="lds-icon"><use href="dist/icons.svg#trash"/></svg><span class="lds-menu__label">Delete watch</span></button>
+            </div>
+
+            <div class="lds-menu">
+              <div class="lds-menu__header">
+                <button class="lds-modal__back" aria-label="Back"><svg class="lds-icon"><use href="dist/icons.svg#chevronLeft"/></svg></button>
+                Notifications
+              </div>
+              <button class="lds-menu__item"><span class="lds-menu__label">Push</span><span class="lds-menu__hint">on</span></button>
+              <button class="lds-menu__item"><span class="lds-menu__label">Email</span><span class="lds-menu__hint">on</span></button>
+              <button class="lds-menu__item"><span class="lds-menu__label">SMS</span><span class="lds-menu__hint">off</span></button>
+              <button class="lds-menu__item" aria-disabled="true"><span class="lds-menu__label">Digest only</span><span class="lds-menu__hint">off</span></button>
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--text-subdued);max-width:62ch;margin-top:12px;">Nesting branches on <strong>pointer, not preference</strong>. On a fine pointer the submenu opens beside its parent on hover &mdash; try it on the left menu. On a coarse pointer, tapping a parent replaces the panel and grows a back affordance, because a cascade opens under the thumb with no hover to keep it alive. The replace branch is the base case; the cascade is the enhancement.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="overlays">
+    <div class="sec-header">
+      <h2><span class="sec-tag lds-tag hue-green">New</span>Sheets, Modals &amp; Overlays</h2>
+      <p>One component, three docks &mdash; centre, bottom, right &mdash; chosen by what the overlay is <em>for</em> rather than by three separate components. Plus the two pieces deferred from the last pass. Neither deferred piece turned out to be a component: the secret field is a composition <em>inside</em> <code>.lds-field</code>, so it inherits the label, help and error the field already owns, and the two-step confirm is <code>.is-armed</code> &mdash; a state any button can be in, at any variant or size.</p>
+    </div>
+
+    <div class="demo-box">
+      <div style="display:flex; flex-direction:column; gap:34px;">
+
+        <div>
+          <div class="micro-label">Secret field &mdash; stored, then replacing</div>
+          <div class="grid-2">
+            <div class="lds-field">
+              <label>Recreation.gov API key</label>
+              <div class="lds-secret">
+                <div class="lds-secret__stored">
+                  <span class="lds-secret__masked">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;4f2a</span>
+                  <button class="lds-btn lds-btn--secondary lds-btn--sm">Replace</button>
+                </div>
+              </div>
+              <p class="lds-field__help">Write-only. The stored value is never returned.</p>
+            </div>
+
+            <div class="lds-field">
+              <label>Slack signing secret</label>
+              <div class="lds-secret">
+                <div class="lds-secret__replacing">
+                  <input type="password" value="hunter2hunter2" aria-label="New signing secret" />
+                  <button class="lds-btn lds-btn--tertiary lds-btn--sm">Cancel</button>
+                </div>
+              </div>
+              <p class="lds-field__help">Paste the new secret, then save the form.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Armed &mdash; the same button, resting and armed</div>
+          <div class="chip-row">
+            <button class="lds-btn lds-btn--secondary">Disconnect Slack</button>
+            <button class="lds-btn lds-btn--secondary is-armed">Tap again to confirm</button>
+            <button class="lds-btn lds-btn--secondary lds-btn--sm is-armed">Delete watch</button>
+            <button class="lds-btn lds-btn--secondary is-armed" disabled>Disconnecting&hellip;</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Modal &mdash; header, scrolling body, pinned actions</div>
+          <div class="lds-modal-scrim" style="border-radius:var(--radius);">
+            <div class="lds-modal">
+              <div class="lds-modal__header">
+                <div class="lds-modal__title">Delete this watch?</div>
+                <button class="lds-modal__close" aria-label="Close">
+                  <svg class="lds-icon"><use href="dist/icons.svg#close"/></svg>
+                </button>
+              </div>
+              <div class="lds-modal__body">
+                Tuolumne Meadows &mdash; Site 12 has been watched since 14 July. Deleting it stops the checks and discards the availability history collected so far.
+              </div>
+              <div class="lds-modal__actions">
+                <button class="lds-btn lds-btn--tertiary">Keep watching</button>
+                <button class="lds-btn lds-btn--secondary is-armed">Tap again to delete</button>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:var(--text-caption); color:var(--text-subdued); margin-top:12px; line-height:var(--leading-normal);">Add <code>.lds-modal--sheet</code> and a <code>.lds-modal__handle</code> and the same modal docks to the bottom edge below 560px &mdash; the tabs breakpoint, reused. Above it, the class does nothing: it is still a centred modal. LDS ships no JS, so drag-to-dismiss is the consumer&rsquo;s; set <code>.is-dragging</code> while the finger is down and the sheet stops transitioning so it can track the touch.</p>
+        </div>
+
+        <div>
+          <div class="micro-label">Size scale &mdash; derived from the measure ceiling</div>
+          <p style="font-size:13px;color:var(--text-subdued);max-width:62ch;margin:-4px 0 12px;"><code>--modal-lg</code> is the anchor: at <code>--text-body</code> 18px, 560px is about 62 characters, the top of the comfortable measure band. Everything at or below it is one column of prose; everything above it is not a column of prose at all. That seam is why <code>xl</code> and <code>2xl</code> are separate steps rather than degrees of bigger.</p>
+          <table class="lds-table" style="max-width:560px;">
+            <thead><tr><th>Token</th><th>Value</th><th>Content shape</th></tr></thead>
             <tbody>
-              <tr><td>Half Dome — Cabin 4</td><td><span class="lds-tag lds-tag--success">available</span></td><td>2m ago</td></tr>
-              <tr><td>Yosemite Valley — Loop B</td><td><span class="lds-tag lds-tag--caution">waitlist</span></td><td>5m ago</td></tr>
-              <tr><td>Tuolumne Meadows — Site 12</td><td><span class="lds-tag lds-tag--error">booked</span></td><td>11m ago</td></tr>
+              <tr><td><code>--modal-sm</code></td><td>360px</td><td>One question, two buttons</td></tr>
+              <tr><td><code>--modal-md</code></td><td>420px</td><td>A short form &mdash; the default, no class</td></tr>
+              <tr><td><code>--modal-lg</code></td><td>560px</td><td>Prose, or a form that scrolls</td></tr>
+              <tr><td><code>--modal-xl</code></td><td>720px</td><td>Two columns, or a table</td></tr>
+              <tr><td><code>--modal-2xl</code></td><td>960px</td><td>A workspace</td></tr>
+              <tr><td><code>--modal-full</code></td><td>&le;1280px</td><td>A task that owns the session</td></tr>
             </tbody>
           </table>
+          <p style="font-size:13px;color:var(--text-subdued);max-width:62ch;margin-top:12px;">Size is <strong>declared, never measured from content</strong>. A modal that resizes as its own content settles &mdash; one width loading, another loaded &mdash; reads as broken. The named class sets nothing but <code>--modal-w</code>, so <code>style="--modal-w:640px"</code> stays available as the override; needing it in three places means a missing step in the scale, not three exceptions.</p>
+        </div>
+
+        <div>
+          <div class="micro-label">Collapsing header &mdash; the large title is content, the bar is chrome</div>
+          <div class="lds-modal-scrim" style="border-radius:var(--radius); height:300px;">
+            <div class="lds-modal lds-modal--lg" style="--modal-h:250px;">
+              <div class="lds-modal__header">
+                <button class="lds-modal__back" aria-label="Back"><svg class="lds-icon"><use href="dist/icons.svg#chevronLeft"/></svg></button>
+                <div class="lds-modal__title">Quiet hours</div>
+                <button class="lds-modal__close" aria-label="Close"><svg class="lds-icon"><use href="dist/icons.svg#close"/></svg></button>
+              </div>
+              <div class="lds-modal__body">
+                <span class="lds-modal__title--large">Quiet hours</span>
+                <p style="margin:0 0 10px;">Scroll this panel. The large title leaves on its own, because it sits in the scroll region &mdash; nothing animates it away.</p>
+                <p style="margin:0 0 10px;">The bar title then cross-fades in and the divider appears, so an unscrolled panel reads as one surface rather than two.</p>
+                <p style="margin:0 0 10px;">Both are polish over a layout that is already correct without them. Where scroll-driven animation is unsupported the bar title simply stays visible.</p>
+                <p style="margin:0;">Back sits left and pops one level; close sits right and dismisses the whole stack. The leading column is reserved either way, so the title does not shift when depth changes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="micro-label">Side sheet &mdash; accompanies, rather than interrupts</div>
+          <div class="lds-modal-scrim" style="border-radius:var(--radius); height:300px;">
+            <div class="lds-modal lds-modal--side">
+              <div class="lds-modal__header">
+                <div class="lds-modal__title">Kirk Creek</div>
+                <button class="lds-modal__close" aria-label="Close"><svg class="lds-icon"><use href="dist/icons.svg#close"/></svg></button>
+              </div>
+              <div class="lds-modal__body">
+                <p style="margin:0 0 10px;">A centred modal <strong>interrupts</strong>; a side sheet <strong>accompanies</strong>. If dismissing the overlay to look at what is behind it would lose work, it is a side sheet.</p>
+                <p style="margin:0;">Its title is left-aligned, because it has to stay subordinate to the hierarchy of the page it sits beside.</p>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:var(--text-caption); color:var(--text-subdued); margin-top:12px; line-height:var(--leading-normal);">Width is <code>clamp(320px, var(--modal-w), 40vw)</code>. The cap is the measurable half of &ldquo;accompanies&rdquo;: never half the screen, or neither side is primary. Below <code>--bp-md</code> there is no beside, so <code>.lds-modal--side</code> becomes a bottom sheet &mdash; one class, correct at every width. An alert is never a side sheet: a destructive confirmation pushed to the edge of a wide display sits outside the reader&rsquo;s gaze.</p>
+        </div>
+
+        <div>
+          <div class="micro-label">Media &mdash; full-bleed is the subject, inset is support</div>
+          <div class="grid-2">
+            <div class="lds-modal" style="max-width:none;">
+              <div class="lds-modal__body" style="padding:0 0 calc(20px * var(--density));">
+                <div class="lds-modal__media" style="width:100%; margin:0 0 14px; background:linear-gradient(135deg,var(--c-400),var(--c-700)); border-radius:var(--radius-lg) var(--radius-lg) 0 0;"></div>
+                <div style="padding:0 calc(22px * var(--density));">
+                  <span class="lds-modal__title--large" style="font-size:var(--text-body);">Kirk Creek</span>
+                  <p style="margin:0; color:var(--text-subdued);">Big Sur, California</p>
+                </div>
+              </div>
+            </div>
+            <div class="lds-modal" style="max-width:none;">
+              <div class="lds-modal__header">
+                <div class="lds-modal__title">Offline maps</div>
+                <button class="lds-modal__close" aria-label="Close"><svg class="lds-icon"><use href="dist/icons.svg#close"/></svg></button>
+              </div>
+              <div class="lds-modal__body">
+                <div class="lds-modal__media lds-modal__media--inset" style="background:linear-gradient(135deg,var(--c-400),var(--c-700));"></div>
+                <p style="margin:0;">Download this region so it stays available without signal.</p>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:var(--text-caption); color:var(--text-subdued); margin-top:12px; line-height:var(--leading-normal);">Aspect comes from <code>--media-ratio</code>, never a fixed height &mdash; a fixed height crops differently at every panel width. A full-bleed image as the panel&rsquo;s first child inherits the panel&rsquo;s top corners; below a header it is square, because the bar already owns that edge. It is also the natural home for <code>.emph-media</code>: a close button placed on the artwork resolves against it rather than assuming a white knockout.</p>
         </div>
 
       </div>

@@ -1,0 +1,640 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>LDS v6 — overlays and data display</title>
+<link rel="stylesheet" href="../../design-system/dist/apca-palette.css">
+<link rel="stylesheet" href="../../design-system/dist/lds.css">
+<style>
+/* ==========================================================================
+   PREVIEW ONLY. Everything below is the v6 SPEC rendered, not shipped CSS.
+   It paints from LDS tokens exclusively — no hex, no font family — so the
+   page cannot silently contradict the system it is proposing against.
+   When a piece lands in lds.css its block here gets deleted.
+   ========================================================================== */
+
+body{
+  margin:0;padding:36px 30px 90px;
+  background:var(--surface-page);color:var(--text);
+  font-family:var(--th-body);font-size:var(--text-caption);
+  line-height:var(--leading-normal);
+}
+.wrap{max-width:1240px;margin:0 auto}
+h1{font-family:var(--th-display);font-size:var(--text-subhead);line-height:var(--leading-subhead);
+   letter-spacing:var(--tracking-subhead);font-weight:var(--weight-medium);margin:0 0 6px}
+h2{font-family:var(--th-ui);font-size:var(--text-body);font-weight:var(--weight-semibold);
+   margin:44px 0 4px;padding-top:20px;border-top:1px solid var(--border-subdued)}
+h3{font-family:var(--th-mono);font-size:var(--text-caption);font-weight:var(--weight-semibold);
+   letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--text-subdued);margin:22px 0 10px}
+p{color:var(--text-subdued);max-width:68ch;margin:0 0 4px}
+code{font-family:var(--th-mono);font-size:.92em;background:var(--surface-sunken);
+     border-radius:var(--radius-sm);padding:1px 5px}
+.lede{font-size:var(--text-body);line-height:var(--leading-relaxed);margin-bottom:8px}
+.note{border-left:2px solid var(--border);padding-left:12px;margin:12px 0;color:var(--text-subdued)}
+
+/* --- scale bars ------------------------------------------------------ */
+.scale{display:grid;grid-template-columns:auto auto 1fr;gap:7px 12px;align-items:center;margin:16px 0 8px}
+.scale b{font-family:var(--th-mono);font-weight:var(--weight-semibold);font-size:var(--text-caption)}
+.scale span{font-family:var(--th-mono);color:var(--text-subdued);font-size:var(--text-caption)}
+.bar{height:22px;border-radius:var(--radius-sm);background:var(--c-200);
+     border:1px solid var(--c-400);display:flex;align-items:center;justify-content:flex-end;
+     padding-right:7px;font-family:var(--th-mono);font-size:var(--text-caption);color:var(--c-800)}
+.bar.is-ceiling{background:var(--c-500);border-color:var(--c-600);color:var(--background)}
+.measure{border-left:2px dashed var(--border);padding-left:10px;margin:10px 0 0;
+         color:var(--text-subdued);font-family:var(--th-ui);font-size:var(--text-caption)}
+
+/* --- device frames --------------------------------------------------- */
+.frames{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;margin-top:12px}
+.fig{flex:0 0 auto;max-width:440px}
+.fig p{max-width:100%}
+.cap code{overflow-wrap:anywhere}
+.cap{font-family:var(--th-ui);font-size:var(--text-caption);color:var(--text-subdued);margin-top:8px;max-width:32ch}
+.cap b{color:var(--text);font-weight:var(--weight-semibold)}
+.frame{position:relative;overflow:hidden;background:var(--surface-base);
+       border:1px solid var(--border);border-radius:var(--radius-lg)}
+.frame--desk{width:440px;height:330px}
+.frame--phone{width:240px;height:400px}
+.behind{padding:14px 16px;font-family:var(--th-ui);color:var(--text-subdued)}
+.behind .ln{height:8px;border-radius:var(--radius-pill);background:var(--border);margin-bottom:9px}
+.behind .ln:nth-child(2){width:78%}.behind .ln:nth-child(3){width:56%}
+.behind .ln:nth-child(4){width:88%}.behind .ln:nth-child(5){width:40%}
+.scrim{position:absolute;inset:0;z-index:5;background:rgba(0,0,0,.45);display:flex}
+.scrim--centre{align-items:center;justify-content:center;padding:16px}
+.scrim--bottom{align-items:flex-end}
+.scrim--side{justify-content:flex-end}
+
+/* --- the proposed panel ---------------------------------------------- */
+.p{background:var(--surface-overlay);color:var(--text);border:1px solid var(--border);
+   display:flex;flex-direction:column;overflow:hidden;width:100%;
+   box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.p--centre{border-radius:var(--radius-lg);max-width:300px;max-height:100%}
+.p--bottom{border-radius:var(--radius-lg) var(--radius-lg) 0 0;max-height:74%}
+.p--side{border-radius:0;height:100%;width:62%}
+
+/* bar = chrome. Three-column grid so the title stays put when back appears. */
+.bar-h{flex:0 0 auto;display:grid;grid-template-columns:minmax(28px,auto) 1fr minmax(28px,auto);
+       align-items:center;gap:8px;padding:0 8px;min-height:38px;
+       background:var(--surface-raised);border-bottom:1px solid var(--border-subdued)}
+.bar-h.is-flat{border-bottom-color:transparent}
+.bar-t{font-family:var(--th-ui);font-size:var(--text-caption);font-weight:var(--weight-semibold);
+       color:var(--text);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-h--left .bar-t{text-align:left}
+.bar-t.is-hidden{opacity:0}
+.ib{width:28px;height:28px;display:grid;place-items:center;background:transparent;border:0;
+    border-radius:var(--radius-sm);color:var(--text-subdued);cursor:pointer;padding:0}
+.ib:hover{background:var(--bg-hover);color:var(--text)}
+.ib svg{width:15px;height:15px}
+.slot-r{display:flex;justify-content:flex-end}
+
+/* body = the scroll region. The large title lives HERE, as content. */
+.p-body{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:14px 16px}
+.big-t{font-family:var(--th-display);font-size:var(--text-body);line-height:var(--leading-subhead);
+       letter-spacing:var(--tracking-subhead);font-weight:var(--weight-medium);
+       color:var(--text);margin:0 0 10px}
+.p-body p{font-size:var(--text-caption);margin-bottom:9px}
+.p-act{flex:0 0 auto;display:flex;gap:8px;justify-content:flex-end;padding:10px 14px;
+       border-top:1px solid var(--border-subdued)}
+.handle{flex:0 0 auto;position:relative;width:100%;height:18px}
+.handle::after{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
+               width:32px;height:4px;border-radius:var(--radius-pill);background:var(--border)}
+
+/* media: full-bleed escapes body padding; inset sits inside it */
+.media{margin:-14px -16px 12px;aspect-ratio:16/9;
+       background:linear-gradient(135deg,var(--c-400),var(--c-700));position:relative}
+.media--inset{margin:0 0 12px;aspect-ratio:16/9;border-radius:var(--radius-base);
+              background:linear-gradient(135deg,var(--c-400),var(--c-700))}
+.media .on{position:absolute;top:8px;right:8px}
+
+/* --- list row --------------------------------------------------------- */
+.rows{border:1px solid var(--border);border-radius:var(--radius-lg);
+      background:var(--surface-base);overflow:hidden;max-width:470px}
+.row{display:flex;align-items:center;gap:12px;padding:9px 14px;min-height:var(--control-2xl);
+     border-bottom:1px solid var(--border-subdued);font-family:var(--th-ui)}
+.row:last-child{border-bottom:none}
+.row:hover{background:var(--bg-hover)}
+.row--compact{min-height:var(--control-xl)}
+.row--roomy{min-height:72px}
+.lead{flex:0 0 auto;display:grid;place-items:center}
+.av{width:34px;height:34px;border-radius:var(--radius-pill);
+    background:linear-gradient(135deg,var(--c-300),var(--c-600))}
+.thumb{width:52px;height:38px;border-radius:var(--radius-sm);
+       background:linear-gradient(135deg,var(--c-300),var(--c-600))}
+/* min-width:0 is load-bearing — without it the subtitle refuses to truncate
+   and shoves the trailing region off the row. */
+.cont{flex:1 1 auto;min-width:0}
+.r-t{font-size:var(--text-caption);font-weight:var(--weight-semibold);color:var(--text);
+     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-s{font-size:var(--text-caption);color:var(--text-subdued);
+     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trail{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.r-l{font-size:var(--text-caption);color:var(--text);font-weight:var(--weight-medium)}
+.r-m{font-size:var(--text-caption);color:var(--text-subdued)}
+.chev{flex:0 0 auto;color:var(--text-subdued);display:grid;place-items:center}
+.chev svg{width:var(--icon-size-sm);height:var(--icon-size-sm)}
+
+/* --- table ------------------------------------------------------------ */
+.t-scroll{max-height:230px;overflow:auto;border:1px solid var(--border);
+          border-radius:var(--radius-lg);background:var(--surface-base)}
+table.v6{width:100%;border-collapse:separate;border-spacing:0;font-family:var(--th-ui);
+         font-size:var(--text-caption)}
+.v6 th{position:sticky;top:0;z-index:2;background:var(--surface-raised);
+       text-align:left;padding:0;border-bottom:1px solid var(--border);
+       font-weight:var(--weight-semibold);color:var(--text-subdued);white-space:nowrap}
+.v6 th button{display:flex;align-items:center;gap:5px;width:100%;background:transparent;
+              border:0;padding:9px 11px;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.v6 th button:hover{color:var(--text)}
+.v6 th.plain{padding:9px 11px}
+.v6 td{padding:9px 11px;border-bottom:1px solid var(--border-subdued);color:var(--text);
+       vertical-align:middle;background:var(--surface-base)}
+.v6 tbody tr:hover td{background:var(--bg-hover)}
+/* frozen column: sticky left, and it MUST carry its own background or rows
+   scroll through it. The header cell needs the higher z to win both axes. */
+.v6 .freeze{position:sticky;left:0;z-index:1;border-right:1px solid var(--border)}
+.v6 th.freeze{z-index:3}
+.v6 .wrap-col{white-space:normal;min-width:190px}
+.v6 .nowrap-col{white-space:nowrap}
+.v6 .trunc{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.caret{width:11px;height:11px;flex:0 0 auto;opacity:.32}
+.caret.on{opacity:1;color:var(--text-accent)}
+.bad{max-width:470px;overflow-x:auto;border:1px solid var(--border);
+     border-radius:var(--radius-lg);background:var(--surface-base)}
+.bad table{width:100%;border-collapse:collapse;font-family:var(--th-ui);font-size:var(--text-caption)}
+.bad th,.bad td{padding:9px 11px;white-space:nowrap;border-bottom:1px solid var(--border-subdued);
+                text-align:left}
+.bad th{color:var(--text-subdued);font-weight:var(--weight-semibold)}
+
+/* --- menu -------------------------------------------------------------- */
+.menu{width:206px;background:var(--surface-overlay);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:5px;font-family:var(--th-ui);
+      box-shadow:0 12px 34px rgba(0,0,0,.2)}
+.mi{display:flex;align-items:center;gap:9px;padding:0 9px;min-height:var(--control-sm);
+    border-radius:var(--radius-sm);font-size:var(--text-caption);color:var(--text);cursor:pointer}
+.mi:hover{background:var(--bg-hover)}
+.mi .g{flex:1 1 auto;min-width:0}
+.mi .k{color:var(--text-subdued);font-family:var(--th-mono)}
+.mi svg{width:var(--icon-size-sm);height:var(--icon-size-sm);flex:0 0 auto;color:var(--text-subdued)}
+.mi--danger{color:var(--c-700)}
+.mi--danger svg{color:var(--c-700)}
+.mode-dark .mi--danger,
+.mode-dark .mi--danger svg{color:var(--c-300)}
+.msep{height:1px;background:var(--border-subdued);margin:5px 7px}
+.mhead{display:flex;align-items:center;gap:7px;padding:4px 8px 7px;
+       border-bottom:1px solid var(--border-subdued);margin-bottom:5px;
+       font-size:var(--text-caption);font-weight:var(--weight-semibold);color:var(--text)}
+.mhead .ib{width:22px;height:22px}
+.mrow{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.mrow .fig{max-width:370px}
+
+.dark-wrap{background:var(--surface-page);padding:20px;border-radius:var(--radius-lg);margin-top:14px}
+</style>
+
+<div class="wrap">
+
+<h1>LDS v6 — overlays and data display</h1>
+<p class="lede">The <a href="v6-spec.md">v6 spec</a>, rendered. Every panel below paints from
+LDS tokens only — no hex, no font family — so this page cannot quietly disagree with the system
+it is proposing against. <b>All four shipped.</b> The live components now live in
+<code>lds.css</code> and are demonstrated in the
+<a href="../../design-system/index.html">showcase</a> &mdash; that page is the source of
+truth. This one is kept as the record of the proposal and its reasoning; where the two
+disagree, the showcase is right.</p>
+
+<!-- ================================================================== -->
+<h2>1 · The size scale is derived, not picked</h2>
+<p><code>--modal-lg</code> is the anchor. At <code>--text-body</code> 18px, 560px is about 62
+characters — the top of the comfortable measure band. Everything at or below it is one column of
+prose; everything above it is not a column of prose at all.</p>
+
+<div class="scale">
+  <b>sm</b><span>360</span>   <div class="bar" style="width:28.1%">confirmation</div>
+  <b>md</b><span>420</span>   <div class="bar" style="width:32.8%">short form · default</div>
+  <b>lg</b><span>560</span>   <div class="bar is-ceiling" style="width:43.8%">prose ceiling ≈ 62ch</div>
+  <b>xl</b><span>720</span>   <div class="bar" style="width:56.3%">two columns, or a table</div>
+  <b>2xl</b><span>960</span>  <div class="bar" style="width:75%">a workspace</div>
+  <b>full</b><span>1280</span><div class="bar" style="width:100%">the cap — not 100vw</div>
+</div>
+<p class="measure">The seam sits at <code>lg</code>. That is why <code>xl</code> and
+<code>2xl</code> are separate steps rather than degrees of &ldquo;bigger&rdquo;, and it is what
+stops someone adding a 640 later because it looked right.</p>
+
+<div class="note"><p><b>Size is declared, never measured from content.</b> A modal that resizes as
+its own content settles — one width loading, another loaded — reads as broken. Stability beats fit.
+The named class sets only <code>--modal-w</code>, so <code>--modal-w:640px</code> inline stays
+available as the designer's lever.</p></div>
+
+<!-- ================================================================== -->
+<h2>2 · The header: large title is content, the bar is chrome</h2>
+<p>The large title sits at the top of the scroll region, so it scrolls away on its own. Nothing
+animates it. That is what makes a collapsing header buildable in a system with no runtime.</p>
+
+<div class="frames">
+  <div class="fig">
+    <div class="frame frame--desk">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre" style="max-width:330px">
+          <div class="bar-h is-flat">
+            <span></span>
+            <div class="bar-t is-hidden">Trip settings</div>
+            <div class="slot-r"><button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+          </div>
+          <div class="p-body">
+            <div class="big-t">Trip settings</div>
+            <p>Notifications, sharing and the offline map cache for this trip.</p>
+            <p>Scroll the panel and this title leaves; the bar title fades in to replace it.</p>
+            <p>Nothing is listening to the scroll event, because nothing has to.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>At rest.</b> Large title visible, bar title at zero opacity, divider absent.</p>
+  </div>
+
+  <div class="fig">
+    <div class="frame frame--desk">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre" style="max-width:330px">
+          <div class="bar-h">
+            <span></span>
+            <div class="bar-t">Trip settings</div>
+            <div class="slot-r"><button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+          </div>
+          <div class="p-body">
+            <p>Scroll the panel and this title leaves; the bar title fades in to replace it.</p>
+            <p>Nothing is listening to the scroll event, because nothing has to.</p>
+            <p>The divider appears only once the body has moved, so an unscrolled panel reads as
+            one surface rather than two.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Scrolled.</b> Bar title cross-faded in, divider revealed. Both are polish over
+    a layout that is already correct without them.</p>
+  </div>
+</div>
+
+<h3>Alignment falls out of the docking rule</h3>
+<p>Centred when the overlay <b>interrupts</b>. Left when it <b>accompanies</b>. Centring is a
+three-column grid, not <code>text-align</code> — with text-align the title shifts sideways the
+moment a back button appears, which is what makes nested flows feel unstable.</p>
+
+<!-- ================================================================== -->
+<h2>3 · Three docks, one component</h2>
+
+<div class="frames">
+  <div class="fig">
+    <div class="frame frame--desk">
+      <div class="behind"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      <div class="scrim scrim--centre">
+        <div class="p p--centre">
+          <div class="bar-h"><span></span><div class="bar-t">Delete this watch?</div>
+            <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+          <div class="p-body"><p>You will stop receiving availability alerts for Kirk Creek. This
+          cannot be undone.</p></div>
+          <div class="p-act">
+            <button class="lds-btn lds-btn--tertiary lds-btn--sm">Cancel</button>
+            <button class="lds-btn lds-btn--sm emph-strong hue-red">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Centre — interrupts.</b> Title centred. No handle: it does not drag, so it
+    must not promise to.</p>
+  </div>
+
+  <div class="fig">
+    <div class="frame frame--desk">
+      <table class="v6" style="font-size:var(--text-caption)">
+        <thead><tr><th class="plain">Campground</th><th class="plain">Trigger</th><th class="plain">Checked</th></tr></thead>
+        <tbody>
+          <tr><td>Kirk Creek</td><td>Weekends</td><td>2h ago</td></tr>
+          <tr><td>Pfeiffer Big Sur</td><td>Sites 1–20</td><td>18m ago</td></tr>
+          <tr><td>Limekiln</td><td>Weekends</td><td>1d ago</td></tr>
+          <tr><td>Andrew Molera</td><td>Sites 4–9</td><td>31m ago</td></tr>
+        </tbody>
+      </table>
+      <div class="scrim scrim--side" style="background:rgba(0,0,0,.28)">
+        <div class="p p--side">
+          <div class="bar-h bar-h--left"><span></span><div class="bar-t">Kirk Creek</div>
+            <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+          <div class="p-body">
+            <div class="media"></div>
+            <p>Site 12 · Ocean side</p>
+            <p>The table behind stays visible, which is the entire reason this is a side sheet and
+            not a modal.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Side — accompanies.</b> Title <b>left</b>, because it must stay subordinate to
+    the page's own hierarchy. Width <code>clamp(320px, --modal-w, 40vw)</code>.</p>
+  </div>
+
+  <div class="fig">
+    <div class="frame frame--phone">
+      <div class="behind"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      <div class="scrim scrim--bottom">
+        <div class="p p--bottom">
+          <div class="handle"></div>
+          <div class="bar-h"><span></span><div class="bar-t">Filters</div>
+            <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+          <div class="p-body">
+            <p>Weekends only</p><p>Ocean side</p><p>Fire pit</p><p>Under 2 hours away</p>
+          </div>
+          <div class="p-act"><button class="lds-btn lds-btn--sm lds-btn--primary">Apply</button></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Bottom — interrupts, on a phone.</b> Handle present, because it drags. A
+    bottom sheet needs no width cap: it only exists below the breakpoint.</p>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<h2>4 · Nesting is a stack, not a second overlay</h2>
+<p>Back left, close right, never the same target. Back pops one level; close dismisses the whole
+stack. <b>A scrim tap closes everything</b> — the user tapped outside all of it, not on the parent
+panel, and popping one level would mean an outside tap behaves differently at a depth they cannot
+see.</p>
+
+<div class="frames">
+  <div class="fig">
+    <div class="frame frame--desk">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre">
+          <div class="bar-h"><span></span><div class="bar-t">Notifications</div>
+            <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+          <div class="p-body">
+            <p>Alert channels</p><p>Quiet hours</p><p>Digest frequency</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Depth 1.</b> No back button — the left slot is reserved, so nothing moves when
+    depth grows.</p>
+  </div>
+
+  <div class="fig">
+    <div class="frame frame--desk">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre">
+          <div class="bar-h">
+            <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 9 12l6-6"/></svg></button>
+            <div class="bar-t">Quiet hours</div>
+            <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+          </div>
+          <div class="p-body"><p>From 22:00</p><p>Until 07:00</p><p>Weekends too</p></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Depth 2.</b> Back appears in the reserved slot. The title does not shift — that
+    is the three-column grid earning its place.</p>
+  </div>
+
+  <div class="fig">
+    <div class="frame frame--desk">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre" style="max-width:270px">
+          <div class="p-body" style="padding:18px 18px 4px">
+            <div class="big-t">Discard changes?</div>
+            <p>Your quiet hours edit will be lost.</p>
+          </div>
+          <div class="p-act" style="border-top:0">
+            <button class="lds-btn lds-btn--sm lds-btn--primary">Keep editing</button>
+            <button class="lds-btn lds-btn--sm emph-soft hue-red">Discard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Leaving with unsaved work.</b> Always a centred modal, never a sheet — it is an
+    alert. The destructive button is named <b>Discard</b>, and <b>Keep editing</b> holds focus.</p>
+  </div>
+</div>
+
+<div class="note"><p><b>And the gesture consequence:</b> with unsaved work a sheet does not
+swipe-dismiss at all. The drag rubber-bands and snaps back. Firing a dialog <i>from</i> a gesture
+already in flight reads as the system fighting the user, so the path is removed rather than
+guarded.</p></div>
+
+<!-- ================================================================== -->
+<h2>5 · Media: full-bleed is the subject, inset is support</h2>
+
+<div class="frames">
+  <div class="fig">
+    <div class="frame frame--desk" style="width:340px;height:300px">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre" style="max-width:280px">
+          <div class="p-body" style="padding-top:0">
+            <div class="media" style="margin-top:0">
+              <div class="on"><button class="ib lds-glass emph-media emph-media--on-dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+            </div>
+            <div class="big-t">Kirk Creek</div>
+            <p>Big Sur, California</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Full-bleed.</b> Escapes body padding, inherits the panel's top radius as first
+    child. The close button sits <b>on</b> the artwork taking <code>emph-media</code> — the
+    one-token media path with a real consumer.</p>
+  </div>
+
+  <div class="fig">
+    <div class="frame frame--desk" style="width:340px;height:300px">
+      <div class="scrim scrim--centre">
+        <div class="p p--centre" style="max-width:280px">
+          <div class="bar-h"><span></span><div class="bar-t">Offline maps</div>
+            <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+          <div class="p-body">
+            <div class="media--inset"></div>
+            <p>Download this region so it stays available without signal.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap"><b>Inset.</b> Sits inside body padding and takes <code>--radius-base</code>. For
+    illustration supporting text, not for the subject itself.</p>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<h2>6 · List row — the component neither system has</h2>
+<p>Three regions: leading, content, trailing, plus an optional affordance. The content region gets
+<code>min-width:0</code>, without which the subtitle refuses to truncate and shoves the trailing
+region off the row — the same <code>min-width:auto</code> trap already documented on the banner.</p>
+
+<div class="rows">
+  <div class="row row--compact">
+    <div class="lead"><label class="lds-check" style="min-height:0"><input type="checkbox" checked><span class="lds-check__box"></span></label></div>
+    <div class="cont"><div class="r-t">Weekends only</div></div>
+  </div>
+  <div class="row">
+    <div class="lead"><div class="av"></div></div>
+    <div class="cont">
+      <div class="r-t">Kirk Creek Campground</div>
+      <div class="r-s">Big Sur · 12 sites tracked</div>
+    </div>
+    <div class="trail"><div class="r-l">3 open</div><div class="r-m">2h ago</div></div>
+    <div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+  </div>
+  <div class="row row--roomy">
+    <div class="lead"><div class="thumb"></div></div>
+    <div class="cont">
+      <div class="r-t">Pfeiffer Big Sur State Park</div>
+      <div class="r-s">A subtitle long enough that it has to truncate rather than push everything else off the row</div>
+    </div>
+    <div class="trail"><span class="lds-tag emph-soft hue-green">Active</span></div>
+    <div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+  </div>
+  <div class="row">
+    <div class="lead"><label class="lds-check" style="min-height:0"><input type="checkbox"><span class="lds-check__box"></span></label></div>
+    <div class="cont"><div class="r-t">Limekiln State Park</div><div class="r-s">Paused</div></div>
+    <div class="trail"><div class="r-m">—</div></div>
+  </div>
+</div>
+<p class="cap" style="max-width:64ch;margin-top:10px">Heights come from the existing
+<code>--control-*</code> scale: compact <code>--control-xl</code> (44), default
+<code>--control-2xl</code>, roomy 72. The whole row is the target, so every variant clears the 44px
+floor.</p>
+
+<div class="note"><p><b>A row cannot be both navigable and multi-select from one tap target.</b> If
+it needs both, the checkbox is its own target and the rest of the row navigates — two targets, both
+clearing 44px. That rule is what stops the component going ambiguous later.</p></div>
+
+<!-- ================================================================== -->
+<h2>7 · Table — wrapping is the bug, sticky and freeze are the features</h2>
+
+<div class="frames"><div class="fig"><h3 style="margin-top:0">Before — today</h3>
+<div class="bad">
+  <table>
+    <tr><th>Campground</th><th>Region</th><th>Trigger</th><th>Last checked</th><th>Status</th></tr>
+    <tr><td>Kirk Creek Campground</td><td>Big Sur</td><td>Any site, weekends</td><td>2 hours ago</td><td>Active</td></tr>
+    <tr><td>Pfeiffer Big Sur State Park</td><td>Big Sur</td><td>Sites 1–20</td><td>18 minutes ago</td><td>Active</td></tr>
+  </table>
+</div>
+<p class="cap" style="max-width:64ch;margin-top:9px"><code>th</code> is <code>nowrap</code> and
+<code>td</code> is not, so headers refuse to compress and the table hands back a horizontal
+scrollbar for content that would have fitted. The status column is already gone.</p></div>
+<div class="fig"><h3 style="margin-top:0">After — per-column intent, sticky, frozen, sortable</h3>
+<div class="t-scroll" style="max-width:470px">
+  <table class="v6">
+    <thead><tr>
+      <th class="freeze"><button>Campground
+        <svg class="caret on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button></th>
+      <th><button>Trigger
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5-5 5 5M7 14l5 5 5-5"/></svg></button></th>
+      <th><button>Last checked
+        <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5-5 5 5M7 14l5 5 5-5"/></svg></button></th>
+      <th class="plain">Status</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="freeze wrap-col">Kirk Creek Campground</td><td class="wrap-col">Any site, weekends</td><td class="nowrap-col">2 hours ago</td><td><span class="lds-tag emph-soft hue-green">Active</span></td></tr>
+      <tr><td class="freeze wrap-col">Pfeiffer Big Sur State Park</td><td class="wrap-col">Sites 1–20, two nights</td><td class="nowrap-col">18 minutes ago</td><td><span class="lds-tag emph-soft hue-green">Active</span></td></tr>
+      <tr><td class="freeze wrap-col">Limekiln State Park</td><td class="wrap-col">Weekends only</td><td class="nowrap-col">1 day ago</td><td><span class="lds-tag emph-soft hue-amber">Paused</span></td></tr>
+      <tr><td class="freeze wrap-col">Julia Pfeiffer Burns State Park</td><td class="wrap-col">Any site</td><td class="nowrap-col">4 hours ago</td><td><span class="lds-tag emph-soft hue-green">Active</span></td></tr>
+      <tr><td class="freeze wrap-col">Andrew Molera State Park</td><td class="wrap-col">Sites 4–9, one night</td><td class="nowrap-col">31 minutes ago</td><td><span class="lds-tag emph-soft hue-green">Active</span></td></tr>
+    </tbody>
+  </table>
+</div>
+<p class="cap" style="max-width:64ch;margin-top:9px">Scroll it both ways. The header stays, the
+first column stays, and the wrapping columns use the vertical space instead of demanding horizontal
+space. <b>The sort caret is visible at rest</b> — hover-only discovery does not exist on touch, so a
+dimmed both-ways caret marks every sortable column.</p></div></div>
+
+<!-- ================================================================== -->
+<h2>8 · Menu — nesting branches on pointer, not preference</h2>
+
+<div class="mrow">
+  <div class="fig">
+    <div class="menu">
+      <div class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span class="g">Edit watch</span></div>
+      <div class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg><span class="g">Pause</span></div>
+      <div class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg><span class="g">Notifications</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+      <div class="msep"></div>
+      <div class="mi mi--danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg><span class="g">Delete</span></div>
+    </div>
+    <p class="cap"><b>Root.</b> Items are the list-row anatomy at compact density, which is why
+    building the row first makes the menu cheap.</p>
+  </div>
+
+  <div class="fig">
+    <div class="menu">
+      <div class="mhead">
+        <button class="ib" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 9 12l6-6"/></svg></button>
+        Notifications
+      </div>
+      <div class="mi"><span class="g">Push</span><span class="k">on</span></div>
+      <div class="mi"><span class="g">Email</span><span class="k">on</span></div>
+      <div class="mi"><span class="g">SMS</span><span class="k">off</span></div>
+      <div class="mi"><span class="g">Digest only</span><span class="k">off</span></div>
+    </div>
+    <p class="cap"><b>Coarse pointer — replace.</b> Tapping a parent swaps the panel and grows a
+    back affordance. Cascading submenus on touch open under the thumb with no hover to keep them
+    alive, so this is the branch the markup is designed around.</p>
+  </div>
+
+  <div class="fig">
+    <div style="display:flex;align-items:flex-start">
+      <div class="menu" style="width:178px">
+        <div class="mi"><span class="g">Edit watch</span></div>
+        <div class="mi"><span class="g">Pause</span></div>
+        <div class="mi" style="background:var(--bg-hover)"><span class="g">Notifications</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+        <div class="msep"></div>
+        <div class="mi mi--danger"><span class="g">Delete</span></div>
+      </div>
+      <div class="menu" style="width:156px;margin-left:-5px;margin-top:52px">
+        <div class="mi"><span class="g">Push</span><span class="k">on</span></div>
+        <div class="mi"><span class="g">Email</span><span class="k">on</span></div>
+        <div class="mi"><span class="g">SMS</span><span class="k">off</span></div>
+      </div>
+    </div>
+    <p class="cap"><b>Fine pointer — cascade.</b> The parent stays visible. This is the
+    enhancement, not the base case.</p>
+  </div>
+</div>
+
+<!-- ================================================================== -->
+<h2>9 · The same components, dark</h2>
+<div class="dark-wrap mode-dark emph-plain">
+  <div class="frames">
+    <div class="fig">
+      <div class="frame frame--desk" style="width:330px;height:300px">
+        <div class="scrim scrim--centre">
+          <div class="p p--centre" style="max-width:270px">
+            <div class="bar-h"><span></span><div class="bar-t">Kirk Creek</div>
+              <div class="slot-r"><button class="ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></div>
+            <div class="p-body">
+              <div class="media"></div>
+              <p>Surfaces resolve from the Layer 2b elevation roles, so nothing here needed a
+              second rule for dark.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fig">
+      <div class="rows" style="width:340px">
+        <div class="row">
+          <div class="lead"><div class="av"></div></div>
+          <div class="cont"><div class="r-t">Kirk Creek Campground</div><div class="r-s">Big Sur · 12 sites</div></div>
+          <div class="trail"><div class="r-l">3 open</div></div>
+          <div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+        <div class="row">
+          <div class="lead"><div class="av"></div></div>
+          <div class="cont"><div class="r-t">Limekiln State Park</div><div class="r-s">Paused</div></div>
+          <div class="trail"><span class="lds-tag emph-soft hue-amber">Paused</span></div>
+          <div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+        </div>
+      </div>
+      <div class="menu" style="margin-top:16px;width:190px">
+        <div class="mi"><span class="g">Edit watch</span></div>
+        <div class="mi"><span class="g">Notifications</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></div>
+        <div class="msep"></div>
+        <div class="mi mi--danger"><span class="g">Delete</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
