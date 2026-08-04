@@ -10,6 +10,11 @@ built independently they will not look like it.
 Not a decision record. Each piece earns its `decisions.md` entry when it lands,
 naming what it ruled out. This file is the target; that file is the history.
 
+**Status: shipped.** All four landed in `lds.css`, with eleven entries in
+`decisions.md`. Two calls changed during the build and the entries, not this
+file, carry the final reasoning: the header title is centred (a reversal), and
+the table's border model moved to `separate` so sticky cells behave.
+
 ---
 
 ## 0. What already exists

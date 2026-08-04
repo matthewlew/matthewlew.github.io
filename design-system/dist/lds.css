@@ -980,7 +980,7 @@
   background:var(--background);color:var(--text);
   border:1px solid var(--border);border-radius:var(--radius-lg);
   box-shadow:var(--shadow-lg,var(--card-shadow,0 20px 50px rgba(0,0,0,.25)));
-  padding:calc(22px * var(--density));max-width:420px;width:100%;
+  padding:calc(22px * var(--density));max-width:var(--modal-w);width:100%;
 }
 .lds-modal__title{font-family:var(--th-display);font-size:var(--text-subhead);font-weight:var(--weight-medium);margin-bottom:8px;line-height:var(--leading-subhead);letter-spacing:var(--tracking-subhead);}
 .lds-modal__body{font-family:var(--th-body);font-size:var(--text-body);color:var(--text-subdued);line-height:var(--leading-body);letter-spacing:var(--tracking-body);}
@@ -1311,12 +1311,11 @@
 .lds-toggle__switch input:disabled + .lds-toggle__track{opacity:.55;cursor:default;}
 
 /* ---- Table ---- */
-.lds-table{width:100%;border-collapse:collapse;font-family:var(--th-ui);font-size:var(--size-1);}
+.lds-table{width:100%;border-collapse:separate;border-spacing:0;font-family:var(--th-ui);font-size:var(--size-1);}
 .lds-table th{
   text-align:left;padding:calc(10px * var(--density)) calc(12px * var(--density));
   font-weight:600;color:var(--text-subdued);font-size:var(--size-0);
   letter-spacing:var(--tracking-wide);border-bottom:1px solid var(--border);
-  white-space:nowrap;
 }
 .lds-table td{
   padding:calc(12px * var(--density)) calc(12px * var(--density));
@@ -1645,7 +1644,7 @@
    author is not made to declare a fact the markup already states. */
 .lds-modal:has(.lds-modal__header){
   padding:0;display:flex;flex-direction:column;overflow:hidden;
-  max-height:min(80vh,640px);
+  max-height:var(--modal-h);
 }
 .lds-modal__header{
   flex:0 0 auto;display:flex;align-items:center;gap:12px;
@@ -1761,6 +1760,402 @@
     max-height:calc(100dvh - 32px);
     overflow-y:auto;
   }
+}
+
+/* ==========================================================================
+   Layer 3 — v6: overlays that dock, tables that hold, rows, and menus
+
+   Four components that look independent and are not. A table row, a list row
+   and a menu item are one horizontal anatomy at three densities — leading
+   slot, a content column that truncates, a trailing slot — so they are built
+   from the same rules here rather than three times.
+
+   Spec and rationale: docs/lew-design-system/v6-spec.md
+   ========================================================================== */
+
+/* ---- Modal size scale ----
+   The steps are derived from one anchor rather than picked. --modal-lg is the
+   MEASURE ceiling: at --text-body 18px, 560px is ~62 characters, the top of
+   the comfortable band. Everything at or below lg is one column of prose;
+   everything above it is not a column of prose at all, which is why xl and
+   2xl are separate steps and not degrees of "bigger".
+
+   --modal-full is a cap, NOT 100vw. Full-screen on a 5K display is nobody's
+   intent; "as large as is useful" is. The gutter collapses at --bp-sm, so the
+   same expression is edge-to-edge on a phone — the convergence trick --side
+   and --sheet use below. */
+:root{
+  --modal-sm:360px;
+  --modal-md:420px;
+  --modal-lg:560px;
+  --modal-xl:720px;
+  --modal-2xl:960px;
+  --modal-gutter:24px;
+}
+@media (max-width:480px){
+  :root{--modal-gutter:0px;}
+}
+
+/* Zero specificity so a consumer's own --modal-w still wins. The named class
+   sets nothing but this property, which is what keeps the raw override
+   available as a designer's lever without a second mechanism. */
+:where(.lds-modal){--modal-w:var(--modal-md);--modal-h:min(80vh,640px);}
+.lds-modal--sm {--modal-w:var(--modal-sm);}
+.lds-modal--lg {--modal-w:var(--modal-lg);}
+.lds-modal--xl {--modal-w:var(--modal-xl); --modal-h:min(88vh,800px);}
+.lds-modal--2xl{--modal-w:var(--modal-2xl);--modal-h:min(88vh,800px);}
+.lds-modal--full{
+  --modal-w:min(100vw - 2 * var(--modal-gutter),1280px);
+  --modal-h:min(100vh - 2 * var(--modal-gutter),900px);
+}
+
+/* ---- Side sheet ----
+   A centred modal INTERRUPTS; a side sheet ACCOMPANIES. If dismissing the
+   overlay to look at what is behind it would lose work, it is a side sheet.
+   An alert is never a side sheet: a destructive confirmation pushed to the
+   edge of a 1440px display sits outside the reader's gaze.
+
+   "Accompanies" has a measurable consequence — never half the screen, or
+   neither side is primary. Hence the 40vw cap. The 320px floor matters as
+   much: below it a side sheet is a column of broken labels. */
+@media (min-width:768px){
+  .lds-modal-scrim:has(.lds-modal--side){
+    align-items:stretch;justify-content:flex-end;padding:0;
+  }
+  .lds-modal--side{
+    width:clamp(320px,var(--modal-w),40vw);max-width:none;
+    height:100%;max-height:none;
+    border-radius:0;border-width:0 0 0 1px;
+  }
+  /* No swipe gesture with a mouse, so no handle — the handle is a promise
+     that the panel drags, and it must not be made where it cannot be kept. */
+  .lds-modal--side .lds-modal__handle{display:none;}
+  /* A side sheet sits beside live content, so its title stays subordinate to
+     the page's own hierarchy rather than claiming the centre. */
+  .lds-modal--side .lds-modal__title{text-align:left;}
+}
+/* Below the breakpoint there is no "beside" — the content it accompanies is
+   already gone — so a side sheet IS a bottom sheet. One class, correct at
+   every width. */
+@media (max-width:767.98px){
+  .lds-modal-scrim:has(.lds-modal--side){align-items:flex-end;padding:0;}
+  .lds-modal--side{
+    max-width:none;width:100%;max-height:var(--modal-h);
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .lds-modal--side .lds-modal__handle{display:block;}
+}
+
+/* ---- Header: the bar is chrome, the large title is content ----
+   The collapsing header is buildable without a runtime because of one
+   structural call: .lds-modal__title--large sits at the top of the SCROLL
+   REGION, so it leaves on its own. Nothing animates it away.
+
+   The bar is a three-column grid rather than a flex row with text-align, so
+   the title holds its optical centre when a back button appears. With
+   text-align it shifts sideways the moment the stack grows, which is what
+   makes a nested flow feel unstable. The leading column is reserved whether
+   or not a back button is present, for the same reason. */
+.lds-modal__header{
+  display:grid;
+  grid-template-columns:minmax(var(--control-xl),auto) 1fr minmax(var(--control-xl),auto);
+}
+.lds-modal__header .lds-modal__title{
+  grid-column:2;text-align:center;
+}
+.lds-modal__back{grid-column:1;justify-self:start;}
+.lds-modal__header .lds-modal__close{grid-column:3;justify-self:end;margin:0;}
+
+/* Back and close are never the same target. Back is directional and belongs
+   at the origin edge; close is terminal and belongs at the far edge. Back
+   pops ONE level of the stack; close dismisses the whole stack. */
+.lds-modal__back{
+  width:var(--control-sm);height:var(--control-sm);
+  display:grid;place-items:center;
+  background:transparent;border:0;border-radius:var(--radius-sm);
+  color:var(--text-subdued);cursor:pointer;padding:0;
+  transition:background var(--dur-fast),color var(--dur-fast);
+}
+.lds-modal__back:hover{background:var(--bg-hover);color:var(--text);}
+.lds-modal__back:focus-visible{outline:2px solid var(--text-accent);outline-offset:1px;}
+.lds-modal__back .lds-icon{width:var(--icon-size-sm);height:var(--icon-size-sm);color:currentColor;}
+
+/* The large title. Takes the whole subhead composite — leading and tracking,
+   not only the size — because a role taken by font-size alone still drifts. */
+.lds-modal__title--large{
+  display:block;
+  font-family:var(--th-display);
+  font-size:var(--text-subhead);
+  line-height:var(--leading-subhead);
+  letter-spacing:var(--tracking-subhead);
+  font-weight:var(--weight-medium);
+  color:var(--text);
+  text-align:left;
+  margin:0 0 12px;
+}
+
+/* The cross-fade is POLISH over a layout that is already correct. Without
+   scroll-driven animation the bar title simply stays visible: mildly
+   redundant beside the large one at rest, never broken. Firefox still has
+   this flagged, so the @supports branch is load-bearing, not defensive.
+
+   scroll(nearest) cannot be used: the bar is not inside the scroller. The
+   body names a timeline and the modal scopes it so the header can reach it. */
+@supports (timeline-scope:--lds-modal-body){
+  .lds-modal:has(.lds-modal__title--large){timeline-scope:--lds-modal-body;}
+  .lds-modal:has(.lds-modal__title--large) .lds-modal__body{
+    scroll-timeline:--lds-modal-body y;
+  }
+  .lds-modal:has(.lds-modal__title--large) .lds-modal__header{
+    border-bottom-color:transparent;
+    animation:lds-modal-divider linear both;
+    animation-timeline:--lds-modal-body;
+    animation-range:0 var(--modal-collapse,48px);
+  }
+  .lds-modal:has(.lds-modal__title--large) .lds-modal__header .lds-modal__title{
+    opacity:0;
+    animation:lds-modal-title-in linear both;
+    animation-timeline:--lds-modal-body;
+    animation-range:0 var(--modal-collapse,48px);
+  }
+}
+@keyframes lds-modal-title-in{to{opacity:1;}}
+@keyframes lds-modal-divider{to{border-bottom-color:var(--border-subdued);}}
+
+/* ---- Modal media ----
+   Full-bleed is the SUBJECT of the overlay; inset is an illustration
+   supporting text. Two roles, not a styling preference.
+
+   Aspect, never a fixed height: a fixed height crops differently at every
+   panel width. The full-bleed escapes the body's padding, so it has to be a
+   direct child of the body — not wrapped. */
+.lds-modal__media{
+  display:block;
+  width:calc(100% + 44px * var(--density));
+  margin:calc(-20px * var(--density)) calc(-22px * var(--density)) calc(14px * var(--density));
+  aspect-ratio:var(--media-ratio,16 / 9);
+  object-fit:cover;
+  background:var(--surface-sunken);
+}
+/* As the panel's first child it inherits the panel's top corners. Below a
+   header it is square, because the bar already owns that rounded edge. */
+.lds-modal__body > .lds-modal__media:first-child{
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+}
+.lds-modal:has(.lds-modal__header) .lds-modal__media{border-radius:0;}
+.lds-modal__media--inset{
+  width:100%;margin:0 0 calc(14px * var(--density));
+  border-radius:var(--radius-base);
+}
+
+/* ---- List row ----
+   The anatomy the system never had: leading slot, content column, trailing
+   slot, affordance. Every slot optional except the title.
+
+   Heights come from the --control-* scale rather than new tokens, and the
+   whole row is the target, so every variant clears the 44px floor. */
+.lds-row{
+  display:flex;align-items:center;
+  gap:calc(12px * var(--density));
+  padding:calc(8px * var(--density)) calc(14px * var(--density));
+  min-height:var(--control-2xl);
+  font-family:var(--th-ui);
+  color:var(--text);
+  text-decoration:none;
+  background:var(--background);
+  transition:background var(--dur-fast) var(--ease-standard);
+}
+.lds-row + .lds-row{border-top:1px solid var(--border-subdued);}
+.lds-row--compact{min-height:var(--control-xl);}
+.lds-row--roomy{min-height:72px;}
+a.lds-row:hover,
+.lds-row--interactive:hover{background:var(--bg-hover);cursor:pointer;}
+a.lds-row:focus-visible,
+.lds-row--interactive:focus-visible{
+  outline:2px solid var(--text-accent);outline-offset:-2px;
+}
+
+.lds-row__lead,
+.lds-row__trail{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+.lds-row__trail{flex-direction:column;align-items:flex-end;gap:1px;text-align:right;}
+
+/* min-width:0 is load-bearing. A flex child defaults to min-width:auto, so
+   without this the subtitle refuses to truncate and shoves the trailing slot
+   off the row — the same trap already documented on .lds-banner. */
+.lds-row__content{flex:1 1 auto;min-width:0;}
+.lds-row__title{
+  font-size:var(--size-1);font-weight:var(--weight-semibold);color:var(--text);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.lds-row__subtitle{
+  font-size:var(--size-1);color:var(--text-subdued);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.lds-row__label{font-size:var(--size-1);font-weight:var(--weight-medium);color:var(--text);}
+.lds-row__meta{font-size:var(--size-1);color:var(--text-subdued);}
+.lds-row__chevron{
+  flex:0 0 auto;display:grid;place-items:center;color:var(--icon);
+}
+.lds-row__chevron .lds-icon{
+  width:var(--icon-size-sm);height:var(--icon-size-sm);color:currentColor;
+}
+.lds-row__thumb{
+  width:52px;height:38px;border-radius:var(--radius-sm);object-fit:cover;
+  background:var(--surface-sunken);
+}
+.lds-row__avatar{
+  width:34px;height:34px;border-radius:var(--radius-pill);object-fit:cover;
+  background:var(--surface-sunken);
+}
+/* A row cannot be both navigable and multi-select from ONE tap target. Where
+   it needs both, the checkbox is its own target and the rest of the row
+   navigates — two targets, both clearing the floor. */
+.lds-row .lds-check{min-height:0;}
+
+/* The list container. Rows carry their own separators, so this only draws the
+   boundary and clips the first and last row's corners. */
+.lds-rows{
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  background:var(--surface-base);overflow:hidden;
+}
+.lds-rows--flush{border:0;border-radius:0;background:none;}
+
+/* ---- Table: per-column intent ----
+   The default was th nowrap / td wrap, which is why headers refused to
+   compress and the table handed back a horizontal scrollbar for content that
+   would have fitted in one column. Wrapping is now the default on BOTH, and
+   not-wrapping is a stated intent per column.
+
+   The three intents are not interchangeable: a wrapped date column is worse
+   than a scrolled one, and a truncated title is worse than a wrapped one. */
+.lds-table__col--wrap{white-space:normal;min-width:var(--col-min,180px);}
+.lds-table__col--nowrap{white-space:nowrap;}
+.lds-table__col--truncate{
+  max-width:var(--col-max,160px);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* ---- Table: sticky header and frozen columns ----
+   Both need their own background: a transparent sticky cell lets rows ghost
+   through it, which is the failure everyone hits first. Both take a surface
+   token rather than a hex, so dark mode needs no second rule.
+
+   The scroll container must have a bounded height, or `top:0` has nothing to
+   stick to. That fails silently — nothing errors, the header simply scrolls. */
+.lds-table-scroll{
+  max-height:var(--table-max-h,420px);
+  overflow:auto;
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  background:var(--surface-base);
+}
+.lds-table--sticky thead th{
+  position:sticky;top:0;z-index:2;
+  background:var(--surface-raised);
+}
+/* Only leading columns freeze — freezing a middle column is not a thing. A
+   frozen column needs its own right edge, because the row border it would
+   otherwise rely on disappears under the scrolling content. */
+.lds-table__col--freeze{
+  position:sticky;left:0;z-index:1;
+  background:var(--surface-base);
+  border-right:1px solid var(--border);
+}
+.lds-table--sticky thead th.lds-table__col--freeze{
+  z-index:3;background:var(--surface-raised);
+}
+.lds-table tbody tr:hover td.lds-table__col--freeze{background:var(--bg-hover);}
+/* A frozen column eats the width it exists to preserve once the viewport is
+   narrow enough that the table is mostly the frozen column. */
+@media (max-width:767.98px){
+  .lds-table__col--freeze{position:static;}
+}
+
+/* ---- Table: sort affordance ----
+   A real button inside the th, not a th with a click handler — that is what
+   carries keyboard and screen-reader semantics.
+
+   The caret is present AT REST on every sortable column. Revealing it only on
+   hover means a touch user cannot discover that the column sorts at all. */
+.lds-table th:has(.lds-table__sort){padding:0;}
+.lds-table__sort{
+  display:flex;align-items:center;gap:6px;
+  width:100%;min-height:var(--control-md);
+  padding:calc(10px * var(--density)) calc(12px * var(--density));
+  background:transparent;border:0;
+  font:inherit;color:inherit;letter-spacing:inherit;
+  text-align:left;cursor:pointer;
+}
+.lds-table__sort:hover{color:var(--text);background:var(--bg-hover);}
+.lds-table__sort:focus-visible{outline:2px solid var(--text-accent);outline-offset:-2px;}
+.lds-table__caret{
+  flex:0 0 auto;width:12px;height:12px;
+  color:currentColor;opacity:.35;
+}
+[aria-sort="ascending"] .lds-table__caret,
+[aria-sort="descending"] .lds-table__caret{opacity:1;color:var(--text-accent);}
+
+/* ---- Menu ----
+   A surface at the overlay plane — the same token the modal takes, rather
+   than a new elevation — carrying list-row anatomy at compact density. */
+.lds-menu{
+  min-width:200px;max-width:320px;
+  background:var(--surface-overlay);color:var(--text);
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-base,var(--card-shadow,0 12px 34px rgba(0,0,0,.2)));
+  padding:5px;font-family:var(--th-ui);
+}
+.lds-menu__item{
+  display:flex;align-items:center;gap:10px;
+  width:100%;min-height:var(--control-sm);
+  padding:0 9px;border:0;background:transparent;
+  border-radius:var(--radius-sm);
+  font:inherit;font-size:var(--size-1);color:var(--text);
+  text-align:left;text-decoration:none;cursor:pointer;
+}
+.lds-menu__item:hover{background:var(--bg-hover);}
+.lds-menu__item:focus-visible{outline:2px solid var(--text-accent);outline-offset:-2px;}
+.lds-menu__item[aria-disabled="true"]{color:var(--text-subdued);cursor:default;}
+.lds-menu__item[aria-disabled="true"]:hover{background:transparent;}
+.lds-menu__label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lds-menu__hint{flex:0 0 auto;color:var(--text-subdued);font-family:var(--th-mono);font-size:var(--size-0);}
+.lds-menu__item .lds-icon{
+  flex:0 0 auto;width:var(--icon-size-sm);height:var(--icon-size-sm);color:var(--icon);
+}
+/* Destructive takes the hue at text weight. emph-plain is neutral by design
+   and cannot carry this meaning, which is why the item states the ramp. */
+.lds-menu__item--danger{color:var(--c-700);}
+.lds-menu__item--danger .lds-icon{color:var(--c-700);}
+.mode-dark .lds-menu__item--danger,
+.mode-dark .lds-menu__item--danger .lds-icon{color:var(--c-300);}
+
+.lds-menu__separator{height:1px;background:var(--border-subdued);margin:5px 7px;border:0;}
+/* The submenu's back affordance. Present only in the replace branch. */
+.lds-menu__header{
+  display:flex;align-items:center;gap:8px;
+  padding:2px 6px 7px;margin-bottom:5px;
+  border-bottom:1px solid var(--border-subdued);
+  font-size:var(--size-1);font-weight:var(--weight-semibold);color:var(--text);
+}
+.lds-menu__header .lds-modal__back{width:26px;height:26px;}
+
+/* Nesting branches on POINTER, not preference. On a fine pointer the submenu
+   opens beside its parent and the parent stays visible. On a coarse pointer
+   tapping a parent REPLACES the panel: a cascade opens under the thumb and
+   there is no hover to keep it alive. The replace branch is the base case and
+   needs no CSS beyond the header above — the cascade is the enhancement. */
+.lds-menu__sub{position:relative;}
+@media (hover:hover) and (pointer:fine){
+  .lds-menu__sub > .lds-menu{
+    position:absolute;top:-5px;left:100%;margin-left:-2px;
+    display:none;
+  }
+  .lds-menu__sub:hover > .lds-menu,
+  .lds-menu__sub:focus-within > .lds-menu{display:block;}
+}
+/* A menu item is a full-width row, so on touch the ROW grows rather than
+   taking the invisible ::after target the small controls use. */
+@media (pointer:coarse){
+  .lds-menu__item{min-height:var(--control-xl);}
 }
 
 /* ---- visibility utilities ----
