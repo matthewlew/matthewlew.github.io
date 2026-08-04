@@ -76,18 +76,112 @@ One class on the markup, correct at every width — the same property that makes
 ### Size scale
 
 `max-width: 420px` is currently hardcoded, which is why every consumer that needed
-something wider re-declared it. Replace with a token scale, defaulting to the
-current value so nothing shifts:
+something wider re-declared it. Replace with a scale — but the steps have to be
+*derived*, not picked, or the next person adds a 640 because it looked right.
 
 ```
---modal-sm    360px   confirmations
---modal-md    420px   the current default
---modal-lg    560px   forms
---modal-xl    720px   tables, side-by-side content
+--modal-sm    360px    confirmations
+--modal-md    420px    the current default
+--modal-lg    560px    the PROSE CEILING — see below
+--modal-xl    720px    two columns, or a table
+--modal-2xl   960px    a workspace
+--modal-full  min(100vw - 2*var(--modal-gutter), 1280px)
 ```
 
-Applied as `.lds-modal--sm/lg/xl`; `md` is the default and needs no class. For a
-side sheet the scale drives **width**, and the sheet is full-height regardless.
+**`--modal-lg` is the measure ceiling, and that is what fixes the scale.** At
+`--text-body` 18px, 560px is ~62 characters — the top of the comfortable measure
+band. Everything at or below `lg` is one column of prose. Everything above it is
+not, by definition: if you need more than 560px, you no longer have a single
+column of text, you have two columns or a table. That is the seam, and it is why
+`xl` and `2xl` exist as separate steps rather than as "bigger".
+
+`--modal-full` is deliberately **not `100vw`**. Full-screen on a 5K display is
+nobody's intent — what they mean is "as large as is useful", which is a cap.
+1280px is that cap. And because the gutter collapses to 0 below `--bp-sm`,
+`--modal-full` becomes genuinely edge-to-edge on a phone from the same
+expression. One rule, both behaviours — the same convergence trick that makes
+`--side` and `--sheet` one class.
+
+```
+--modal-gutter  24px          (0 below --bp-sm)
+```
+
+The actual applied width is `min(100%, var(--modal-w))`, so a modal never exceeds
+its declared size but always shrinks with the viewport. The declared value is a
+**ceiling, not a width.**
+
+### Height, which the current code gets wrong
+
+`max-height: min(80vh, 640px)` is hardcoded on every modal with a header. That is
+fine for `sm`–`lg` and actively wrong for `2xl` and `full`: a workspace modal
+strangled to 640px tall is the bug that sends people back to a full page.
+
+Height tracks the width step:
+
+| | `--modal-h` |
+|---|---|
+| `sm`–`lg` | `min(80vh, 640px)` — unchanged |
+| `xl`, `2xl` | `min(88vh, 800px)` |
+| `full` | `min(100vh - 2*var(--modal-gutter), 900px)` |
+
+### Side sheet width is capped by ratio, not by pixels
+
+A side sheet **accompanies**. That word has a measurable consequence: it must
+never take half the screen, because at half neither side is primary and the
+"accompanies" claim is just untrue.
+
+```css
+.lds-modal--side { width: clamp(320px, var(--modal-w), 40vw); }
+```
+
+| Viewport | `--modal-lg` (560) resolves to |
+|---|---|
+| 1024px | 410px — the 40vw cap bites |
+| 1440px | 560px — the declared size |
+| 2560px | 560px — still the declared size, not 40% |
+
+The floor matters as much as the cap: below 320px a side sheet is a column of
+broken labels. And below `--bp-md` none of this applies — it is a bottom sheet
+there, and a bottom sheet needs no width cap at all, because it only exists below
+the breakpoint. That is worth noticing: **the bottom sheet cannot be too wide.**
+The geometry rules it out rather than a token doing so.
+
+### 1-bis. So which size does a given modal get?
+
+The direct answer to "does the content dictate it": **no, and it must not.**
+
+CSS cannot measure content and choose a token. But even if it could, auto-sizing
+is the wrong behaviour: the same dialog would be one width while loading and
+another once loaded, one width in its error state and another without. A modal
+that changes size as its own content settles reads as broken. **Stability beats
+fit.**
+
+So the size is **declared** — but it is declared from the content's *shape*, not
+from taste. Which makes it a lookup, not a judgement:
+
+| Content shape | Size |
+|---|---|
+| One question, two buttons | `sm` |
+| A short form, ≤ 4 fields | `md` (default) |
+| Prose, or a form that scrolls | `lg` |
+| Two columns, or a table ≤ 5 columns | `xl` |
+| A table that scrolls both ways, a map, an editor | `2xl` |
+| A task that owns the session | `full` |
+
+**And the lever is exposed.** The named classes do nothing except set one custom
+property:
+
+```css
+.lds-modal--lg { --modal-w: var(--modal-lg); }
+```
+
+so a designer who needs 640px sets `--modal-w: 640px` inline and takes it. Named
+class carries *intent* and survives a redesign; the raw property is the escape
+hatch. That is the same split LDS already uses for emphasis — `.emph-soft` is the
+intent, the underlying tokens are the override — so it needs no new concept.
+
+The rule that keeps this honest: **if you find yourself overriding `--modal-w` in
+three places, that is a missing step in the scale, not three exceptions.**
 
 ### Behaviours to get right
 
