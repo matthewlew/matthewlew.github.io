@@ -6,12 +6,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Caveat only. Every system face (Coconat, Ronzino) is self-hosted in
-     design-system/dist/fonts and loaded by lds.css; Caveat is this
+     vendor/lds/fonts and loaded by lds.css; Caveat is this
      page's own face for the hand-written notes, not an LDS role. -->
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <!-- Lew Design System — live, not vendored. Powers the footer badge only;
      the rest of this page keeps its own hand-tuned styles for now. -->
-<link rel="stylesheet" href="design-system/dist/lds.css">
+<link rel="stylesheet" href="vendor/lds/lds.css">
+<link rel="stylesheet" href="site.css">
 <style>
   /* This page's tokens are now aliases onto LDS, not values of their own.
      Every rule below still says var(--ink) or var(--accent); re-pointing the
@@ -35,7 +36,7 @@
     --font-display: var(--th-display);
     --font-body:    var(--th-body);
     --font-mono:    var(--th-mono);
-    --nav-h: 48px;
+    /* --nav-h comes from site.css so the bar is the same height everywhere. */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -57,59 +58,10 @@
 
   ::selection { background: var(--accent); color: #fff; }
 
-  /* ---------- NAV ---------- */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    height: var(--nav-h);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--ink);
-  }
-  .nav-name {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    line-height: 1;
-  }
-  .nav-name .accent { color: var(--accent); }
-  .nav-links {
-    display: flex;
-    list-style: none;
-    align-items: stretch;
-    height: 100%;
-  }
-  .nav-links li { display: flex; }
-  .nav-links a {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ink-2);
-    border-left: 1px solid var(--rule);
-    transition: color 0.15s, background 0.15s;
-  }
-  .nav-links a:hover { color: var(--ink); background: var(--bg-soft); }
-  .nav-links a.active { color: var(--accent); }
-  .nav-toggle {
-    display: none;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    background: none;
-    border: 1px solid var(--ink);
-    padding: 6px 12px;
-    cursor: pointer;
-  }
+  /* ---------- NAV ----------
+     The bar is in site.css now, shared with index.html. This page used to
+     hand-roll its own .nav-name / .nav-links bar, which is the single clearest
+     reason it read as a page from a different site. */
 
   /* ---------- SECTION SCAFFOLD ---------- */
   section { border-bottom: 1px solid var(--rule); }
@@ -228,6 +180,50 @@
   .d1 { animation-delay: 0.05s; } .d2 { animation-delay: 0.18s; }
   .d3 { animation-delay: 0.31s; } .d4 { animation-delay: 0.44s; }
   .d5 { animation-delay: 0.57s; }
+
+  /* ---------- HERO METRICS ---------- */
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    margin-top: clamp(40px, 7vh, 76px);
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+  }
+  .hero-metrics .metric b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3.2vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .hero-metrics .metric span {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+  }
+  @media (max-width: 720px) { .hero-metrics { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- HOUSE RULES (dark band) ---------- */
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 48px;
+  }
+  .rule-name {
+    font-family: var(--font-display);
+    font-size: clamp(17px, 2vw, 21px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  .rule p { font-size: 15px; line-height: 1.6; color: var(--ink-3); }
+  @media (max-width: 720px) { .rules { grid-template-columns: 1fr; gap: 32px; } }
 
   /* ---------- WORK TABLE ---------- */
   .work-table { border-top: 1px solid var(--rule); }
@@ -682,25 +678,7 @@
     .skill-col { border-right: none; border-bottom: 1px solid var(--rule); }
   }
   @media (max-width: 768px) {
-    .nav-links {
-      position: absolute;
-      top: var(--nav-h);
-      left: 0; right: 0;
-      height: auto;
-      flex-direction: column;
-      background: var(--bg);
-      border-bottom: 1px solid var(--ink);
-      display: none;
-    }
-    .nav-links.open { display: flex; }
-    .nav-links li { width: 100%; }
-    .nav-links a {
-      width: 100%;
-      border-left: none;
-      border-top: 1px solid var(--rule);
-      padding: 14px 24px;
-    }
-    .nav-toggle { display: block; }
+    /* the bar is responsive in site.css */
     .hero-sub { grid-template-columns: 1fr; gap: 28px; }
     .work-row { grid-template-columns: 1fr; gap: 8px; }
     .work-meta { text-align: left; }
@@ -722,17 +700,21 @@
   }
 </style>
 
-<nav class="nav">
-  <a href="index.html" class="nav-name">Matthew<span class="accent">.</span>Lew</a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="index.html#cases">Cases</a></li>
-    <li><a href="index.html#resources">Resources</a></li>
-    <li><a href="about.html">About Me</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="brand-identity.html">Brand ↗</a></li>
-    <li><a href="tools.html">Tools ↗</a></li>
-  </ul>
-  <button class="nav-toggle" id="navToggle">Menu</button>
+<nav class="nav" aria-label="Primary">
+  <div class="nav__inner">
+    <a class="nav__logo-link lds-nav__logo" href="index.html">Lew<b>.</b></a>
+    <span class="lds-nav__spacer nav__spacer"></span>
+    <button class="lds-btn lds-btn--tertiary lds-btn--sm nav__toggle" id="navToggle"
+            aria-expanded="false" aria-controls="navLinks">Menu</button>
+    <div class="lds-nav__links" id="navLinks">
+      <a href="#work">Work</a>
+      <a href="#approach">Approach</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">Design System &#8599;</a>
+      <a href="about.html" aria-current="page">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
 </nav>
 
 
@@ -751,13 +733,19 @@
       The technical labor of pushing pixels is shifting to AI. The designer's true role today is translating abstract positioning, branding, and UX constraints into structured, machine-readable information.
     </p>
   </div>
+  <div class="hero-metrics rise d4">
+    <div class="metric"><b>100+ &rarr; 7</b><span>Colour tokens, Starbucks</span></div>
+    <div class="metric"><b>1,000+</b><span>Icons drawn, DoorDash</span></div>
+    <div class="metric"><b>4&times;</b><span>Themes rebuilt, GlossGenius</span></div>
+    <div class="metric"><b>100+</b><span>Designers served</span></div>
+  </div>
 </header>
 
 <!-- ===================== 01 · WORK ===================== -->
 <section id="work">
   <div class="section-header">
     <span>Work History</span>
-    <span class="num">01 / 06</span>
+    <span class="num">01 / 04</span>
   </div>
   <div class="section-title-row">
     <h2 class="section-title">Where I've<br>shipped <span class="it">systems.</span><svg class="doodle" width="0.55em" height="0.55em" viewBox="0 0 60 60" aria-hidden="true"><path d="M30 5 L 55 31 L 29 56 L 6 29 L 32 7"/></svg></h2>
@@ -801,58 +789,62 @@
 
 
 <!-- ===================== 02 · PHILOSOPHY ===================== -->
-<section id="philosophy" style="background: var(--ink); color: var(--bg); padding-bottom: 80px; border-bottom: none;">
+<section id="approach" style="background: var(--ink); color: var(--bg); padding-bottom: 80px; border-bottom: none;">
   <div class="section-header" style="color: var(--ink-3); border-bottom: 1px solid #2A2A28;">
     <span>System Philosophy</span>
-    <span class="num">02 / 06</span>
+    <span class="num">02 / 04</span>
   </div>
   <div class="section-title-row">
     <h2 class="section-title" style="color: var(--bg);">The 80/90 <span class="it">Rule.</span><svg class="doodle" width="0.6em" height="0.5em" viewBox="0 0 66 56" aria-hidden="true"><path d="M33 6 L 59 28 L 33 50 L 7 28 L 30 8 M 33 6 L 36 9"/></svg></h2>
   </div>
   
-  <div style="padding: 0 24px; max-width: 800px; margin: 0 auto; margin-top: 24px;">
-    
-    <div style="margin-bottom: 72px;">
-      <h3 style="font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); margin-bottom: 20px; font-weight: 500; letter-spacing: -0.01em;">How do you summarize your core value proposition as a Design Systems Architect?</h3>
-      <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3);">
-        "I build the structural engines and layout guardrails that allow product teams to scale without creating design or engineering debt. Instead of just drawing components, I design the token architectures, navigation frameworks, and AI context layers that bridge the gap between Figma and code."
-      </p>
+  <div style="padding: 0 24px; max-width: 860px; margin: 0 auto; margin-top: 24px;">
+
+    <p style="font-size: clamp(19px, 2.4vw, 25px); line-height: 1.45; margin-bottom: 28px;">
+      I build the structural engines and layout guardrails that let product teams
+      scale without accruing design or engineering debt. Not by drawing components
+      &mdash; by designing the token architectures, navigation frameworks and context
+      layers that close the gap between Figma and code.
+    </p>
+
+    <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3); margin-bottom: 56px;">
+      Startups burn months custom-building a component library before they know
+      their own product patterns, and that is where system debt comes from. So I
+      run the <strong style="color: var(--bg);">80/90 rule</strong>: take native,
+      off-the-shelf primitives to cover 80&ndash;90% of the operational surface on
+      day one, set the layout rules and semantic token boundaries first, and spend
+      the saved months on the cases that are genuinely unusual.
+    </p>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-name">Drift is a signal, not a violation</div>
+        <p>When designers diverge from the system, the product is telling you it
+          moved. The job is to absorb the good patterns back, not to police the file.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-name">Figma variables map 1:1 to code</div>
+        <p>Aligned with lead engineers early, so a handoff is a shared foundation
+          rather than a translation exercise.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-name">The system is the context layer</div>
+        <p>Give an agent clear token rules and it emits production UI. Give it none
+          and it emits inconsistency at speed.</p>
+      </div>
+      <div class="rule">
+        <div class="rule-name">Managing risk, not files</div>
+        <p>As products grow everything is connected. The work is making sure the
+          system can evolve without breaking three platforms at once.</p>
+      </div>
     </div>
 
-    <div style="margin-bottom: 72px;">
-      <h3 style="font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); margin-bottom: 20px; font-weight: 500; letter-spacing: -0.01em;">Why is the "80/90 Rule" critical for modern product teams?</h3>
-      <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3);">
-        "Startups often burn months trying to build custom, component-heavy libraries from scratch before they even know their core product patterns—leading directly to system debt. My approach focuses on using native, out-of-the-box primitives (like shadcn/ui) to cover 80% to 90% of operational workflows immediately. By establishing clear layout rules and semantic token boundaries first, product teams get 10x velocity without the months of upfront engineering burn."
-      </p>
-    </div>
-
-    <div style="margin-bottom: 72px;">
-      <h3 style="font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); margin-bottom: 20px; font-weight: 500; letter-spacing: -0.01em;">Why is an AI-ready design system more important now than ever?</h3>
-      <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3);">
-        "In the age of AI tools like Claude Code, if your system lacks structured context sheets or token guardrails, AI will generate code slop and fragmented UI. An AI-ready design system acts as the ultimate prompt layer: you give the LLM strict layout parameters, semantic tokens, and component boundaries, and it generates high-fidelity, production-aligned UI every single time."
-      </p>
-    </div>
-
-    <div style="margin-bottom: 72px;">
-      <h3 style="font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); margin-bottom: 20px; font-weight: 500; letter-spacing: -0.01em;">How do you solve brand-to-product drift?</h3>
-      <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3);">
-        "Brand marketing and product design often operate in silos. At DoorDash, when the team selected a new brand red, the color was technically inaccessible for digital UI standards. I created a digital-compliant version of DoorDash red that balanced visual identity with strict accessibility contrast ratios—a token that is still in production today. Design systems shouldn't just enforce layout rules—they should protect and express brand identity consistently."
-      </p>
-    </div>
-
-    <div style="margin-bottom: 72px;">
-      <h3 style="font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); margin-bottom: 20px; font-weight: 500; letter-spacing: -0.01em;">Why is iconography the "last frontier", and how does Open Icons solve it?</h3>
-      <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3);">
-        "At DoorDash, I manually designed a 1,000+ icon library. It taught me that manual vector craftsmanship doesn't scale in high-velocity organizations. <strong>Open Icons</strong> is designed to treat iconography as a dynamic, parametric system. By defining underlying design rules—stroke weight axes, optical sizing, corner radii—we turn a historical design bottleneck into an open engine where AI generation tools can create new, contextually aligned icons on demand."
-      </p>
-    </div>
-    
-    <div style="margin-bottom: 32px;">
-      <h3 style="font-family: var(--font-display); font-size: clamp(20px, 3vw, 26px); margin-bottom: 20px; font-weight: 500; letter-spacing: -0.01em;">What is your prediction for the next big horizon in design systems?</h3>
-      <p style="font-size: 16px; line-height: 1.6; color: var(--ink-3);">
-        "We are heading toward multi-modal, agentic design systems where traditional GUIs might not even be the primary output. The ultimate design system won't just feed pixels to a screen; it will streamline content and structural parameters so human users and AI agents stay in complete sync. The underlying design system will serve as the single source of truth for both human and machine interaction."
-      </p>
-    </div>
+    <p style="font-size: 15px; line-height: 1.6; color: var(--ink-3); margin-top: 56px; padding-top: 28px; border-top: 1px solid #2A2A28;">
+      The longer arguments &mdash; why an AI-ready system needs token guardrails,
+      how brand-to-product drift gets solved, why iconography is the last frontier
+      &mdash; live with the system they describe, in
+      <a href="https://github.com/matthewlew/lds/blob/main/docs/philosophy.md" target="_blank" rel="noopener" style="color: var(--bg); text-decoration: underline;">the LDS philosophy notes</a>.
+    </p>
 
   </div>
 </section>
@@ -866,49 +858,11 @@
 </div>
 
 
-<!-- ===================== 03 · WORKFLOW ===================== -->
-<section id="workflow">
-  <div class="section-header">
-    <span>AI-Augmented Workflow</span>
-    <span class="num">03 / 07</span>
-  </div>
-  <div class="section-title-row">
-    <h2 class="section-title">How the work<br>gets <span class="it">made.</span><svg class="doodle" width="0.68em" height="0.42em" viewBox="0 0 76 44" aria-hidden="true"><path d="M7 8 L 70 6 L 71 37 L 6 39 L 8 10 L 30 8"/></svg></h2>
-  </div>
-  <div class="workflow-grid">
-    <div class="flow">
-      <div class="flow-idx">→ 01</div>
-      <div class="flow-name">Figma MCP</div>
-      <p class="flow-desc">Design context exposed as a live protocol — agents read variables, components, and structure straight from the file.</p>
-      <span class="flow-chip">Source of truth</span>
-    </div>
-    <div class="flow">
-      <div class="flow-idx">→ 02</div>
-      <div class="flow-name">Claude Code</div>
-      <p class="flow-desc">The reasoning layer. Turns token specs and intent into production components, docs, and tests.</p>
-      <span class="flow-chip">Reasoning</span>
-    </div>
-    <div class="flow">
-      <div class="flow-idx">→ 03</div>
-      <div class="flow-name">Vibe Coding</div>
-      <p class="flow-desc">Cursor + Claude in a tight loop — prototype, critique, refine. Design and build collapse into one motion.</p>
-      <span class="flow-chip">Iteration</span>
-    </div>
-    <div class="flow">
-      <div class="flow-idx">→ 04</div>
-      <div class="flow-name">Style Dictionary</div>
-      <p class="flow-desc">One token definition compiled to every platform — CSS, iOS, Android, docs. Machine-readable by default.</p>
-      <span class="flow-chip">Distribution</span>
-    </div>
-  </div>
-</section>
-
-
 <!-- ===================== 04 · SKILLS ===================== -->
 <section id="skills">
   <div class="section-header">
     <span>Capabilities</span>
-    <span class="num">04 / 07</span>
+    <span class="num">03 / 04</span>
   </div>
   <div class="section-title-row">
     <h2 class="section-title">The <span class="it">toolkit.</span><svg class="doodle" width="0.5em" height="0.5em" viewBox="0 0 56 56" aria-hidden="true"><path d="M8 9 L 48 7 L 49 47 L 7 48 L 9 11 L 26 9"/></svg></h2>
@@ -917,31 +871,31 @@
     <div class="skill-col">
       <h3>System Architecture</h3>
       <ul>
-        <li>Design Tokens (W3C) <span class="lvl">EXPERT</span></li>
-        <li>Semantic Theming <span class="lvl">EXPERT</span></li>
-        <li>Component APIs <span class="lvl">EXPERT</span></li>
-        <li>Style Dictionary <span class="lvl">ADVANCED</span></li>
-        <li>Governance &amp; Docs <span class="lvl">EXPERT</span></li>
+        <li>Design Tokens (W3C)</li>
+        <li>Semantic Theming</li>
+        <li>Component APIs</li>
+        <li>Style Dictionary</li>
+        <li>Governance &amp; Docs</li>
       </ul>
     </div>
     <div class="skill-col">
       <h3>Craft &amp; Tools</h3>
       <ul>
-        <li>Figma / Variables <span class="lvl">EXPERT</span></li>
-        <li>Accessibility (WCAG) <span class="lvl">ADVANCED</span></li>
-        <li>Dark Mode Systems <span class="lvl">EXPERT</span></li>
-        <li>Icon Systems <span class="lvl">ADVANCED</span></li>
-        <li>Motion &amp; Interaction <span class="lvl">PROFICIENT</span></li>
+        <li>Figma / Variables</li>
+        <li>Accessibility (WCAG)</li>
+        <li>Dark Mode Systems</li>
+        <li>Icon Systems</li>
+        <li>Motion &amp; Interaction</li>
       </ul>
     </div>
     <div class="skill-col">
       <h3>AI-Native</h3>
       <ul>
-        <li>Figma MCP <span class="lvl">ADVANCED</span></li>
-        <li>Claude Code <span class="lvl">ADVANCED</span></li>
-        <li>Cursor / Vibe Coding <span class="lvl">ADVANCED</span></li>
-        <li>Agent Pipelines <span class="lvl">PROFICIENT</span></li>
-        <li>HTML / CSS / JS <span class="lvl">ADVANCED</span></li>
+        <li>Figma MCP</li>
+        <li>Claude Code</li>
+        <li>Cursor / Vibe Coding</li>
+        <li>Agent Pipelines</li>
+        <li>HTML / CSS / JS</li>
       </ul>
     </div>
   </div>
@@ -952,7 +906,7 @@
 <section id="contact" class="contact">
   <div class="section-header">
     <span>Get In Touch</span>
-    <span class="num">07 / 07</span>
+    <span class="num">04 / 04</span>
   </div>
   <div class="contact-inner">
     <div class="contact-cta">Let's build the<br><span class="accent">next system.</span></div>
@@ -977,29 +931,35 @@
 <footer>
   <span>© 2026 Matthew Lew — Design Systems Designer</span>
   <span class="mode-dark emph-plain" style="display:inline-flex;align-items:center;gap:6px;">
-    <a href="design-system/index.html" class="lds-badge" style="text-decoration:none;">
-      <svg class="lds-icon" style="width:11px;height:11px;"><use href="design-system/dist/icons.svg#checkboxFilled"/></svg>
+    <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener" class="lds-badge" style="text-decoration:none;">
+      <svg class="lds-icon" style="width:11px;height:11px;"><use href="vendor/lds/icons.svg#checkboxFilled"/></svg>
       Built on Lew Design System
     </a>
   </span>
   <span>
-    <a href="brand-identity.html">Brand Identity ↗</a>
+    <a href="https://matthewlew.github.io/lds/" target="_blank" rel="noopener">Design System ↗</a>
     &nbsp;·&nbsp;
     <a href="#top">Back to top ↑</a>
   </span>
 </footer>
 
 <script>
-  // Mobile nav toggle
+  // Mobile nav toggle — same behaviour and same aria contract as index.html.
   const toggle = document.getElementById('navToggle');
   const links  = document.getElementById('navLinks');
-  toggle.addEventListener('click', () => links.classList.toggle('open'));
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
   links.querySelectorAll('a').forEach(a =>
-    a.addEventListener('click', () => links.classList.remove('open')));
+    a.addEventListener('click', () => {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }));
 
   // Active section highlight via IntersectionObserver
   const navMap = {};
-  document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
+  document.querySelectorAll('.lds-nav__links a[href^="#"]').forEach(a => {
     navMap[a.getAttribute('href').slice(1)] = a;
   });
   const observer = new IntersectionObserver((entries) => {
@@ -1013,3 +973,5 @@
   }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
   document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
 </script>
+
+<script src="global-nav.js" defer></script>

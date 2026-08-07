@@ -1,40 +1,68 @@
 # matthewlew.github.io
 
-**Matthew Lew — Design Systems Designer.** Personal portfolio + brand system.
-*The system is the statement.*
+**Matthew Lew — Design Systems Architect.** The portfolio, and the hub for the
+projects around it.
+
+Static, no build step. Open a page or push to GitHub Pages.
 
 ## Pages
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Portfolio — Work · Cases · AI Workflow · Skills · Contact |
-| `brand-identity.html` | Brand system — Color · Type · Mark · Card · Rules · System |
+| `index.html` | The hub — work, approach, the project index, how to build on the system, contact |
+| `about.html` | The portfolio — who I am, what I have shipped, how I work. The page to send a recruiter |
 
-Both are static, dependency-free HTML. Open `index.html` or push to GitHub Pages — no build step.
+## Projects
 
-## Design system
+The design system does not live here any more. It and everything built on it
+are their own repos:
 
-Shared CSS custom properties across both files (never deviate):
+| Project | Repo |
+|---------|------|
+| Lew Design System — the showcase | <https://matthewlew.github.io/lds/> |
+| Lew Design System — the repo | [matthewlew/lds](https://github.com/matthewlew/lds) |
+| Decision record | [lds/docs/decisions](https://github.com/matthewlew/lds/blob/main/docs/decisions/decisions.md) |
+| One Token | [matthewlew/one-token](https://github.com/matthewlew/one-token) |
+| Open Icons | [matthewlew/open-icons](https://github.com/matthewlew/open-icons) |
+| Palette | [matthewlew/palette](https://github.com/matthewlew/palette) |
 
-```css
---bg:#FFFFFF; --bg-soft:#F6F6F4; --paper:#F5F0E8;
---ink:#0A0A0A; --ink-2:#5C5C5A; --ink-3:#B5B5B2; --rule:#D8D8D5;
---red:#C8391B;  /* signature accent — use sparingly */
---font-display:'DM Sans'; --font-body:'DM Sans'; --font-mono:'Space Mono';
+`global-nav.js` renders the hub widget that links them together. Adding a
+project means adding one entry to the `links` array in that file — it appears
+on every page at once.
+
+## How this site gets its CSS
+
+`vendor/lds/` is a **pinned snapshot** of the plain-CSS LDS these pages were
+built against, copied in when the design system moved out to its own repo.
+It is a vendored dependency, not a source of truth: do not edit it here.
+
+It is a snapshot only because nothing serves it yet. `matthewlew/lds` now
+carries the identical files at its repo root `dist/` — byte for byte the same,
+same lineage. Enable Pages on that repo and this becomes a one-line swap:
+
+```html
+<link rel="stylesheet" href="https://matthewlew.github.io/lds/dist/lds.css">
 ```
 
-**Rules:** full-width layouts · 1px hairline rules between sections · massive display type ·
-monospace for all metadata · zero border-radius · no shadows · red as accent only.
-
-Type is **DM Sans** throughout — bold weights for display, regular for body — with
-**Space Mono** for all metadata. To swap in a custom family later: drop `.woff2` files in
-`fonts/`, add an `@font-face`, and update `--font-display` / `--font-body` in both files.
+Do **not** point it at `packages/lds/css/` instead — that is the React
+package's CSS and a different lineage, ~1,800 lines apart. Three tokens
+(`--grey-50`, `--grey-400`, `--grey-800`) and one class (`lds-tag--info`) are
+in use here and missing there, so that swap fails silently.
 
 ## Local preview
 
 ```sh
 python3 -m http.server 8000   # then open http://localhost:8000
 ```
+
+Or use the Browser preview tools with the `Static HTML Server` config in
+`.claude/launch.json`.
+
+## A note on quirks mode
+
+`about.html` renders in **quirks mode** — it has no doctype. `index.html` has
+one. Adding a doctype to About is a real change with layout risk. Do not do it
+incidentally.
 
 ---
 © 2026 Matthew Lew · matttjlew@gmail.com · linkedin.com/in/mattjlew

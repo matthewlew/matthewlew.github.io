@@ -1,41 +1,17 @@
 {
-  "name": "lew-design-system",
-  "version": "1.5.0",
-  "description": "Lew Design System \u2014 primitives, One Token semantics, and components as plain CSS.",
+  "name": "matthewlew.github.io",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Matthew Lew — portfolio and project hub. Consumes the Lew Design System.",
   "license": "MIT",
   "author": "Matthew Lew",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matthewlew/matthewlew.github.io.git",
-    "directory": "design-system"
+    "url": "git+https://github.com/matthewlew/matthewlew.github.io.git"
   },
-  "homepage": "https://matthewlew.github.io/design-system/",
+  "homepage": "https://matthewlew.github.io/",
   "keywords": [
-    "design-system",
-    "css",
-    "design-tokens",
-    "one-token",
-    "apca"
-  ],
-  "sideEffects": [
-    "*.css"
-  ],
-  "files": [
-    "design-system/dist",
-    "design-system/tokens.json",
-    "design-system/README.md"
-  ],
-  "exports": {
-    ".": "./design-system/dist/lds.css",
-    "./lds.css": "./design-system/dist/lds.css",
-    "./ink": {
-      "types": "./design-system/dist/lds-ink.d.mts",
-      "default": "./design-system/dist/lds-ink.mjs"
-    },
-    "./hues.css": "./design-system/dist/apca-palette.css",
-    "./themes/*.css": "./design-system/dist/themes/*.css",
-    "./icons.svg": "./design-system/dist/icons.svg",
-    "./tokens.json": "./design-system/tokens.json",
-    "./package.json": "./package.json"
-  }
+    "portfolio",
+    "design-systems"
+  ]
 }
