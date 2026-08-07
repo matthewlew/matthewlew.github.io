@@ -152,8 +152,8 @@
   const links = [
     { label: 'Home', path: '/' },
     { label: 'About', path: '/about.html' },
-    { label: 'Brand', path: '/brand-identity.html' },
-    { label: 'Design System', path: 'https://github.com/matthewlew/lds', external: true },
+    { label: 'Design System', path: 'https://matthewlew.github.io/lds/', external: true },
+    { label: 'System on GitHub', path: 'https://github.com/matthewlew/lds', external: true },
     { label: 'One Token', path: 'https://github.com/matthewlew/one-token', external: true },
     { label: 'Open Icons', path: 'https://github.com/matthewlew/open-icons', external: true },
     { label: 'Palette', path: 'https://github.com/matthewlew/palette', external: true }

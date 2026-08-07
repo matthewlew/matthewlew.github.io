@@ -11,7 +11,6 @@ Static, no build step. Open a page or push to GitHub Pages.
 |------|---------|
 | `index.html` | The hub — work, approach, the project index, how to build on the system, contact |
 | `about.html` | The portfolio — who I am, what I have shipped, how I work. The page to send a recruiter |
-| `brand-identity.html` | The brand system — colour, type, mark, card, rules |
 
 ## Projects
 
@@ -20,7 +19,8 @@ are their own repos:
 
 | Project | Repo |
 |---------|------|
-| Lew Design System | [matthewlew/lds](https://github.com/matthewlew/lds) |
+| Lew Design System — the showcase | <https://matthewlew.github.io/lds/> |
+| Lew Design System — the repo | [matthewlew/lds](https://github.com/matthewlew/lds) |
 | Decision record | [lds/docs/decisions](https://github.com/matthewlew/lds/blob/main/docs/decisions/decisions.md) |
 | One Token | [matthewlew/one-token](https://github.com/matthewlew/one-token) |
 | Open Icons | [matthewlew/open-icons](https://github.com/matthewlew/open-icons) |
@@ -36,18 +36,18 @@ on every page at once.
 built against, copied in when the design system moved out to its own repo.
 It is a vendored dependency, not a source of truth: do not edit it here.
 
-It is a snapshot rather than a live dependency for two reasons, both temporary:
+It is a snapshot only because nothing serves it yet. `matthewlew/lds` now
+carries the identical files at its repo root `dist/` — byte for byte the same,
+same lineage. Enable Pages on that repo and this becomes a one-line swap:
 
-1. `matthewlew/lds` does not publish its CSS anywhere a browser can reach yet
-   — `site/` is gitignored, there is no `dist/`, and Pages is not enabled.
-2. The CSS in that repo is a **different lineage** from this snapshot, not a
-   newer commit of it. It is very nearly a superset, but three tokens
-   (`--grey-50`, `--grey-400`, `--grey-800`) and one class (`lds-tag--info`)
-   exist here and not there, and all four are in use on these pages.
+```html
+<link rel="stylesheet" href="https://matthewlew.github.io/lds/dist/lds.css">
+```
 
-Closing those four gaps and publishing the CSS is what turns this directory
-into a real dependency. Until then, swapping it out will break the pages
-quietly rather than loudly.
+Do **not** point it at `packages/lds/css/` instead — that is the React
+package's CSS and a different lineage, ~1,800 lines apart. Three tokens
+(`--grey-50`, `--grey-400`, `--grey-800`) and one class (`lds-tag--info`) are
+in use here and missing there, so that swap fails silently.
 
 ## Local preview
 
@@ -60,9 +60,9 @@ Or use the Browser preview tools with the `Static HTML Server` config in
 
 ## A note on quirks mode
 
-`index.html`, `about.html` and `brand-identity.html` render in **quirks mode**
-— they have no doctype. Adding one is a real change with layout risk. Do not
-do it incidentally.
+`about.html` renders in **quirks mode** — it has no doctype. `index.html` has
+one. Adding a doctype to About is a real change with layout risk. Do not do it
+incidentally.
 
 ---
 © 2026 Matthew Lew · matttjlew@gmail.com · linkedin.com/in/mattjlew

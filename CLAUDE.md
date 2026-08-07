@@ -1,19 +1,24 @@
 # matthewlew.github.io
 
-Portfolio site and **project hub**. Three pages, static, no build step, no
+Portfolio site and **project hub**. Two pages, static, no build step, no
 runtime, no framework binding. Do not introduce one.
 
 | File | Purpose |
 |------|---------|
 | `index.html` | The hub — work, approach, project index, how to build on the system, contact |
 | `about.html` | The portfolio — the page to send a recruiter |
-| `brand-identity.html` | The brand system |
 
 ## The design system does not live here any more
 
 LDS moved to **[matthewlew/lds](https://github.com/matthewlew/lds)**, along with
-the decision record, One Token, and the old `tools.html` / "System Ops" page.
-This repo is now a *consumer*.
+the decision record, the philosophy notes, One Token, and the old `tools.html` /
+"System Ops" page. This repo is now a *consumer*.
+
+**The showcase at <https://matthewlew.github.io/lds/> is the source of truth for
+what the system looks like.** `brand-identity.html` used to live here and was a
+thinner, older duplicate of it — six sections against fourteen, everything it
+covered covered better there. It was retired and its one unique section, the ML
+monogram, moved into the showcase. Do not recreate a system-showcase page here.
 
 That means the rule that used to dominate this file — every LDS change needs a
 decision entry in the same commit — **is not this repo's rule any more.** It
@@ -25,20 +30,24 @@ working there. Do not re-add a decision log here.
 These pages paint from `vendor/lds/`, a **pinned snapshot** of the plain-CSS LDS
 they were built against. Changes belong upstream in `matthewlew/lds`, not here.
 
-It is a snapshot rather than a live dependency because of two things that are
-both fixable, and until they are fixed this is a trap:
+It is a snapshot only because nothing serves it yet. `matthewlew/lds` now has
+the identical CSS at its repo root `dist/` — **byte for byte the same files as
+`vendor/lds/`**, same lineage, verified at migration. The moment Pages is
+enabled on that repo, this becomes a one-line swap with no risk:
 
-1. `matthewlew/lds` publishes its CSS nowhere a browser can reach — `site/` is
-   gitignored, there is no `dist/`, Pages is not enabled. There is no URL to
-   point a `<link>` at.
-2. The CSS in that repo is a **different lineage**, not a newer commit of this
-   one — the two `lds.css` files differ by ~1,800 lines. It is very nearly a
-   superset, but `--grey-50`, `--grey-400`, `--grey-800` and `lds-tag--info`
-   exist here and not there, and all four are in use on these pages.
+```html
+<link rel="stylesheet" href="https://matthewlew.github.io/lds/dist/lds.css">
+```
 
-So swapping `vendor/lds/` for the upstream CSS today breaks these pages
-**quietly** — no error, just wrong greys and an unstyled footer tag. Close the
-four gaps upstream and publish the CSS first.
+**Do not swap it for `packages/lds/css/` instead.** That is the React package's
+CSS and a *different lineage* — the two `lds.css` files differ by ~1,800 lines.
+It is very nearly a superset, but `--grey-50`, `--grey-400`, `--grey-800` and
+`lds-tag--info` exist in ours and not in it, and all four are in use on these
+pages. That swap breaks them **quietly** — no error, just wrong greys and an
+unstyled footer tag.
+
+So: `dist/` is safe and same-lineage; `packages/lds/css/` needs those four gaps
+closed first.
 
 ## Constraints that fail quietly
 
@@ -48,33 +57,32 @@ Full reasoning for all of these is in the decision record, now at
 - **Put the theme and emphasis classes on the root element.** Custom properties
   inherit downward only, so `theme-product` or `emph-plain` on an inner wrapper
   leaves `body` resolving core defaults while the components inside look
-  correctly themed. All three pages here set `emph-plain` on `<html>`.
+  correctly themed. Both pages here set `emph-plain` on `<html>`.
 - **These pages paint from tokens.** Never hardcode a font family or hex on a
   page that demonstrates the system — it will silently contradict the thing it
-  is demonstrating. `about.html` and `brand-identity.html` alias their local
-  names (`--ink`, `--accent`, …) onto LDS tokens at `:root` for exactly this
-  reason; keep new work on that pattern rather than adding raw values.
+  is demonstrating. `about.html` aliases its local names (`--ink`, `--accent`,
+  …) onto LDS tokens at `:root` for exactly this reason; keep new work on that
+  pattern rather than adding raw values.
 - **Use the semantic type roles** (`--text-title/subhead/body/caption`), not the
   raw `--size-*` scale, and take the whole composite: the role carries leading
   and tracking too, so a page that takes only the font-size still drifts.
 - **Contrast is APCA**, not WCAG 2.x. Verify against the floors rather than
   eyeballing; several "it looks fine" values measure under them.
-- **`about.html` and `brand-identity.html` render in quirks mode** (no doctype).
-  `index.html` has one. Adding a doctype to the other two is a real change with
-  layout risk — do not do it incidentally, and expect the standards-mode result
-  to differ from what you see today.
+- **`about.html` renders in quirks mode** (no doctype). `index.html` has one.
+  Adding a doctype to About is a real change with layout risk — do not do it
+  incidentally, and expect the standards-mode result to differ from what you
+  see today.
 
 ## The nav is in `site.css`. There is one of it.
 
-All three pages take the same bar: `.nav > .nav__inner` with LDS's
+Both pages take the same bar: `.nav > .nav__inner` with LDS's
 `.lds-nav__logo` and `.lds-nav__links` inside it. The rules live in `site.css`,
 linked by every page after `vendor/lds/lds.css`.
 
-It used to be defined three times — once here on the LDS parts, and twice as a
-hand-rolled `.nav-name` / `.nav-links` bar on `about.html` and
-`brand-identity.html` that predated the hub. That is how those two drifted into
-looking like a different site. Do not re-add a page-local nav rule; change
-`site.css`.
+It used to be defined three times — once on the LDS parts in `index.html`, and
+twice as a hand-rolled `.nav-name` / `.nav-links` bar on the pages that predated
+the hub. That is how they drifted into looking like a different site. Do not
+re-add a page-local nav rule; change `site.css`.
 
 The link *lists* stay per-page, because the anchors differ. The bar does not.
 
