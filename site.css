@@ -29,7 +29,12 @@
   height: 100%;
   display: flex;
   align-items: center;
-  gap: calc(3 * var(--u));
+  /* LDS's own spacing scale, not the page's --u baseline. This was
+     calc(3 * var(--u)), and --u is declared in index.html's <style> and
+     nowhere else — so on about.html the calc was invalid at computed-value
+     time and the gap fell back to `normal`, i.e. zero, collapsing the logo
+     into the links. A shared stylesheet cannot reach for a page-local name. */
+  gap: var(--space-5);
 }
 .nav a { text-decoration: none; }
 .nav a:hover { text-decoration: underline; }
@@ -55,7 +60,7 @@
   }
   .lds-nav__links:not(.open) { display: none; }
   .lds-nav__links a {
-    padding: calc(2 * var(--u)) 0;
+    padding: var(--space-4) 0;
     border-top: 1px solid var(--border-subdued);
   }
   .nav__toggle { display: inline-flex; }
