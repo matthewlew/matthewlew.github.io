@@ -7,6 +7,7 @@
        vendor/lds/lds.css. -->
 <link rel="stylesheet" href="vendor/lds/apca-palette.css">
 <link rel="stylesheet" href="vendor/lds/lds.css">
+<link rel="stylesheet" href="site.css">
 
 <style>
   :root {
@@ -21,7 +22,7 @@
     --font-display: var(--th-display);
     --font-body: var(--th-body);
     --font-mono: var(--th-mono);
-    --nav-h: 48px;
+    /* --nav-h comes from site.css. */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,33 +38,7 @@
   a { color: inherit; text-decoration: none; }
   ::selection { background: var(--accent); color: #fff; }
 
-  /* NAV */
-  .nav {
-    position: sticky; top: 0; z-index: 100;
-    height: var(--nav-h);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px;
-    background: var(--bg);
-    border-bottom: 1px solid var(--ink);
-  }
-  .nav-name { font-family: var(--font-display); font-size: 20px; line-height: 1; }
-  .nav-name .accent { color: var(--accent); }
-  .nav-links { display: flex; list-style: none; height: 100%; }
-  .nav-links li { display: flex; }
-  .nav-links a {
-    display: flex; align-items: center; padding: 0 15px;
-    font-family: var(--font-mono); font-size: 10px;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-2); border-left: 1px solid var(--rule);
-    transition: color 0.15s, background 0.15s;
-  }
-  .nav-links a:hover { color: var(--ink); background: var(--bg-soft); }
-  .nav-links a.active { color: var(--accent); }
-  .nav-toggle {
-    display: none; font-family: var(--font-mono); font-size: 10px;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    background: none; border: 1px solid var(--ink); padding: 6px 12px; cursor: pointer;
-  }
+  /* NAV — in site.css now, shared with index.html and about.html. */
 
   section { border-bottom: 1px solid var(--ink); }
   .section-header {
@@ -258,15 +233,6 @@
     .card-cell { border-right: none; border-bottom: 1px solid #2A2A28; }
   }
   @media (max-width: 768px) {
-    .nav-links {
-      position: absolute; top: var(--nav-h); left: 0; right: 0;
-      height: auto;
-      flex-direction: column; background: var(--bg); border-bottom: 1px solid var(--ink); display: none;
-    }
-    .nav-links.open { display: flex; }
-    .nav-links li { width: 100%; }
-    .nav-links a { width: 100%; border-left: none; border-top: 1px solid var(--rule); padding: 14px 24px; }
-    .nav-toggle { display: block; }
     .spec { grid-template-columns: 1fr; gap: 12px; }
     .mark-grid { grid-template-columns: 1fr; }
     .mark { border-right: none; border-bottom: 1px solid var(--rule); aspect-ratio: 1.6 / 1; }
@@ -283,26 +249,28 @@
     html { scroll-behavior: auto; }
   }
   /* Display weight — headings hold up without a serif */
-  .nav-name, .section-title, .hero-title, .spec .display,
+  .nav__logo-link, .section-title, .hero-title, .spec .display,
   .type-scale td.sample, .mark .glyph, .biz .b-name, .sys-name,
   .marquee-track { font-weight: 600; letter-spacing: -0.02em; }
   .section-title, .hero-title { line-height: 1.0; }
 </style>
 
-<nav class="nav">
-  <a href="index.html" class="nav-name">Matthew<span class="accent">.</span>Lew</a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#color">01 Color</a></li>
-    <li><a href="#type">02 Type</a></li>
-    <li><a href="#mark">03 Mark</a></li>
-    <li><a href="#card">04 Card</a></li>
-    <li><a href="#rules">05 Rules</a></li>
-    <li><a href="#system">06 System</a></li>
-    <li><a href="index.html">Home ↗</a></li>
-    <li><a href="about.html">About ↗</a></li>
-    <li><a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">Design System ↗</a></li>
-  </ul>
-  <button class="nav-toggle" id="navToggle">Menu</button>
+<nav class="nav" aria-label="Primary">
+  <div class="nav__inner">
+    <a class="nav__logo-link lds-nav__logo" href="index.html">Lew<b>.</b></a>
+    <span class="lds-nav__spacer nav__spacer"></span>
+    <button class="lds-btn lds-btn--tertiary lds-btn--sm nav__toggle" id="navToggle"
+            aria-expanded="false" aria-controls="navLinks">Menu</button>
+    <div class="lds-nav__links" id="navLinks">
+      <a href="#color">Color</a>
+      <a href="#type">Type</a>
+      <a href="#mark">Mark</a>
+      <a href="#rules">Rules</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">Design System &#8599;</a>
+      <a href="about.html">About</a>
+    </div>
+  </div>
 </nav>
 
 <header class="hero">
@@ -517,7 +485,7 @@
     a.addEventListener('click', () => links.classList.remove('open')));
 
   const navMap = {};
-  document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
+  document.querySelectorAll('.lds-nav__links a[href^="#"]').forEach(a => {
     navMap[a.getAttribute('href').slice(1)] = a;
   });
   const observer = new IntersectionObserver((entries) => {

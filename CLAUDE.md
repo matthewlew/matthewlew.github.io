@@ -59,8 +59,43 @@ Full reasoning for all of these is in the decision record, now at
   and tracking too, so a page that takes only the font-size still drifts.
 - **Contrast is APCA**, not WCAG 2.x. Verify against the floors rather than
   eyeballing; several "it looks fine" values measure under them.
-- **All three pages render in quirks mode** (no doctype). Adding one is a real
-  change with layout risk — do not do it incidentally.
+- **`about.html` and `brand-identity.html` render in quirks mode** (no doctype).
+  `index.html` has one. Adding a doctype to the other two is a real change with
+  layout risk — do not do it incidentally, and expect the standards-mode result
+  to differ from what you see today.
+
+## The nav is in `site.css`. There is one of it.
+
+All three pages take the same bar: `.nav > .nav__inner` with LDS's
+`.lds-nav__logo` and `.lds-nav__links` inside it. The rules live in `site.css`,
+linked by every page after `vendor/lds/lds.css`.
+
+It used to be defined three times — once here on the LDS parts, and twice as a
+hand-rolled `.nav-name` / `.nav-links` bar on `about.html` and
+`brand-identity.html` that predated the hub. That is how those two drifted into
+looking like a different site. Do not re-add a page-local nav rule; change
+`site.css`.
+
+The link *lists* stay per-page, because the anchors differ. The bar does not.
+
+Note the bar takes `.lds-nav__logo` and `.lds-nav__links` but **not** `.lds-nav`
+itself — that is a floating pill with a border, radius and shadow, and a sticky
+full-bleed bar is a different object.
+
+## Which page owns what
+
+The two pages were both trying to be the portfolio: Starbucks, DoorDash and
+GlossGenius each appeared three times across them, and the 80/90 rule was told
+twice at different lengths. The split now:
+
+- **`index.html` is the hub.** Projects, how to build on the system, contact,
+  and a short credibility strip that links to About. It does *not* carry work
+  history, metrics or approach any more.
+- **`about.html` is the portfolio.** It owns the work history table, the proof
+  metrics, the house rules and the capabilities list.
+
+If you are adding biography, work history or positioning, it goes on About. If
+you are adding a project or a way in, it goes on the hub.
 
 ## Adding a project to the hub
 
