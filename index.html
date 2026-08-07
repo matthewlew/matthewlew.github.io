@@ -7,8 +7,8 @@
 <title>Matthew Lew — Design Systems Architect</title>
 
 <!-- No font CDN. Coconat and Ronzino are self-hosted and loaded by
-     design-system/dist/lds.css. -->
-<link rel="stylesheet" href="design-system/dist/lds.css">
+     vendor/lds/lds.css. -->
+<link rel="stylesheet" href="vendor/lds/lds.css">
 
 <style>
   /* ==========================================================================
@@ -184,9 +184,9 @@
     <div class="lds-nav__links" id="navLinks">
       <a href="#work">Work</a>
       <a href="#approach">Approach</a>
-      <a href="#tools">Tools</a>
+      <a href="#projects">Projects</a>
+      <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">Design System &#8599;</a>
       <a href="about.html">About</a>
-      <a href="brand-identity.html">Brand</a>
       <a href="#contact">Contact</a>
     </div>
   </div>
@@ -264,15 +264,16 @@
         </article>
       </a>
 
-      <a class="card-link" href="brand-identity.html">
+      <a class="card-link" href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">
         <article class="lds-card emph-subtle">
-          <div class="lds-card__kicker">This site</div>
+          <div class="lds-card__kicker">Flagship &middot; own repo</div>
           <h3 class="lds-card__title">Lew Design System</h3>
-          <p class="lds-card__body">Plain CSS, no build step, four layers, and a decision
-            record that names what every call ruled out. This page is a consumer of it &mdash;
-            every colour and typeface you are reading came from a token.</p>
+          <p class="lds-card__body">28 components over a one-token CSS cascade, four themes
+            &times; light/dark, and a decision record that names what every call ruled out.
+            This page is a consumer of it &mdash; every colour and typeface you are reading
+            came from a token.</p>
           <hr class="lds-card__divider">
-          <div class="lds-card__meta">v1.4.0 &middot; 61 recorded decisions</div>
+          <div class="lds-card__meta">github.com/matthewlew/lds</div>
         </article>
       </a>
     </div>
@@ -322,50 +323,116 @@
   </section>
 
   <!-- ---------- TOOLS ---------- -->
-  <section id="tools" aria-labelledby="tools-title">
+  <section id="projects" aria-labelledby="projects-title">
     <div class="sec-head">
       <div class="stack-s">
-        <p class="eyebrow">Tools</p>
-        <h2 class="sec-title" id="tools-title">At long last.</h2>
-        <p>Four of them. Each does exactly one thing, on purpose.</p>
+        <p class="eyebrow">Projects</p>
+        <h2 class="sec-title" id="projects-title">Everything, and where it lives.</h2>
+        <p>One design system and the projects built on it. Each is its own repo &mdash;
+          the system does not live inside the portfolio.</p>
       </div>
       <p class="lds-meta">03 / 04</p>
     </div>
 
     <div class="cards">
-      <a class="card-link" href="palette/index.html">
+      <a class="card-link" href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">
+        <article class="lds-card emph-subtle">
+          <div class="lds-card__kicker">The system &middot; start here</div>
+          <h3 class="lds-card__title">Lew Design System</h3>
+          <p class="lds-card__body">28 React components over a one-token CSS cascade, four
+            themes &times; light/dark, and the Open Icons sprite. Components emit class names
+            and carry no styles, so a theme repaints the system without any component knowing
+            a theme exists.</p>
+          <hr class="lds-card__divider">
+          <div class="lds-card__meta">matthewlew/lds</div>
+        </article>
+      </a>
+      <a class="card-link" href="https://github.com/matthewlew/lds/blob/main/docs/decisions/decisions.md" target="_blank" rel="noopener">
         <article class="lds-card emph-plain">
-          <div class="lds-card__kicker">Gradient tool</div>
+          <div class="lds-card__kicker">The reasoning</div>
+          <h3 class="lds-card__title">Decision record</h3>
+          <p class="lds-card__body">~2,750 lines naming what every call ruled out &mdash;
+            APCA over WCAG&nbsp;2.x, semantic roles over the raw scale, brand ramps steeper
+            than the palette curve. Reversals are amended, never deleted.</p>
+        </article>
+      </a>
+      <a class="card-link" href="https://github.com/matthewlew/palette" target="_blank" rel="noopener">
+        <article class="lds-card emph-plain">
+          <div class="lds-card__kicker">Consumer &middot; gradient tool</div>
           <h3 class="lds-card__title">Palette</h3>
           <p class="lds-card__body">Explore, score and export gradients. Oklab interpolation,
             masonry gallery, share links, copy-paste straight into a project.</p>
         </article>
       </a>
-      <a class="card-link" href="one-token/index.html">
+      <a class="card-link" href="https://github.com/matthewlew/one-token" target="_blank" rel="noopener">
         <article class="lds-card emph-plain">
-          <div class="lds-card__kicker">Colour system</div>
+          <div class="lds-card__kicker">The idea underneath</div>
           <h3 class="lds-card__title">One Token</h3>
           <p class="lds-card__body">Seven object colours, four container classes, zero
-            hardcoded hex. A colour method small enough to hold in your head.</p>
+            hardcoded hex. Declare what a colour means, not what it looks like &mdash; so
+            brand, dark mode and mixed themes are one class swap, not a rewrite.</p>
         </article>
       </a>
-      <a class="card-link" href="https://open-icons-playground.vercel.app" target="_blank" rel="noopener">
+      <a class="card-link" href="https://github.com/matthewlew/open-icons" target="_blank" rel="noopener">
         <article class="lds-card emph-plain">
           <div class="lds-card__kicker">Icon foundry</div>
           <h3 class="lds-card__title">Open Icons</h3>
-          <p class="lds-card__body">Icons defined by axes &mdash; stroke weight, optical size,
-            fill or outline &mdash; rather than as static files, so a new one matches by
-            construction instead of by hand.</p>
+          <p class="lds-card__body">A 174-symbol sprite with no dependency on the design
+            system, so an app can take the icons without taking the system. Defined by axes
+            rather than as static files, so a new one matches by construction.</p>
         </article>
       </a>
-      <a class="card-link" href="design-system/index.html">
+      <a class="card-link" href="brand-identity.html">
         <article class="lds-card emph-plain">
-          <div class="lds-card__kicker">Component library</div>
-          <h3 class="lds-card__title">LDS playground</h3>
-          <p class="lds-card__body">One set of components wearing three brands, so you can
-            watch the same parts retheme. Including this site&rsquo;s.</p>
+          <div class="lds-card__kicker">This site</div>
+          <h3 class="lds-card__title">Brand system</h3>
+          <p class="lds-card__body">Colour, type, mark, card and the rules that hold them
+            together &mdash; the brand layer the portfolio itself paints from.</p>
         </article>
       </a>
+    </div>
+  </section>
+
+  <!-- ---------- BUILD ON IT ---------- -->
+  <section id="build" aria-labelledby="build-title">
+    <div class="sec-head">
+      <div class="stack-s">
+        <p class="eyebrow">Build on it</p>
+        <h2 class="sec-title" id="build-title">Starting a new one.</h2>
+        <p>Every project above starts the same way, which is the point of having a system.</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <ul class="lds-list lds-list--flush emph-plain full">
+        <li class="lds-list__item">
+          <span class="lds-list__title">01 &nbsp; Take the system</span>
+          <span><code>npm i @lew/lds</code> &mdash; or link the CSS on its own if the project
+            has no build step.</span>
+        </li>
+        <li class="lds-list__item">
+          <span class="lds-list__title">02 &nbsp; Theme at the root</span>
+          <span>Put <code>theme-*</code> and <code>emph-*</code> on the root element. Custom
+            properties inherit downward only, so a theme class on an inner wrapper leaves the
+            page resolving defaults while the components inside look correctly themed.</span>
+        </li>
+        <li class="lds-list__item">
+          <span class="lds-list__title">03 &nbsp; Use the semantic roles</span>
+          <span><code>--text-title/subhead/body/caption</code>, not the raw <code>--size-*</code>
+            scale. The role carries leading and tracking too; taking only the font-size drifts.</span>
+        </li>
+        <li class="lds-list__item">
+          <span class="lds-list__title">04 &nbsp; Record what you ruled out</span>
+          <span>A change to the system needs an entry in the decision record in the same
+            commit &mdash; if it changed what a token means, or set a constraint consumers
+            have to respect.</span>
+        </li>
+        <li class="lds-list__item">
+          <span class="lds-list__title">05 &nbsp; Link back</span>
+          <span>New projects appear in the hub widget on every page, so the set stays
+            navigable from anywhere in it.</span>
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -402,8 +469,9 @@
   <footer>
     <span>&copy; 2026 Matthew Lew &middot; Design Systems Architect</span>
     <span class="row">
-      <span class="lds-tag lds-tag--info">Built on LDS v1.4.0</span>
-      <a href="docs/lew-design-system/decisions.html">Decision record</a>
+      <span class="lds-tag lds-tag--info">Built on LDS</span>
+      <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">Design system &#8599;</a>
+      <a href="https://github.com/matthewlew/lds/blob/main/docs/decisions/decisions.md" target="_blank" rel="noopener">Decision record &#8599;</a>
       <a href="#top">Back to top</a>
     </span>
   </footer>

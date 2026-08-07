@@ -6,12 +6,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Caveat only. Every system face (Coconat, Ronzino) is self-hosted in
-     design-system/dist/fonts and loaded by lds.css; Caveat is this
+     vendor/lds/fonts and loaded by lds.css; Caveat is this
      page's own face for the hand-written notes, not an LDS role. -->
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <!-- Lew Design System — live, not vendored. Powers the footer badge only;
      the rest of this page keeps its own hand-tuned styles for now. -->
-<link rel="stylesheet" href="design-system/dist/lds.css">
+<link rel="stylesheet" href="vendor/lds/lds.css">
 <style>
   /* This page's tokens are now aliases onto LDS, not values of their own.
      Every rule below still says var(--ink) or var(--accent); re-pointing the
@@ -725,12 +725,12 @@
 <nav class="nav">
   <a href="index.html" class="nav-name">Matthew<span class="accent">.</span>Lew</a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="index.html#cases">Cases</a></li>
-    <li><a href="index.html#resources">Resources</a></li>
-    <li><a href="about.html">About Me</a></li>
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#approach">Approach</a></li>
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener">Design System ↗</a></li>
+    <li><a href="about.html" aria-current="page">About</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="brand-identity.html">Brand ↗</a></li>
-    <li><a href="tools.html">Tools ↗</a></li>
   </ul>
   <button class="nav-toggle" id="navToggle">Menu</button>
 </nav>
@@ -977,8 +977,8 @@
 <footer>
   <span>© 2026 Matthew Lew — Design Systems Designer</span>
   <span class="mode-dark emph-plain" style="display:inline-flex;align-items:center;gap:6px;">
-    <a href="design-system/index.html" class="lds-badge" style="text-decoration:none;">
-      <svg class="lds-icon" style="width:11px;height:11px;"><use href="design-system/dist/icons.svg#checkboxFilled"/></svg>
+    <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener" class="lds-badge" style="text-decoration:none;">
+      <svg class="lds-icon" style="width:11px;height:11px;"><use href="vendor/lds/icons.svg#checkboxFilled"/></svg>
       Built on Lew Design System
     </a>
   </span>
@@ -1013,3 +1013,5 @@
   }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
   document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
 </script>
+
+<script src="global-nav.js" defer></script>

@@ -145,25 +145,40 @@
 
   const currentPath = window.location.pathname;
   
+  /* Each project is its own repo now — the design system moved out of this
+     site, so these are absolute links rather than paths under it. Anything
+     `external` opens in a new tab and never matches the active check, since
+     it is not a page of this site at all. */
   const links = [
     { label: 'Home', path: '/' },
-    { label: 'Design System', path: '/design-system/' },
-    { label: 'One Token', path: '/one-token/' },
-    { label: 'Palette', path: '/palette/' }
+    { label: 'About', path: '/about.html' },
+    { label: 'Brand', path: '/brand-identity.html' },
+    { label: 'Design System', path: 'https://github.com/matthewlew/lds', external: true },
+    { label: 'One Token', path: 'https://github.com/matthewlew/one-token', external: true },
+    { label: 'Open Icons', path: 'https://github.com/matthewlew/open-icons', external: true },
+    { label: 'Palette', path: 'https://github.com/matthewlew/palette', external: true }
   ];
 
   links.forEach(link => {
     const a = document.createElement('a');
     a.href = link.path;
     a.innerHTML = `<span>${link.label}</span>`;
-    
+
+    if (link.external) {
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML += `<span aria-hidden="true" style="color: var(--text-subdued); font-size: 10px;">&#8599;</span>`;
+      menu.appendChild(a);
+      return;
+    }
+
     let isActive = false;
     if (link.path === '/') {
       isActive = (currentPath === '' || currentPath === '/index.html' || currentPath === '/');
     } else {
       isActive = currentPath.startsWith(link.path);
     }
-    
+
     if (isActive) {
       a.className = 'active';
       a.innerHTML += `<span aria-hidden="true" style="color: var(--text-accent); font-size: 10px;">●</span>`;
