@@ -6,7 +6,7 @@
    This is the one definition. Link lists stay per-page, because the anchors
    differ; the bar they sit in does not.
 
-   Requires vendor/lds/lds.css — it paints entirely from LDS tokens and takes
+   Requires LDS's lds.css (loaded from npm via jsDelivr) — it paints entirely from LDS tokens and takes
    .lds-nav__logo and .lds-nav__links from it. Note it does NOT take .lds-nav
    itself: that is a floating pill with a border, a large radius and a shadow,
    and a sticky full-bleed bar is a different object. Using the parts without

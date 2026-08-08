@@ -25,29 +25,28 @@ decision entry in the same commit — **is not this repo's rule any more.** It
 lives in `docs/decisions/README.md` in the LDS repo, and applies when you are
 working there. Do not re-add a decision log here.
 
-## `vendor/lds/` is vendored. Do not edit it.
+## LDS is loaded from npm. There is no vendored copy any more.
 
-These pages paint from `vendor/lds/`, a **pinned snapshot** of the plain-CSS LDS
-they were built against. Changes belong upstream in `matthewlew/lds`, not here.
-
-It is a snapshot only because nothing serves it yet. `matthewlew/lds` now has
-the identical CSS at its repo root `dist/` — **byte for byte the same files as
-`vendor/lds/`**, same lineage, verified at migration. The moment Pages is
-enabled on that repo, this becomes a one-line swap with no risk:
+These pages used to paint from `vendor/lds/`, a pinned snapshot of LDS's CSS
+copied in when the design system moved out to its own repo. That snapshot is
+gone. `@lew-ds/lds` is now published to the public npm registry, and both
+pages load it straight from there via jsDelivr, pinned to an exact version:
 
 ```html
-<link rel="stylesheet" href="https://matthewlew.github.io/lds/dist/lds.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@lew-ds/lds@1.0.0/css/lds.css">
 ```
 
-**Do not swap it for `packages/lds/css/` instead.** That is the React package's
-CSS and a *different lineage* — the two `lds.css` files differ by ~1,800 lines.
-It is very nearly a superset, but `--grey-50`, `--grey-400`, `--grey-800` and
-`lds-tag--info` exist in ours and not in it, and all four are in use on these
-pages. That swap breaks them **quietly** — no error, just wrong greys and an
-unstyled footer tag.
+**Always pin the version, never `@latest`.** jsDelivr caches a pinned-version
+URL as immutable, so bumping means editing the version in the URL, not waiting
+on a cache. To pick up a new LDS release: check the new version's CSS still
+defines everything these pages reference (`--gray-*`, not `--grey-*` — that
+was the pre-npm spelling and no longer exists anywhere in the system), bump
+the version in both `index.html` and `about.html`, and check the pages
+visually before pushing — nothing here checks that automatically.
 
-So: `dist/` is safe and same-lineage; `packages/lds/css/` needs those four gaps
-closed first.
+The one icon on `about.html` not covered by LDS component classes
+(`checkboxFilled` in the footer) loads the same way, from
+`@lew-ds/open-icons` via jsDelivr.
 
 ## Constraints that fail quietly
 

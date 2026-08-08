@@ -32,22 +32,17 @@ on every page at once.
 
 ## How this site gets its CSS
 
-`vendor/lds/` is a **pinned snapshot** of the plain-CSS LDS these pages were
-built against, copied in when the design system moved out to its own repo.
-It is a vendored dependency, not a source of truth: do not edit it here.
-
-It is a snapshot only because nothing serves it yet. `matthewlew/lds` now
-carries the identical files at its repo root `dist/` — byte for byte the same,
-same lineage. Enable Pages on that repo and this becomes a one-line swap:
+Both pages load `@lew-ds/lds` directly from npm via jsDelivr, pinned to an
+exact version — there is no vendored copy in this repo any more:
 
 ```html
-<link rel="stylesheet" href="https://matthewlew.github.io/lds/dist/lds.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@lew-ds/lds@1.0.0/css/lds.css">
 ```
 
-Do **not** point it at `packages/lds/css/` instead — that is the React
-package's CSS and a different lineage, ~1,800 lines apart. Three tokens
-(`--grey-50`, `--grey-400`, `--grey-800`) and one class (`lds-tag--info`) are
-in use here and missing there, so that swap fails silently.
+Bump the version in both `index.html` and `about.html` to pick up an LDS
+release — pinned-version jsDelivr URLs cache as immutable, so there's no
+cache to bust, just a version number to edit. See `CLAUDE.md` for what to
+check before bumping.
 
 ## Local preview
 

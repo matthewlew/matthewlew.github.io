@@ -5,13 +5,14 @@
 <title>Matthew Lew — Design Systems Designer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Caveat only. Every system face (Coconat, Ronzino) is self-hosted in
-     vendor/lds/fonts and loaded by lds.css; Caveat is this
-     page's own face for the hand-written notes, not an LDS role. -->
+<!-- Caveat only. Every system face (Coconat, Ronzino) comes with LDS itself,
+     loaded from npm below; Caveat is this page's own face for the
+     hand-written notes, not an LDS role. -->
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet">
-<!-- Lew Design System — live, not vendored. Powers the footer badge only;
-     the rest of this page keeps its own hand-tuned styles for now. -->
-<link rel="stylesheet" href="vendor/lds/lds.css">
+<!-- Lew Design System — from npm via jsDelivr, pinned to a version. Powers
+     the footer badge only; the rest of this page keeps its own hand-tuned
+     styles for now. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@lew-ds/lds@1.0.0/css/lds.css">
 <link rel="stylesheet" href="site.css">
 <style>
   /* This page's tokens are now aliases onto LDS, not values of their own.
@@ -26,12 +27,12 @@
      and flipping that is a separate change with its own risks. */
   :root {
     --bg:      var(--background);   /* cream card, not #FFFFFF */
-    --bg-soft: var(--grey-100);
-    --paper:   var(--grey-200);   /* oat panel, was a brand tint */
-    --ink:     var(--grey-900);
-    --ink-2:   var(--grey-600);
-    --ink-3:   var(--grey-400);
-    --rule:    var(--grey-300);
+    --bg-soft: var(--gray-100);
+    --paper:   var(--gray-200);   /* oat panel, was a brand tint */
+    --ink:     var(--gray-900);
+    --ink-2:   var(--gray-600);
+    --ink-3:   var(--gray-400);
+    --rule:    var(--gray-300);
     --accent: var(--c-600);       /* interactive blue, was terracotta */
     --font-display: var(--th-display);
     --font-body:    var(--th-body);
@@ -932,7 +933,7 @@
   <span>© 2026 Matthew Lew — Design Systems Designer</span>
   <span class="mode-dark emph-plain" style="display:inline-flex;align-items:center;gap:6px;">
     <a href="https://github.com/matthewlew/lds" target="_blank" rel="noopener" class="lds-badge" style="text-decoration:none;">
-      <svg class="lds-icon" style="width:11px;height:11px;"><use href="vendor/lds/icons.svg#checkboxFilled"/></svg>
+      <svg class="lds-icon" style="width:11px;height:11px;"><use href="https://cdn.jsdelivr.net/npm/@lew-ds/open-icons@1.0.0/icons.svg#checkboxFilled"/></svg>
       Built on Lew Design System
     </a>
   </span>
